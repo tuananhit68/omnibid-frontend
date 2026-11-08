@@ -1,0 +1,236 @@
+# Outline tự trích từ Figma JSON – S02 – Chi tiết phiên đấu giá (Khách)
+# Định dạng: tên layer [x,y wxh] (toạ độ so với góc frame) + thuộc tính; TEXT: "nội dung" size/weight/line-height màu
+
+S02 – Chi tiết phiên đấu giá (Khách) [0,0 1280x1601] bg #FFFFFF
+  Main - MAIN WRAPPER: Fixed desktop container (1440 [0,65 1280x1471] col gap 24, pad 20 32 20 32
+    Section - 1. BREADCRUMB & REPORT BAR [32,85 1216x49] row gap 119, pad 0 0 12 0, border #CBD5E1
+      Nav - Breadcrumb [32,93 906x20] row gap 8
+        Link – Trang chủ [32,93 82x20] row gap 4
+          Container [32,96 12x13] col gap 0
+          Text [48,93 66x20] "Trang chủ" 14/400/20 #475569
+        Container [122,99 4x8] col gap 0
+        Link – Phiên đấu giá [135,93 89x20] col gap 0
+          Text [135,93 89x20] "Phiên đấu giá" 14/400/20 #475569
+        Container [233,99 4x8] col gap 0
+        Link – Điện thoại & Máy tính bảng [246,93 177x20] col gap 0
+          Text [246,93 177x20] "Điện thoại & Máy tính bảng" 14/400/20 #475569
+        Container [431,99 4x8] col gap 0
+        Container [444,93 493x20] col gap 0
+          Text [444,93 493x20] "iPhone 15 Pro Max 256GB Titan Tự Nhiên - Chính Hãng VN/A Nguyên Seal" 14/500/20 #1D4ED8
+      Button – Báo cáo phiên này [1102,85 145x36] row gap 6, pad 0 12 0 12, bg #F1F5F9, r 4
+        Container [1114,97 10x11] col gap 0
+        Container [1130,95 105x16] col gap 0
+          Text [1130,95 105x16] "Báo cáo phiên này" 12/500/16 #475569
+    2. MAIN AUCTION DETAIL SECTION (2 COLUMNS: ~55% Le [32,158 1216x824]
+      Section - LEFT COLUMN: Image Gallery (~55% -> 7 co [32,158 696x786] col gap 16
+        Main Large Image Container [32,158 696x522] row gap 0, bg #FFFFFF, border #CBD5E1, r 12, shadow
+          iPhone 15 Pro Max Titan Tự Nhiên [33,159 694x520] r 12
+          Zoom Indicator Button [678,626 33x37] col gap 0, pad 12 8 8 8, bg #FFFFFF@0.90, border #CBD5E1, r 8, shadow
+            Container [687,638 15x15] row gap 0
+          Live status chip on image [49,175 229x26] row gap 8
+            Background+Border [49,175 132x26] row gap 8, pad 4 12 4 12, bg #DCFCE7, border #BBF7D0, r 9999
+              Container [62,184 8x8] row gap 0
+                Background [62,184 8x8] bg #34D399, r 9999
+                Background [62,184 8x8] bg #059669, r 9999
+              Container [78,180 90x16] col gap 0
+                Text [78,180 90x16] "ĐANG DIỄN RA" 12/600/16 #166534
+            Background+Border+OverlayBlur [189,175 89x26] col gap 0, pad 4 10 4 10, bg #FFFFFF@0.95, border #CBD5E1, r 9999, shadow
+              Text [200,180 67x16] "#AUC-9821" 12/600/16 #0037B0
+        5 Interactive Thumbnails [32,696 696x84] row gap 12, pad 0 0 4 0
+          Button [32,696 80x80] col gap 0, bg #FFFFFF, r 8, shadow
+            Thumbnail 1 - Mặt trước iPhone 15 Pro Max [32,696 80x80]
+          Button [124,696 80x80] col gap 0, bg #FFFFFF, border #E2E8F0, r 8
+            Thumbnail 2 - Cạnh sau iPhone 15 Pro Max [125,697 78x78]
+          Button [216,696 80x80] col gap 0, bg #FFFFFF, border #E2E8F0, r 8
+            Thumbnail 3 - Cận cảnh camera [217,697 78x78]
+          Button [308,696 80x80] col gap 0, bg #FFFFFF, border #E2E8F0, r 8
+            Thumbnail 4 - Khung viền titan & Action button [309,697 78x78]
+        Product Specs Badges & Tags below gallery:margin [32,796 696x54] col gap 0, pad 12 0 16 0
+          Product Specs Badges & Tags below gallery [32,808 696x26] row gap 352
+            Background [32,809 146x24] col gap 0, pad 4 10 4 10, bg #F1F5F9, r 9999
+              Mã phiên: #AUC-9821 [42,813 126x16] "Mã phiên: #AUC-9821" 12/400/16 #334155
+            Background+Border [541,808 186x26] row gap 6, pad 4 10 4 10, bg #ECFDF5, border #A7F3D0, r 9999
+              Container [552,814 13x13] col gap 0
+              Text [572,813 144x16] "Kiểm duyệt: Hợp lệ 100%" 12/500/16 #059669
+        Background+Border+Shadow [32,866 696x78] row gap 259, pad 16, bg #FFFFFF, border #CBD5E1, r 12, shadow
+          Container [49,883 290x44] row gap 12
+            Background+Shadow [49,883 44x44] row gap 0, bg #1D4ED8, r 9999, shadow
+              Container [63,898 15x13] col gap 0
+            Container [105,885 234x39] col gap 0
+              Container [105,885 234x21] row gap 6
+                Container [105,886 125x20] col gap 0
+                  Text [105,886 125x20] "TechStore_Official" 14/700/20 #0E111B
+                Container [236,889 14x14] col gap 0
+                Background+Border [256,885 82x21] col gap 0, pad 2 8 2 8, bg #DCFCE7, border #BBF7D0, r 4
+                  Text [265,888 64x15] "Đối tác Uy tín" 10/600/15 #166534
+              Container [105,906 234x18] row gap 0, pad 2 0 0 0
+                Container [105,908 95x16] col gap 0
+                  Text [105,908 95x16] "3 năm hoạt động" 12/400/16 #747686
+          Button – Xem gian hàng [599,890 111x30] col gap 0, pad 6 12 6 12, bg #FFFFFF, border #CBD5E1, r 8
+            Text [612,897 85x16] "Xem gian hàng" 12/500/16 #0E111B
+      Section - RIGHT COLUMN: Pricing & Bidding Panel (~ [760,158 488x809] col gap 20, pad 24, bg #FFFFFF, border #CBD5E1, r 8, shadow
+        Chips & Title [785,183 438x170] col gap 0
+          Container [785,183 438x56]
+            Background [785,183 173x24] col gap 0, pad 4 10 4 10, bg #D5E3FC, r 9999
+              Text [795,187 153x16] "Điện thoại & Máy tính bảng" 12/500/16 #0037B0
+            Background [966,183 157x24] row gap 4, pad 4 10 4 10, bg #DCFCE7, r 9999
+              Container [976,189 11x10] col gap 0
+              Text [991,187 122x16] "Tình trạng: Mới 100%" 12/500/16 #166534
+            Background [785,215 162x24] row gap 4, pad 4 10 4 10, bg #F1F5F9, r 9999
+              Container [795,222 10x10] col gap 0
+              Text [809,219 128x16] "Đầy đủ phụ kiện & hộp" 12/500/16 #475569
+            Background [957,215 153x24] row gap 4, pad 4 10 4 10, bg #F1F5F9, r 9999
+              Container [967,223 11x8] col gap 0
+              Text [982,219 118x16] "Giao hàng toàn quốc" 12/500/16 #475569
+          Heading 1:margin [785,239 438x114] col gap 0, pad 8 0 16 0
+            Heading 1 [785,247 438x90] col gap 0
+              iPhone 15 Pro Max 256GB Titan Tự Nhiên - Chính Hãn [785,247 438x90] "iPhone 15 Pro Max 256GB Titan Tự
+Nhiên - Chính Hãng VN/A Nguyên
+Seal" 24/700/30 #0E111B
+        Countdown Box:margin [785,373 438x136] col gap 0, pad 0 0 16 0
+          Countdown Box [785,373 438x120] col gap 4, pad 16, bg #FEF3C7, border #FDE68A, r 12
+            Container [802,390 404x26] row gap 155
+              Container [802,394 114x17] col gap 0
+                Text [802,394 114x17] "THỜI GIAN CÒN LẠI" 11/700/16 #92400E
+              Overlay+Border [1071,390 134x26] row gap 6, pad 4 10 4 10, bg #FFFFFF@0.80, border #FDE68A, r 9999
+                Background [1082,399 8x8] bg #B45309, r 9999
+                Container [1096,395 98x16] col gap 0
+                  Text [1096,395 98x16] "Đang đếm ngược" 12/500/16 #92400E
+            Container [802,420 404x36] row gap 8, pad 4 0 0 0
+              Container [802,429 21x21] col gap 0
+              Container [831,424 251x32] col gap 0
+                Text [831,424 251x32] "02 giờ 14 phút 34 giây" 24/700/32 #92400E
+            Container [802,460 404x16] row gap 6
+              Container [802,460 71x16] col gap 0
+                Text [802,460 71x16] "Kết thúc lúc:" 12/400/16 #92400E
+              Container [879,460 102x16] col gap 0
+                Text [879,460 102x16] "28/10/2026 21:30" 12/600/16 #B45309
+              Container [987,460 49x16] col gap 0
+                Text [987,460 49x16] "(GMT+7)" 12/400/16 #92400E
+        Pricing Box [785,529 438x262] col gap 12, pad 16, bg #FAF8FF, border #DAE2FD, r 12
+          Container [802,546 404x23] row gap 214
+            Container [802,549 82x16] col gap 0
+              Text [802,549 82x16] "GIÁ HIỆN TẠI" 12/600/16 #4F6296
+            Background+Border [1099,546 106x23] row gap 0, pad 2 8 2 8, bg #FEF3C7, border #FDE68A, r 4
+              Text [1108,549 88x17] "Chưa đạt giá sàn" 11/600/16 #B45309
+          Container [802,581 404x36] row gap 0
+            Text [802,581 186x36] "21.500.000 ₫" 30/700/36 #1D4ED8
+          Container [802,629 404x10] row gap 0, pad 2 0 0 0
+            Container [802,631 8x8] row gap 0
+              Background [802,631 8x8] bg #34D399, r 9999
+              Background [802,631 8x8] bg #10B981, r 9999
+          Specs table inside pricing card [802,651 404x123] col gap 8, pad 12, bg #F8F9FB, border #CBD5E1, r 8
+            Container [815,664 378x16] row gap 220
+              Container [815,664 80x16] col gap 0
+                Text [815,664 80x16] "Giá khởi điểm:" 12/400/16 #515F74
+              Container [1115,664 77x16] col gap 0
+                Text [1115,664 77x16] "18.000.000 ₫" 12/600/16 #0E111B
+            Container [815,688 378x16] row gap 215
+              Container [815,688 101x16] col gap 0
+                Text [815,688 101x16] "Bước giá tối thiểu:" 12/400/16 #515F74
+              Container [1132,688 60x16] col gap 0
+                Text [1132,688 60x16] "500.000 ₫" 12/600/16 #0E111B
+            Container [815,712 378x16] row gap 199
+              Container [815,712 95x16] col gap 0
+                Text [815,712 95x16] "Tổng số lượt đặt:" 12/400/16 #515F74
+              Container [1110,712 82x16] col gap 0
+                Text [1110,712 82x16] "22 lượt đặt giá" 12/600/16 #0E111B
+            HorizontalBorder [815,736 378x25] row gap 159, pad 4 0 0 0, border #DAE2FD
+              Container [815,743 124x16] col gap 0
+                Text [815,743 124x16] "Giá tối thiểu tiếp theo:" 12/400/16 #515F74
+              Container [1098,741 94x20] col gap 0
+                Text [1098,741 94x20] "22.000.000 ₫" 14/700/20 #0037B0
+        Guest CTA Buttons [785,811 438x131] col gap 10, pad 4 0 0 0
+          Button – Đăng nhập để đặt giá [785,815 438x44] row gap 8, pad 12 16 12 16, bg #1D4ED8, r 8, shadow
+            Container [921,830 13x13] col gap 0
+            Container [943,827 143x20] col gap 0
+              Text [943,827 143x20] "Đăng nhập để đặt giá" 14/600/20 #FFFFFF
+          Button – Theo dõi phiên này [785,869 438x42] row gap 8, pad 10 16 10 16, bg #FFFFFF, border #CBD5E1, r 8
+            Container [928,883 15x13] col gap 0
+            Container [951,880 127x20] col gap 0
+              Text [951,880 127x20] "Theo dõi phiên này" 14/500/20 #334155
+          Container [785,921 438x21] col gap 0, pad 4 0 0 0
+    Section - 3. TABS SECTION (Below Main Fold):margin [32,1006 1216x509] col gap 0, pad 16 0 0 0
+      Section - 3. TABS SECTION (Below Main Fold) [32,1022 1216x493] col gap 24, pad 0 0 36 0, bg #FFFFFF, border #CBD5E1, r 8, shadow
+        Tab Header Bar [33,1023 1214x51] row gap 0, pad 0 24 0 24, bg #F8F9FB, border #CBD5E1
+          Button – Mô tả sản phẩm [57,1023 175x50] row gap 8, pad 14 24 14 24, border #1D4ED8
+            Container [81,1040 12x15] col gap 0
+            Text [101,1037 107x20] "Mô tả sản phẩm" 14/600/20 #1D4ED8
+          Button – Lịch sử đặt giá (22 lượt) [232,1023 227x50] row gap 8, pad 14 24 14 24
+            Container [256,1040 13x13] col gap 0
+            Text [277,1037 157x20] "Lịch sử đặt giá (22 lượt)" 14/500/20 #64748B
+        Tab Content Area → Tab 1: Product Description & Sp [57,1098 1166x380] col gap 24
+          Container [57,1098 1166x279] col gap 8
+            Heading 3 [57,1098 1166x24] col gap 0
+              Thông số kỹ thuật chi tiết [57,1098 1166x24] "Thông số kỹ thuật chi tiết" 16/700/24 #0E111B
+            Border [57,1130 1166x247] col gap 0, border #CBD5E1, r 8
+              Background+HorizontalBorder [58,1131 1164x41] bg #F8F9FB, border #CBD5E1
+                Container [74,1141 377x20] col gap 0
+                  Text [74,1141 116x20] "Mẫu máy (Model)" 14/500/20 #515F74
+                Container [451,1141 754x20] col gap 0
+                  Text [451,1141 196x20] "iPhone 15 Pro Max (Mã VN/A)" 14/500/20 #0E111B
+              Background+HorizontalBorder [58,1172 1164x41] bg #FFFFFF, border #CBD5E1
+                Container [74,1182 377x20] col gap 0
+                  Text [74,1182 124x20] "Dung lượng lưu trữ" 14/500/20 #515F74
+                Container [451,1182 754x20] col gap 0
+                  Text [451,1182 49x20] "256 GB" 14/400/20 #0E111B
+              Background+HorizontalBorder [58,1213 1164x41] bg #F8F9FB, border #CBD5E1
+                Container [74,1223 377x20] col gap 0
+                  Text [74,1223 56x20] "Màu sắc" 14/500/20 #515F74
+                Container [451,1223 754x20] col gap 0
+                  Text [451,1223 220x20] "Titan Tự Nhiên (Natural Titanium)" 14/400/20 #0E111B
+              Background+HorizontalBorder [58,1254 1164x41] bg #FFFFFF, border #CBD5E1
+                Container [74,1264 377x20] col gap 0
+                  Text [74,1264 130x20] "Tình trạng đóng gói" 14/500/20 #515F74
+                Container [451,1264 754x20] col gap 0
+                  Text [451,1264 312x20] "Nguyên Seal hộp, chưa kích hoạt (Chưa Active)" 14/400/20 #0E111B
+              Background+HorizontalBorder [58,1295 1164x41] bg #F8F9FB, border #CBD5E1
+                Container [74,1305 377x20] col gap 0
+                  Text [74,1305 62x20] "Bảo hành" 14/500/20 #515F74
+                Container [451,1305 754x20] col gap 0
+                  Text [451,1305 357x20] "12 tháng chính hãng Apple Việt Nam từ ngày kích hoạt" 14/400/20 #0E111B
+              Background [58,1336 1164x40] bg #FFFFFF
+                Container [74,1346 377x20] col gap 0
+                  Text [74,1346 126x20] "Phụ kiện trong hộp" 14/500/20 #515F74
+                Container [451,1346 754x20] col gap 0
+                  Text [451,1346 561x20] "Thân máy iPhone 15 Pro Max, Cáp sạc USB-C (1m), Tài liệu hướng dẫn, Que chọc sim" 14/400/20 #0E111B
+          Container [57,1401 1166x77] col gap 7
+            Heading 3 [57,1401 1166x24] col gap 0
+              Cam kết của người bán & Quy định giao hàng [57,1401 1166x24] "Cam kết của người bán & Quy định giao hàng" 16/700/24 #0E111B
+            Container [57,1432 1166x46] col gap 0, pad 0 0 1 0
+              Sản phẩm được cam kết chính hãng 100%, bảo quản tr [57,1432 1166x46] "Sản phẩm được cam kết chính hãng 100%, bảo quản trong môi trường khô ráo, tem ni" 14/400/23 #434655
+  Footer [0,1536 1280x65] col gap 0, pad 24 0 24 0, bg #FFFFFF, border #CBD5E1
+    Container [0,1561 1280x16] row gap 404, pad 0 32 0 32
+      Container [32,1561 341x16] col gap 0
+        © 2026 Sàn đấu giá trực tuyến OmniBid. Bảo lưu mọi [32,1561 341x16] "© 2026 Sàn đấu giá trực tuyến OmniBid. Bảo lưu mọi quyền." 12/400/16 #515F74
+      Container [780,1561 467x16] row gap 24
+        Link – Điều khoản dịch vụ [780,1561 108x16] col gap 0
+          Text [780,1561 108x16] "Điều khoản dịch vụ" 12/400/16 #515F74
+        Link – Quy chế vận hành [913,1561 102x16] col gap 0
+          Text [913,1561 102x16] "Quy chế vận hành" 12/400/16 #515F74
+        Link – Bảo mật thông tin [1040,1561 99x16] col gap 0
+          Text [1040,1561 99x16] "Bảo mật thông tin" 12/400/16 #515F74
+        Link – Hỗ trợ kỹ thuật [1164,1561 83x16] col gap 0
+          Text [1164,1561 83x16] "Hỗ trợ kỹ thuật" 12/400/16 #515F74
+  Header [0,0 1280x65] col gap 0, bg #FFFFFF, border #E2E8F0
+    Container [0,0 1280x64] row gap 24, pad 0 32 0 32
+      Container [32,16 344x32] row gap 32
+        Logo [32,16 129x32] row gap 8
+          Container [32,20 21x22] col gap 0
+          Container [61,16 100x32] col gap 0
+            OmniBid [61,16 100x32] "OmniBid" 24/900/32 #0F172A
+        Nav [193,17 183x30] row gap 24
+          Nav – Trang chủ [193,17 67x30] col gap 0, pad 4 0 4 0
+            Text [193,21 67x20] "Trang chủ" 14/500/20 #475569
+          Nav – Phiên đấu giá [284,17 91x30] col gap 0, pad 4 0 4 0, border #1D4ED8
+            Text [284,21 91x20] "Phiên đấu giá" 14/700/20 #1D4ED8
+      Margin [400,13 618x38] col gap 0, pad 0 80 0 80
+        Container [480,13 458x38] row gap 0
+          Input [480,13 458x38] col gap 0, pad 9 16 10 40, bg #F8FAFC, border #E2E8F0, r 8
+            Container [521,23 400x17] col gap 0
+              Tìm kiếm phiên đấu giá… [521,23 400x17] "Tìm kiếm phiên đấu giá…" 14/400/17 #6B7280
+      Container [1042,13 205x38] row gap 12
+        Button – Đăng ký [1042,13 89x38] col gap 0, pad 8 16 8 16, border #CBD5E1, r 8
+          Text [1059,22 55x20] "Đăng ký" 14/500/20 #334155
+        Button – Đăng nhập [1143,14 104x36] col gap 0, pad 8 16 8 16, bg #2563EB, r 8
+          Text [1159,22 72x20] "Đăng nhập" 14/500/20 #FFFFFF

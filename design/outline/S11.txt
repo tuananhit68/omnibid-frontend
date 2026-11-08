@@ -1,0 +1,202 @@
+# Outline tự trích từ Figma JSON – S11 – Chi tiết đơn hàng & Thanh toán (Người mua)
+# Định dạng: tên layer [x,y wxh] (toạ độ so với góc frame) + thuộc tính; TEXT: "nội dung" size/weight/line-height màu
+
+S11 – Chi tiết đơn hàng & Thanh toán (Người mua) [0,0 1280x1019] col gap 0, pad 0 0 24 0, bg #FFFFFF
+  Main [0,0 1280x935] col gap 0, pad 64 0 0 0, bg #FAF8FF
+    Container [0,64 1280x871] col gap 0
+      Section - Top Navigation & Order Identity Bar:marg [0,64 1280x122] col gap 0, pad 0 0 24 0
+        Section - Top Navigation & Order Identity Bar [0,64 1280x98] col gap 0, bg #FFFFFF, shadow
+          Container [0,64 1280x98] col gap 8, pad 16 32 16 32
+            Nav - Breadcrumb [32,80 1216x20] row gap 8
+              Link – Trang chủ [32,80 82x20] row gap 4
+                Container [32,83 12x13] col gap 0
+                Text [48,80 66x20] "Trang chủ" 14/400/20 #475569
+              Container [122,86 4x8] col gap 0
+              Link – Đơn hàng của tôi [135,80 112x20] col gap 0
+                Text [135,80 112x20] "Đơn hàng của tôi" 14/400/20 #475569
+              Container [255,86 4x8] col gap 0
+              Container [268,80 194x20] col gap 0
+                Text [268,80 194x20] "Chi tiết đơn hàng #ORD-8841" 14/500/20 #1D4ED8
+            Order Header Row [32,108 1216x38] row gap 532
+              Container [32,108 464x38] row gap 16
+                Heading 1 [32,108 308x38] col gap 0
+                  Text [32,108 308x38] "Đơn hàng #ORD-8841" 30/700/38 #131B2E
+                Background [356,113 139x28] row gap 6, pad 4 12 4 12, bg #D5E3FC, r 4
+                  Container [368,119 16x15] col gap 0
+                  Text [391,117 92x20] "Trúng đấu giá" 14/600/20 #57657A
+              Container [1036,114 211x26] col gap 0, pad 0 0 6 0
+                Link – Quay lại danh sách đơn hàng [1036,114 211x20] row gap 4
+                  Container [1036,117 13x13] col gap 0
+                  Text [1053,114 194x20] "Quay lại danh sách đơn hàng" 14/600/20 #0037B0
+      Main Content Layout (Desktop 12-col: 7 cols left [ [0,186 1280x749] col gap 0, pad 0 32 0 32
+        Container [32,186 1216x749]
+          LEFT COLUMN (~58%) [32,186 699x748] col gap 24
+            Article - CARD 1: Thông tin tài sản trúng đấu gi [32,186 699x366] col gap 16, pad 24, bg #FFFFFF, r 12, shadow
+              Container [56,210 651x36] row gap 180, pad 0 0 8 0
+                Container [56,210 309x28] row gap 4
+                  Container [56,214 12x18] col gap 0
+                  Heading 2 [72,210 293x28] col gap 0
+                    Text [72,210 293x28] "Thông tin tài sản trúng đấu giá" 20/600/28 #131B2E
+                Background [555,212 152x24] col gap 0, pad 4 8 4 8, bg #E2E7FF, r 4
+                  Text [563,216 136x16] "MÃ PHIÊN: #AUC-2049" 12/600/16 #434655
+              Container [56,262 651x266] row gap 16
+                Thumbnail Image [56,262 176x176] col gap 0, bg #EAEDFF, r 8
+                  AB6AXuC23f8HprZSOUFlT2c4SEmJQhC-7njygAjMM9TOJgRjJ9 [56,262 176x176]
+                  Overlay+OverlayBlur [64,409 99x21] col gap 0, pad 2 8 2 8, bg #131B2E@0.80, r 4, shadow
+                    Text [72,411 83x17] "4 ảnh giám định" 11/400/16 #FFFFFF
+                Asset Details [248,262 459x266] col gap 0
+                  Container [248,262 459x101] col gap 4, pad 6 0 0 0
+                    Text [248,267 176x16] "ĐỒNG HỒ CỔ & TRANG SỨC" 12/400/16 #747686
+                    Heading 3 [248,287 459x52] col gap 0
+                      Đồng hồ Thụy Sỹ Chronograph Heritage 1972 Automati [248,287 459x52] "Đồng hồ Thụy Sỹ Chronograph Heritage 1972
+Automatic" 18/600/26 #131B2E
+                    Container [248,343 459x20] row gap 4
+                      Container [248,347 13x12] col gap 0
+                      Container [265,343 234x20] col gap 0
+                        Text [265,343 234x20] "Người bán: Antique Timepieces SG" 14/400/20 #434655
+                      Margin [503,343 108x20] col gap 0, pad 0 0 0 4
+                        Container [507,343 104x20] row gap 0
+                          Container [507,347 11x11] col gap 0
+                          Container [519,343 18x20] col gap 0
+                            Text [519,343 18x20] "5.0" 12/700/20 #A73400
+                          Margin [538,343 74x20] col gap 0, pad 0 0 0 2
+                            Text [540,343 72x20] "(Đã xác minh)" 11/400/20 #747686
+                  Price Breakdown Table:margin [248,363 459x165] col gap 0, pad 16 0 0 0
+                    Price Breakdown Table [248,379 459x149] col gap 4, pad 8 16 16 16, bg #F2F3FF, r 8
+                      Container [264,387 427x20] row gap 225
+                        Container [264,387 113x20] col gap 0
+                          Text [264,387 113x20] "Giá trúng đấu giá" 14/400/20 #434655
+                        Container [601,387 89x20] col gap 0
+                          Text [601,387 89x20] "38.200.000 ₫" 14/400/20 #131B2E
+                      Margin [264,411 427x9] col gap 0, pad 4 0 4 0
+                        Horizontal Divider [264,415 427x1] bg #C4C5D7@0.30
+                      Container [264,424 427x88]
+                        Container [264,438 213x56] col gap 0, pad 0 34 0 0
+                          Text [264,438 178x56] "Giá cuối cần thanh
+toán:" 20/600/28 #131B2E
+                        Container [477,424 214x88] col gap 0, pad 0 10 0 0
+                          Text [477,424 204x88] "38.200.000
+₫" 36/700/44 #1D4ED8
+            Article - CARD 2: Form Thông tin giao hàng [32,576 699x358] col gap 16, pad 24, bg #FFFFFF, r 12, shadow
+              Container [56,600 651x32] row gap 0, pad 0 0 4 0
+                Container [56,600 447x28] row gap 4
+                  Container [56,607 20x14] col gap 0
+                  Heading 2 [80,600 422x28] col gap 0
+                    Text [80,600 422x28] "Thông tin giao hàng & Nhận bàn giao tài sản" 20/600/28 #131B2E
+              Form [56,648 651x262] col gap 16
+                Container [56,648 651x70] row gap 16
+                  Recipient Name [56,648 317x70] col gap 6
+                    Label [56,648 317x20] col gap 0
+                      Họ và tên người nhận [56,648 317x20] "Họ và tên người nhận" 14/600/20 #131B2E
+                    Background+Shadow [56,674 317x44] row gap 0, pad 0 14 0 14, bg #F2F3FF, r 8, shadow
+                      Container [70,684 118x24] col gap 0
+                        Text [70,684 118x24] "Nguyễn Văn An" 16/400/24 #131B2E
+                  Phone Number [389,648 317x70] col gap 6
+                    Label [389,648 317x20] col gap 0
+                      Số điện thoại liên hệ [389,648 317x20] "Số điện thoại liên hệ" 14/600/20 #131B2E
+                    Background+Shadow [389,674 317x44] row gap 0, pad 0 14 0 14, bg #FFFFFF, r 8, shadow
+                      Input [403,684 276x24] col gap 0
+                        Container [403,684 276x24] col gap 0
+                          0912 345 678 [403,684 276x24] "0912 345 678" 16/400/24 #131B2E
+                      Container [679,689 13x13] col gap 0
+                Delivery Address [56,734 651x94] col gap 6
+                  Label [56,734 651x20] col gap 0
+                    Địa chỉ nhận hàng [56,734 651x20] "Địa chỉ nhận hàng" 14/600/20 #131B2E
+                  Background+Shadow [56,760 651x68] row gap 0, pad 10 14 10 14, bg #FFFFFF, r 8, shadow
+                    Textarea [70,770 603x48] col gap 0, pad 0 0 24 0
+                      Container [70,770 603x24] col gap 0
+                        Số 12, Ngõ 45, Đường Lê Duẩn, Phường Bến Nghé, Quậ [70,770 603x24] "Số 12, Ngõ 45, Đường Lê Duẩn, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh" 16/400/24 #131B2E
+                    Margin [673,770 19x20] col gap 0, pad 4 0 0 8
+                Delivery Notes [56,844 651x66] col gap 6
+                  Label [56,844 651x20] col gap 0
+                    Ghi chú giao hàng [56,844 651x20] "Ghi chú giao hàng" 14/600/20 #131B2E
+                  Background+Shadow [56,870 651x40] col gap 0, pad 11 14 9 14, bg #FFFFFF, r 8, shadow
+                    Input [70,881 623x20] col gap 0
+                      Giao giờ hành chính, gọi điện trước 15 phút [70,881 623x20] "Giao giờ hành chính, gọi điện trước 15 phút" 14/400/20 #131B2E
+          RIGHT COLUMN (~42%): LIVE SIMULATED PAYMENT CONSOL [755,186 492x349] col gap 0
+            Background [755,186 492x349] col gap 16, pad 24, bg #FFFFFF, r 12
+              Overlay+Shadow [755,186 492x349] bg #FFFFFF@0.00, r 12, shadow
+              Countdown & Deadline Header [779,210 444x64] col gap 8, pad 0 0 8 0
+                Container [779,210 444x28] row gap 43
+                  Container [779,216 155x16] col gap 0
+                    Text [779,216 155x16] "TRẠNG THÁI ĐƠN HÀNG" 12/600/16 #747686
+                  Background [982,210 241x28] row gap 6, pad 4 12 4 12, bg #FFDBCF, r 4
+                    Container [994,216 13x15] col gap 0
+                    Container [1013,214 198x20] col gap 0
+                      Text [1013,214 198x20] "Hạn thanh toán: còn 47:12:08" 14/600/20 #390C00
+                Container [779,246 444x20] row gap 6
+                  Container [779,249 12x13] col gap 0
+                  Container [797,246 232x20] col gap 0
+                    Text [797,246 232x20] "Thời hạn chót: 27/10/2026 - 20:30" 14/400/20 #434655
+              Total Calculation preview in console [779,290 444x64] row gap 85, pad 16, bg #F2F3FF, r 8
+                Container [795,310 168x24] col gap 0
+                  Text [795,310 168x24] "Tổng tiền cần chuyển:" 16/400/24 #131B2E
+                Container [1048,306 159x32] col gap 0
+                  Text [1048,306 159x32] "38.200.000 ₫" 24/700/32 #0037B0
+              Simulated Payment Options (No real bank details or [779,370 444x77] col gap 8
+                Label [779,370 444x20] row gap 0
+                  Container [779,370 444x20] col gap 0
+                    Phương thức thanh toán mô phỏng [779,370 444x20] "Phương thức thanh toán mô phỏng" 14/600/20 #131B2E
+                Label [779,398 444x49] row gap 0, pad 14, bg #FFFFFF, r 8, shadow
+                  Input [793,414 16x16] col gap 0, pad 0 3 0 3, bg #FFFFFF, border #0037B0, r 50
+                    Input:checked [796,417 9x9] bg #0037B0, r 50
+                  Margin [809,412 400x21] col gap 0, pad 0 0 0 12
+                    Container [821,412 388x21] row gap 108
+                      Container [821,412 213x20] row gap 10
+                        Container [821,415 20x14] col gap 0
+                        Container [851,412 183x20] col gap 0
+                          Text [851,412 183x20] "Cổng thanh toán mô phỏng" 14/600/20 #131B2E
+                      Background [1144,412 65x21] col gap 0, pad 2 8 2 8, bg #DCE1FF, r 4
+                        Text [1152,414 49x17] "Mặc định" 11/700/16 #001551
+              Button – Thanh toán 38.200.000 ₫ [779,463 444x48] row gap 8, bg #0037B0, r 8, shadow
+                Container [904,478 13x17] col gap 0
+                Text [925,477 173x20] "Thanh toán 38.200.000 ₫" 14/600/20 #FFFFFF
+  Footer [0,935 1280x84] col gap 0, pad 32 0 32 0, bg #FFFFFF, shadow
+    Container [0,967 1280x20] row gap 272, pad 0 32 0 32
+      Container [32,967 397x20] col gap 0
+        © 2026 Sàn đấu giá trực tuyến OmniBid. Bảo lưu mọi [32,967 397x20] "© 2026 Sàn đấu giá trực tuyến OmniBid. Bảo lưu mọi quyền." 14/400/20 #434655
+      Container [706,967 541x20] row gap 24
+        Link – Điều khoản dịch vụ [706,967 129x20] col gap 0
+          Text [706,967 129x20] "Điều khoản dịch vụ" 14/600/20 #434655
+        Link – Quy chế vận hành [859,967 121x20] col gap 0
+          Text [859,967 121x20] "Quy chế vận hành" 14/600/20 #434655
+        Link – Bảo mật thông tin [1005,967 118x20] col gap 0
+          Text [1005,967 118x20] "Bảo mật thông tin" 14/600/20 #434655
+        Link – Hỗ trợ kỹ thuật [1148,967 99x20] col gap 0
+          Text [1148,967 99x20] "Hỗ trợ kỹ thuật" 14/600/20 #434655
+  Header [0,0 1280x64] col gap 0, bg #FFFFFF@0.95, shadow
+    Container [0,0 1280x64] row gap 24, pad 0 32 0 32
+      Container [32,15 660x34] row gap 32
+        Logo [32,16 120x32] row gap 4
+          Container [32,20 21x22] col gap 0
+          Container [57,16 95x32] col gap 0
+            OmniBid [57,16 95x32] "OmniBid" 24/600/32 #131B2E
+        Nav [184,15 508x34] row gap 24
+          Nav – Trang chủ [184,15 77x34] col gap 0, pad 4 0 4 0
+            Text [184,19 77x24] "Trang chủ" 16/500/24 #475569
+          Nav – Phiên đấu giá [285,15 103x34] col gap 0, pad 4 0 4 0
+            Text [285,19 103x24] "Phiên đấu giá" 16/500/24 #475569
+          Nav – Theo dõi [412,15 66x34] col gap 0, pad 4 0 4 0
+            Text [412,19 66x24] "Theo dõi" 16/500/24 #475569
+          Nav – Lượt đặt giá [503,15 90x34] col gap 0, pad 4 0 4 0
+            Text [503,19 90x24] "Lượt đặt giá" 16/500/24 #475569
+          Nav – Đơn hàng [617,15 75x34] col gap 0, pad 4 0 4 0, border #1D4ED8
+            Text [617,19 75x24] "Đơn hàng" 16/700/24 #1D4ED8
+      Margin [716,10 276x44] col gap 0, pad 0 8 0 8
+        Background [724,10 260x44] row gap 0, pad 0 16 0 16, bg #F2F3FF, r 8
+          Margin [740,24 19x15] col gap 0, pad 0 4 0 0
+          Input [759,22 209x20] col gap 0, pad 1 0 2 0
+            Container [759,23 209x17] col gap 0
+              Text [759,23 310x17] "Tìm kiếm tài sản, phiên đấu giá, mã đơn hàng..." 14/400/17 #747686
+      Container [1017,2 230x60] row gap 16
+        Button – Thông báo [1017,12 40x40] row gap 0, r 8
+          Container [1030,22 14x18] col gap 0
+          Background [1033,18 18x18] row gap 0, pad 0 6 0 6, bg #BA1A1A, r 9999
+            Text [1039,20 6x13] "3" 10/700/12 #FFFFFF
+        Container [1073,2 174x60] col gap 0, pad 8 0 8 0
+          Nav – Nguyễn Văn An [1073,10 174x44] row gap 8, pad 6, r 8
+            Background [1079,16 32x32] row gap 0, bg #0037B0, r 9999
+              Container [1089,26 12x12] col gap 0
+            Container [1119,22 105x20] col gap 0
+              Text [1119,22 105x20] "Nguyễn Văn An" 14/600/20 #131B2E
+            Container [1233,29 9x5] col gap 0

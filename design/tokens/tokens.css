@@ -1,0 +1,125 @@
+/*
+ * OmniBid – Design tokens (trích từ Figma "Online Auction System", sửa lần cuối 2026-11-07)
+ * Nguồn: frame "OmniBid" (palette) + thống kê màu/chữ thực dùng trong 28 frame S00–S26.
+ * Dùng với Tailwind CSS v4 (CSS-first): import file này trong src/app/globals.css
+ *   @import "tailwindcss";
+ *   @import "../styles/tokens.css";
+ * Tên token theo vai trò (semantic). Không dùng hex trực tiếp trong component.
+ * MÀU: bắt buộc giữ như Figma. Font, thang chữ, bo góc, bóng, spacing: khung đề xuất, được chỉnh
+ * (xem design/style-overrides.md). Không dùng Inter, không dùng chữ hoa + giãn chữ cho nhãn.
+ * Các giá trị đánh dấu [A11Y] đã được làm đậm hơn bản Figma để đạt tương phản 4.5:1.
+ */
+
+@theme {
+  /* ---------- Font ---------- */
+  --font-sans: var(--font-be-vietnam-pro), "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif; /* nạp bằng next/font/google */
+
+  /* ---------- Brand palette (frame OmniBid) ---------- */
+  --color-primary-50: #e9edff;
+  --color-primary-100: #d5deff;
+  --color-primary-200: #b8c7ff;
+  --color-primary-300: #91a8fa;
+  --color-primary-400: #6888f5;
+  --color-primary-500: #4169e8;
+  --color-primary-600: #1d4ed8; /* Primary – nút chính, link, nav active */
+  --color-primary-700: #0037b0; /* Primary strong – giá tiền, nút Đặt giá/Thanh toán, số liệu nhấn */
+  --color-primary-800: #082d85;
+  --color-primary-900: #071b55;
+
+  --color-tertiary-50: #ffeae4;
+  --color-tertiary-100: #ffd5c9;
+  --color-tertiary-200: #ffb49f;
+  --color-tertiary-600: #a73400; /* nhấn cam: cảnh báo nhẹ, "Bị vượt" */
+  --color-tertiary-800: #7f2500;
+
+  /* ---------- Semantic: nền & bề mặt ---------- */
+  --color-bg: #faf8ff;               /* nền trang (Main) */
+  --color-surface: #ffffff;          /* card, header, sidebar */
+  --color-surface-subtle: #f2f3ff;   /* input fill, hàng nhấn, khối thông tin phụ */
+  --color-surface-muted: #eaedff;    /* nút secondary, chip */
+  --color-surface-strong: #e2e7ff;   /* hover của surface-muted, viền nhẹ */
+  --color-surface-info: #eff6ff;
+  --color-overlay: rgb(19 27 46 / 0.5); /* nền mờ phía sau modal */
+
+  /* ---------- Semantic: chữ ---------- */
+  --color-text: #131b2e;             /* chữ chính */
+  --color-text-secondary: #434655;   /* đoạn văn, nhãn */
+  --color-text-tertiary: #515f74;    /* meta, chú thích */
+  --color-text-subtle: #696b7b;      /* [A11Y] Figma: #747686 (4.49:1) */
+  --color-text-placeholder: #5f6b7f; /* [A11Y] Figma: #94A3B8 (2.56:1) */
+  --color-text-disabled: #94a3b8;    /* chỉ cho trạng thái disabled */
+  --color-text-inverse: #ffffff;
+  --color-text-link: #1d4ed8;
+
+  /* ---------- Semantic: viền ---------- */
+  --color-border: #e2e8f0;           /* viền card, bảng */
+  --color-border-subtle: #f1f5f9;    /* kẻ dòng bảng */
+  --color-border-strong: #cbd5e1;    /* viền input outline, nút outlined */
+  --color-border-brand: #e2e7ff;
+  --color-focus: #1d4ed8;            /* focus ring 2px + offset 2px */
+
+  /* ---------- Semantic: trạng thái ---------- */
+  --color-success: #166534;  --color-success-bg: #dcfce7;  --color-success-border: #a7f3d0;
+  --color-success-strong: #047857; /* [A11Y] Figma: #059669 (3.58:1 trên nền xanh nhạt) */
+  --color-warning: #b45309;  --color-warning-bg: #fef3c7;  --color-warning-border: #fde68a;
+  --color-warning-subtle-bg: #fffbeb; --color-warning-strong: #92400e;
+  --color-danger: #ba1a1a;   --color-danger-bg: #fef2f2;   --color-danger-border: #fecaca;
+  --color-danger-strong: #991b1b;
+  --color-info: #1d4ed8;     --color-info-bg: #dbeafe;     --color-info-border: #bfdbfe;
+  --color-neutral: #475569;  --color-neutral-bg: #f1f5f9;
+
+  /* ---------- Bo góc ---------- */
+  --radius-sm: 6px;   /* chip "Bạn", ô nhỏ */
+  --radius-md: 8px;   /* nút, input, mục menu */
+  --radius-lg: 10px;  /* nút/ô nhập cỡ xl (52px), thumbnail, khối số liệu */
+  --radius-xl: 12px;  /* card, section, hộp thông báo */
+  --radius-2xl: 16px; /* modal */
+  --radius-full: 9999px; /* badge, pill, avatar */
+
+  /* ---------- Đổ bóng: chỉ cho lớp nổi. Card KHÔNG đổ bóng, dùng viền 1px border-brand ---------- */
+  --shadow-xs: 0 1px 2px 0 rgb(19 27 46 / 0.08);                  /* nút đang chọn trong segmented control */
+  --shadow-md: 0 8px 24px -6px rgb(19 27 46 / 0.14);              /* dropdown, popover, menu */
+  --shadow-lg: 0 20px 48px -12px rgb(19 27 46 / 0.24);            /* modal, drawer */
+
+  /* ---------- Thang chữ (Be Vietnam Pro) ---------- */
+  --text-display: 40px;  --text-display--line-height: 48px; --text-display--letter-spacing: -0.5px; --text-display--font-weight: 700; /* chỉ hero trang chủ */
+  --text-h1: 28px;       --text-h1--line-height: 36px;      --text-h1--letter-spacing: -0.3px; --text-h1--font-weight: 600; /* tiêu đề trang */
+  --text-h2: 22px;       --text-h2--line-height: 30px;      --text-h2--font-weight: 600;   /* tiêu đề section */
+  --text-h3: 18px;       --text-h3--line-height: 26px;      --text-h3--font-weight: 600;   /* tiêu đề card */
+  --text-h4: 16px;       --text-h4--line-height: 24px;      --text-h4--font-weight: 600;   /* tên sản phẩm trong thẻ */
+  --text-body-lg: 16px;  --text-body-lg--line-height: 26px; /* đoạn mô tả dài */
+  --text-body: 15px;     --text-body--line-height: 24px;    /* MẶC ĐỊNH */
+  --text-small: 14px;    --text-small--line-height: 22px;   /* bảng admin, dòng phụ */
+  --text-label: 13px;    --text-label--line-height: 20px;   --text-label--font-weight: 500; /* nhãn, tiêu đề cột, badge */
+  --text-caption: 12px;  --text-caption--line-height: 18px; /* meta, giờ kết thúc – cỡ nhỏ nhất được dùng */
+
+  /* Con số (luôn kèm .tabular) */
+  --text-price-xl: 40px; --text-price-xl--line-height: 48px; --text-price-xl--letter-spacing: -0.6px; --text-price-xl--font-weight: 700; /* giá hiện tại ở trang chi tiết (mobile 34/42) */
+  --text-price-lg: 22px; --text-price-lg--line-height: 30px; --text-price-lg--font-weight: 700; /* giá trên thẻ phiên, tổng tiền đơn */
+  --text-timer: 28px;    --text-timer--line-height: 36px;    --text-timer--font-weight: 700; /* đồng hồ đếm ngược */
+
+  /* ---------- Layout ---------- */
+  --spacing: 4px;              /* nhịp 4px; khoảng hay dùng: 8 · 12 · 16 · 24 · 32 · 48 */
+  --container-page: 1216px;
+  --header-height: 64px;       /* mobile: 56px */
+  --sidebar-width: 256px;
+  --control-height-sm: 32px;
+  --control-height-md: 40px;
+  --control-height-lg: 44px;   /* mặc định cho nút và ô nhập trong form */
+  --control-height-xl: 52px;   /* nút và ô nhập liên quan tiền: Đặt giá, Thanh toán */
+}
+
+/* Tiện ích dùng lại */
+@layer base {
+  html { font-family: var(--font-sans); font-size: 15px; line-height: 24px; color: var(--color-text); background: var(--color-bg); -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+  .tabular { font-variant-numeric: tabular-nums; } /* giá tiền, đồng hồ đếm ngược */
+  /* Nhãn phụ (thay cho nhãn chữ hoa của Figma): viết thường kiểu câu, không giãn chữ */
+  .label { font-size: 13px; line-height: 20px; font-weight: 500; color: var(--color-text-tertiary); }
+  /* Giá vừa cập nhật realtime: nháy nền primary-50 trong 600ms (tắt khi reduced-motion) */
+  @keyframes price-flash { from { background-color: var(--color-primary-50); } to { background-color: transparent; } }
+  .price-flash { animation: price-flash 600ms ease-out; border-radius: var(--radius-md); }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+}

@@ -1,0 +1,197 @@
+# Outline tự trích từ Figma JSON – S08 – Cài đặt tài khoản (Người mua)
+# Định dạng: tên layer [x,y wxh] (toạ độ so với góc frame) + thuộc tính; TEXT: "nội dung" size/weight/line-height màu
+
+S08 – Cài đặt tài khoản (Người mua) [0,0 1280x1061] col gap 0, pad 0 0 461 0, bg #FFFFFF
+  Main [0,0 1280x976] col gap 0, pad 64 0 0 0, bg #FAF8FF
+    Toast Notification Bar (Sticky / Prominent Top Ale [0,64 1280x912] col gap 24, pad 24 32 24 32
+      Nav - Breadcrumb:margin [32,88 1216x36] col gap 0, pad 0 0 16 0
+        Nav - Breadcrumb [32,88 1216x20] row gap 8
+          Link – Trang chủ [32,88 82x20] row gap 4
+            Container [32,91 12x13] col gap 0
+            Text [48,88 66x20] "Trang chủ" 14/400/20 #64748B
+          Container [122,94 4x8] col gap 0
+          Link – Tài khoản của tôi [135,88 111x20] col gap 0
+            Text [135,88 111x20] "Tài khoản của tôi" 14/400/20 #64748B
+          Container [255,94 4x8] col gap 0
+          Container [268,88 111x20] col gap 0
+            Text [268,88 111x20] "Cài đặt tài khoản" 14/500/20 #1D4ED8
+      Page Header [32,148 1216x70] row gap 0, pad 0 0 4 0
+        Container [32,148 701x66] col gap 4
+          Container [32,148 701x38] row gap 0
+            Heading 1 [32,148 230x38] col gap 0
+              Text [32,148 230x38] "Cài đặt tài khoản" 30/700/38 #131B2E
+          Container [32,190 701x24] col gap 0
+            Text [32,190 701x24] "Quản lý thông tin định danh cá nhân và thiết lập bảo mật mật khẩu truy cập hệ th" 16/400/24 #434655
+      Main 2-Column Responsive Layout (Asymmetrical 7:5  [32,242 1216x710]
+        Section - CARD 1: Thông tin cá nhân (Col 7) [32,242 699x710] col gap 24, pad 24, bg #FFFFFF, r 12, shadow
+          Card 1 Header:margin [56,266 651x40]
+            Card 1 Header [32,242 699x64] row gap 427, pad 16 24 8 24, bg #F2F3FF
+              Container [56,258 204x40] row gap 8
+                Background [56,258 40x40] row gap 0, bg #DCE1FF, r 8
+                  Container [66,268 18x18] col gap 0
+                Container [104,265 156x26] col gap 0
+                  Heading 2 → Thông tin cá nhân [104,265 156x26] "Thông tin cá nhân" 18/600/26 #131B2E
+              Container [690,269 16x16] col gap 0
+          Avatar & Role Section [56,330 651x128] row gap 16, pad 16, bg #F2F3FF, r 8
+            Container [72,346 80x80] col gap 0
+              AB6AXuCeTNnHRKDTbZ-CspbQQgUWpMOj4UC5RbWPK4sDho9rG4 [72,346 80x80] r 9999, shadow
+              Button [124,398 32x32] row gap 0, bg #0037B0, r 9999
+                Button:shadow [124,398 32x32] bg #FFFFFF@0.00, r 9999, shadow
+                Container [133,408 13x12] col gap 0
+            Container [168,346 523x96] col gap 6
+              Container [168,346 523x28] row gap 4
+                Container [168,346 150x28] col gap 0
+                  Text [168,346 150x28] "Nguyễn Văn An" 20/600/28 #131B2E
+                Role Chip Active [322,350 100x20] row gap 4, pad 2 10 2 10, bg #D5E3FC, r 4
+                  Container [332,355 11x9] col gap 0
+                  Text [348,352 65x16] "Người mua" 12/600/16 #0D1C2E
+              Container [168,380 523x16] col gap 0
+                Hỗ trợ định dạng JPG, PNG hoặc WebP. Kích thước kh [168,380 523x16] "Hỗ trợ định dạng JPG, PNG hoặc WebP. Kích thước khuyến nghị 400x400px, tối đa 2M" 12/400/16 #747686
+              Container [168,402 523x40] row gap 8, pad 4 0 0 0
+                Button – Tải ảnh mới [168,406 108x36] row gap 4, pad 0 12 0 12, bg #FFFFFF, r 4, shadow
+                  Container [180,418 10x10] col gap 0
+                  Text [194,416 69x16] "Tải ảnh mới" 12/600/16 #131B2E
+                Link – Gỡ ảnh [284,406 80x36] row gap 4, pad 0 12 0 12, r 4
+                  Container [296,418 10x12] col gap 0
+                  Text [310,416 42x16] "Gỡ ảnh" 12/600/16 #BA1A1A
+          Personal Info Form [56,482 651x446] col gap 16
+            Họ và tên [56,482 651x70] col gap 6
+              Label [56,482 651x20] row gap 0
+                Container [56,482 651x20] col gap 0
+                  Họ và tên * [56,482 651x20] "Họ và tên *" 14/600/20 #131B2E
+              Background+Shadow [56,508 651x44] row gap 0, pad 0 16 0 16, bg #FFFFFF, r 8, shadow
+                Margin [72,523 17x13] col gap 0, pad 0 4 0 0
+                Input [89,518 602x24] col gap 0
+                  Container [89,518 602x24] col gap 0
+                    Nguyễn Văn An [89,518 602x24] "Nguyễn Văn An" 16/400/24 #131B2E
+            Email (Read-only) [56,568 651x70] col gap 6
+              Container [56,568 651x20] row gap 0
+                Label [56,568 651x20] col gap 0
+                  Email đăng nhập [56,568 651x20] "Email đăng nhập" 14/600/20 #131B2E
+              Background [56,594 651x44] row gap 0, pad 0 16 0 16, bg #F2F3FF, r 8
+                Margin [72,609 22x13] col gap 0, pad 0 4 0 0
+                Input [94,604 580x24] col gap 0
+                  Container [94,604 580x24] col gap 0
+                    nguyenvanan.tech@gmail.com [94,604 580x24] "nguyenvanan.tech@gmail.com" 16/400/24 #434655
+                Container [674,608 16x15] col gap 0
+            Số điện thoại [56,654 651x70] col gap 6
+              Label [56,654 651x20] col gap 0
+                Số điện thoại liên hệ * [56,654 651x20] "Số điện thoại liên hệ *" 14/600/20 #131B2E
+              Background+Shadow [56,680 651x44] row gap 0, pad 0 16 0 16, bg #FFFFFF, r 8, shadow
+                Margin [72,694 19x15] col gap 0, pad 0 4 0 0
+                Input [91,690 600x24] col gap 0
+                  Container [91,690 600x24] col gap 0
+                    0912 345 678 [91,690 600x24] "0912 345 678" 16/400/24 #131B2E
+            a chỉ nhận hàng & liên h [56,740 651x120] col gap 6
+              Label [56,740 651x20] row gap 0
+                Container [56,740 651x20] col gap 0
+                  Địa chỉ nhận hàng mặc định * [56,740 651x20] "Địa chỉ nhận hàng mặc định *" 14/600/20 #131B2E
+              Background+Shadow [56,766 651x94] row gap 4, pad 8, bg #FFFFFF, r 8, shadow
+                Margin [64,774 13x18] col gap 0, pad 2 0 0 0
+                Textarea [81,774 618x78] col gap 0, pad 0 0 52 0
+                  Container [81,774 618x26] col gap 0
+                    Số 12, Ngõ 45, Đường Lê Duẩn, Phường Bến Nghé, Quậ [81,774 618x26] "Số 12, Ngõ 45, Đường Lê Duẩn, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh" 16/400/26 #131B2E
+            Card 1 Buttons [56,876 651x52] row gap 16, pad 8 0 0 0
+              Button – Hủy bỏ [430,884 96x44] col gap 0, pad 12 24 12 24, bg #EAEDFF, r 8
+                Text [454,895 48x20] "Hủy bỏ" 14/600/20 #131B2E
+              Button – Lưu thay đổi [542,884 164x44] row gap 4, pad 12 32 12 32, bg #1D4ED8, r 8, shadow
+                Container [574,898 13x13] col gap 0
+                Text [592,895 83x20] "Lưu thay đổi" 14/600/20 #FFFFFF
+        Section - CARD 2: Đổi mật khẩu (Col 5) [755,242 492x464] col gap 24, pad 24, bg #FFFFFF, r 12, shadow
+          Card 2 Header:margin [779,266 444x40]
+            Card 2 Header [755,242 492x64] row gap 263, pad 16 24 8 24, bg #F2F3FF
+              Container [779,258 161x40] row gap 8
+                Background [779,258 40x40] row gap 0, bg #DCE1FF, r 8
+                  Container [792,268 14x18] col gap 0
+                Container [827,265 113x26] col gap 0
+                  Heading 2 → Đổi mật khẩu [827,265 113x26] "Đổi mật khẩu" 18/600/26 #131B2E
+              Container [1204,273 19x10] col gap 0
+          Password Change Form [779,330 444x352] col gap 16
+            Mật khẩu hiện tại [779,330 444x70] col gap 6
+              Label [779,330 444x20] col gap 0
+                Mật khẩu hiện tại * [779,330 444x20] "Mật khẩu hiện tại *" 14/600/20 #131B2E
+              Background+Shadow [779,356 444x44] row gap 0, pad 0 16 0 16, bg #FFFFFF, r 8, shadow
+                Margin [795,369 17x17] col gap 0, pad 0 4 0 0
+                Input [812,366 370x24] col gap 0
+                  Container [812,366 370x24] col gap 0
+                    matkhaucu123 [812,366 370x24] "matkhaucu123" 16/400/24 #131B2E
+                Button [1183,365 24x25] col gap 0, pad 4 4 10 4
+                  Container [1187,369 16x11] row gap 0
+            Mật khẩu mới [779,416 444x112] col gap 6
+              Label [779,416 444x20] col gap 0
+                Mật khẩu mới * [779,416 444x20] "Mật khẩu mới *" 14/600/20 #131B2E
+              Background+Shadow [779,442 444x44] row gap 0, pad 0 16 0 16, bg #FFFFFF, r 8, shadow
+                Margin [795,455 20x16] col gap 0, pad 0 4 0 0
+                Input [816,452 367x24] col gap 0
+                  Container [816,452 367x24] col gap 0
+                    OmniBid@Secure2025 [816,452 367x24] "OmniBid@Secure2025" 16/400/24 #131B2E
+                Button [1183,451 24x25] col gap 0, pad 4 4 10 4
+                  Container [1187,455 16x11] row gap 0
+              List - Password Strength Bar [779,492 444x36] col gap 0, pad 4 0 0 0
+                Item [779,496 444x32]
+                  Text [779,495 6x16] " " 12/500/16 #434655
+                  Text [796,495 414x16] "Mật khẩu phải chứa ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường và chữ" 12/500/16 #434655
+                  Text [779,511 13x16] "số" 12/500/16 #434655
+            Nhập lại mật khẩu mới (With explicit inline error  [779,544 444x70] col gap 6
+              Label [779,544 444x20] col gap 0
+                Nhập lại mật khẩu mới * [779,544 444x20] "Nhập lại mật khẩu mới *" 14/600/20 #131B2E
+              Background+Shadow [779,570 444x44] row gap 0, pad 0 16 0 16, bg #FFFFFF, r 8, shadow
+                Margin [795,582 19x18] col gap 0, pad 0 4 0 0
+                Input [815,580 368x23] col gap 0, pad 2 0 2 0
+                  Container [815,582 368x19] col gap 0
+                    Nhập lại mật khẩu mới [815,582 368x19] "Nhập lại mật khẩu mới" 16/400/19 #747686
+                Button [1183,579 24x25] col gap 0, pad 4 4 10 4
+                  Container [1187,583 16x11] row gap 0
+            Card 2 Action Button [779,630 444x52] col gap 0, pad 8 0 0 0
+              Button – Cập nhật mật khẩu [779,638 444x44] row gap 4, pad 12 0 12 0, bg #1D4ED8, r 8, shadow
+                Container [928,655 16x9] col gap 0
+                Text [948,649 126x20] "Cập nhật mật khẩu" 14/600/20 #FFFFFF
+  Footer [0,976 1280x85] col gap 0, pad 32 0 32 0, bg #FFFFFF, shadow
+    Container [0,1008 1280x21] row gap 330, pad 0 32 0 32
+      Container [32,1008 341x21] col gap 0
+        © 2026 Sàn đấu giá trực tuyến OmniBid. Bảo lưu mọi [32,1008 341x20] "© 2026 Sàn đấu giá trực tuyến OmniBid. Bảo lưu mọi quyền." 12/400/20 #434655
+      Container [706,1008 541x20] row gap 24
+        Link – Điều khoản dịch vụ [706,1008 129x20] col gap 0
+          Text [706,1008 129x20] "Điều khoản dịch vụ" 14/600/20 #434655
+        Link – Quy chế vận hành [859,1008 121x20] col gap 0
+          Text [859,1008 121x20] "Quy chế vận hành" 14/600/20 #434655
+        Link – Bảo mật thông tin [1005,1008 118x20] col gap 0
+          Text [1005,1008 118x20] "Bảo mật thông tin" 14/600/20 #434655
+        Link – Hỗ trợ kỹ thuật [1148,1008 99x20] col gap 0
+          Text [1148,1008 99x20] "Hỗ trợ kỹ thuật" 14/600/20 #434655
+  Header [0,0 1280x64] col gap 0, bg #FFFFFF@0.95, shadow
+    Container [0,0 1280x64] row gap 24, pad 0 32 0 32
+      Container [32,16 607x32] row gap 32
+        Logo [32,16 120x32] row gap 4
+          Container [32,20 21x22] col gap 0
+          Container [57,16 95x32] col gap 0
+            OmniBid [57,16 95x32] "OmniBid" 24/600/32 #131B2E
+        Nav [184,17 455x30] row gap 24
+          Nav – Trang chủ [184,17 67x30] col gap 0, pad 4 0 4 0
+            Text [184,21 67x20] "Trang chủ" 14/500/20 #475569
+          Nav – Phiên đấu giá [275,17 90x30] col gap 0, pad 4 0 4 0
+            Text [275,21 90x20] "Phiên đấu giá" 14/500/20 #475569
+          Nav – Theo dõi [389,17 58x30] col gap 0, pad 4 0 4 0
+            Text [389,21 58x20] "Theo dõi" 14/500/20 #475569
+          Nav – Lượt đặt giá [472,17 78x30] col gap 0, pad 4 0 4 0
+            Text [472,21 78x20] "Lượt đặt giá" 14/500/20 #475569
+          Nav – Đơn hàng [575,17 64x30] col gap 0, pad 4 0 4 0
+            Text [575,21 64x20] "Đơn hàng" 14/500/20 #475569
+      Margin [663,10 329x44] col gap 0, pad 0 8 0 8
+        Background [671,10 313x44] row gap 0, pad 0 16 0 16, bg #F2F3FF, r 8
+          Margin [687,24 19x15] col gap 0, pad 0 4 0 0
+          Input [706,22 262x20] col gap 0, pad 1 0 2 0
+            Container [706,23 262x17] col gap 0
+              Tìm kiếm tài sản, phiên đấu giá... [706,23 262x17] "Tìm kiếm tài sản, phiên đấu giá..." 14/400/17 #747686
+      Container [1017,2 230x60] row gap 16
+        Button – Thông báo [1017,12 40x40] row gap 0, r 8
+          Container [1030,22 14x18] col gap 0
+          Background [1033,18 18x18] row gap 0, pad 0 6 0 6, bg #BA1A1A, r 9999
+            Text [1039,20 6x13] "3" 10/700/12 #FFFFFF
+        Container [1073,2 174x60] col gap 0, pad 8 0 8 0
+          Nav – Nguyễn Văn An [1073,10 174x44] row gap 8, pad 6, r 8
+            Background [1079,16 32x32] row gap 0, bg #0037B0, r 9999
+              Container [1089,26 12x12] col gap 0
+            Container [1119,22 105x20] col gap 0
+              Text [1119,22 105x20] "Nguyễn Văn An" 14/600/20 #131B2E
+            Container [1233,29 9x5] col gap 0

@@ -1,0 +1,395 @@
+# Outline tự trích từ Figma JSON – S14 – Sản phẩm của tôi (Người bán)
+# Định dạng: tên layer [x,y wxh] (toạ độ so với góc frame) + thuộc tính; TEXT: "nội dung" size/weight/line-height màu
+
+S14 – Sản phẩm của tôi (Người bán) [0,0 1280x1297] col gap 0, pad 0 0 21 0, bg #FFFFFF
+  Container [0,0 1280x1297] col gap 0, pad 0 0 0 256
+    Main [256,0 1024x1249] col gap 0, pad 64 32 24 32, bg #FAF8FF
+      Container [288,64 960x1161] col gap 24, pad 24 0 24 0
+        1. Header & Breadcrumb [288,88 960x94] row gap 222
+          Container [288,88 557x94] col gap 4
+            Nav [288,88 557x24] row gap 4
+              Link – Kênh Người Bán [288,92 96x16] col gap 0
+                Text [288,92 96x16] "Kênh Người Bán" 12/600/16 #434655
+              Container [388,96 4x7] col gap 0
+              Link – Quản lý kho hàng [396,92 104x16] col gap 0
+                Text [396,92 104x16] "Quản lý kho hàng" 12/600/16 #434655
+              Container [505,96 4x7] col gap 0
+              Container [513,88 135x24] col gap 0
+                Text [513,88 135x24] "Sản phẩm của tôi" 16/500/24 #131B2E
+            Margin [288,116 557x42] col gap 0, pad 4 0 0 0
+              Container [288,120 557x38] row gap 0
+                Heading 1 [288,120 557x38] col gap 0
+                  Sản phẩm của tôi [288,120 557x38] "Sản phẩm của tôi" 30/700/38 #131B2E
+            Container [288,162 557x20] col gap 0
+              Text [288,162 557x20] "Quản lý danh mục tài sản, kiểm định chất lượng và khởi tạo phiên đấu giá trực tu" 14/400/20 #434655
+          Button – Thêm sản phẩm [1076,113 171x44] row gap 4, pad 0 24 0 24, bg #1D4ED8, r 8, shadow
+            Container [1100,129 11x11] col gap 0
+            Container [1115,125 108x20] col gap 0
+              Text [1115,125 108x20] "Thêm sản phẩm" 14/600/20 #FFFFFF
+        2. Metrics Overview Cards [288,206 960x164] row gap 16
+          Card 1 [288,206 228x164] col gap 8, pad 24, bg #FFFFFF, r 12, shadow
+            Container [312,230 180x36] row gap 40
+              Container [312,238 104x20] col gap 0
+                Text [312,238 104x20] "Tổng sản phẩm" 14/600/20 #434655
+              Background [456,230 36x36] row gap 0, bg #DCE1FF, r 8
+                Container [465,239 16x16] col gap 0
+            Container [312,274 180x44] row gap 0
+              Text [312,274 46x44] "08" 36/700/44 #131B2E
+            Container [312,326 180x20] row gap 4, pad 4 0 0 0
+              Container [312,333 12x9] col gap 0
+              Container [328,330 140x16] col gap 0
+                Text [328,330 140x16] "Ước tính: 185.000.000 ₫" 12/400/16 #434655
+          Card 2 [532,206 228x164] col gap 36, pad 24, bg #FFFFFF, r 12, shadow
+            Container [556,230 180x36] row gap 33
+              Container [556,238 110x20] col gap 0
+                Text [556,238 110x20] "Có thể tạo phiên" 14/600/20 #434655
+              Background [700,230 36x36] row gap 0, bg #D5E3FC, r 8
+                Container [709,239 16x16] col gap 0
+            Paragraph [556,302 180x44] row gap 4
+              Text [556,302 46x44] "03" 36/700/44 #1D4ED8
+              Text [606,325 55x16] "sản phẩm" 12/400/16 #434655
+          Card 3 [776,206 228x164] col gap 32, pad 24, bg #FFFFFF, r 12, shadow
+            Container [800,230 180x40] row gap 0
+              Container [800,230 145x40] col gap 0, pad 0 21 0 0
+                Text [800,230 124x40] "Đang đấu giá / Giữ
+chỗ" 14/600/20 #434655
+              Background [945,232 34x36] row gap 0, bg #E2E7FF, r 8
+                Container [956,241 13x16] col gap 0
+            Paragraph [800,302 180x44] row gap 4
+              Text [800,302 46x44] "03" 36/700/44 #131B2E
+              Text [850,325 85x16] "phiên chốt/chờ" 12/400/16 #434655
+          Card 4 [1020,206 228x164] col gap 36, pad 24, bg #FFFFFF, r 12, shadow
+            Container [1044,230 180x36] row gap 80
+              Container [1044,238 63x20] col gap 0
+                Text [1044,238 63x20] "Cần lưu ý" 14/600/20 #434655
+              Background [1188,230 36x36] row gap 0, bg #FFDAD6, r 8
+                Container [1196,240 18x15] col gap 0
+            Paragraph [1044,302 180x44] row gap 4
+              Text [1044,302 45x44] "02" 36/700/44 #BA1A1A
+              Text [1093,325 55x16] "sản phẩm" 12/400/16 #434655
+        3. Filter & Control Toolbar [288,394 960x128] col gap 16, pad 16, bg #FFFFFF, r 12, shadow
+          Container [304,410 928x44] row gap 16
+            Search [304,410 528x44] col gap 0
+              Input [304,410 528x44] row gap 0, pad 14 16 14 40, bg #F2F3FF, r 8
+                Container [344,423 472x17] col gap 0
+                  Tìm kiếm theo tên sản phẩm, mã SKU hoặc danh mục.. [344,423 472x17] "Tìm kiếm theo tên sản phẩm, mã SKU hoặc danh mục..." 14/400/17 #747686
+            Filters on Right [848,410 383x44] row gap 8
+              Background [848,410 198x44] row gap 4, pad 0 16 0 16, bg #F2F3FF, r 8
+                Container [864,424 14x15] col gap 0
+                Options [882,422 148x19] col gap 0, pad 1 16 1 4
+                  Container [886,423 128x17] col gap 0, pad 1 16 1 0
+                    Text [886,424 112x15] "Tất cả danh mục" 14/600/15 #131B2E
+              Background [1054,410 177x44] row gap 4, pad 0 16 0 16, bg #F2F3FF, r 8
+                Container [1070,427 13x9] col gap 0
+                Options [1088,422 128x19] col gap 0, pad 1 16 1 4
+                  Container [1092,423 108x17] col gap 0, pad 1 49 1 0
+                    Text [1092,424 58x15] "Mới nhất" 14/600/15 #131B2E
+          Status Tabs [304,470 928x36] row gap 4, pad 4 0 4 0
+            Button – Tất cả (8) [304,474 90x28] col gap 0, pad 6 16 6 16, bg #1D4ED8, r 8, shadow
+              Text [320,480 58x16] "Tất cả (8)" 12/600/16 #FFFFFF
+            Button – Có thể đấu giá (3) [398,474 139x28] col gap 0, pad 6 16 6 16, bg #EAEDFF, r 8
+              Text [414,480 107x16] "Có thể đấu giá (3)" 12/600/16 #131B2E
+            Button – Đang đấu giá (2) [541,474 131x28] col gap 0, pad 6 16 6 16, bg #EAEDFF, r 8
+              Text [557,480 99x16] "Đang đấu giá (2)" 12/600/16 #131B2E
+            Button – Đang giữ chỗ (1) [676,474 129x28] col gap 0, pad 6 16 6 16, bg #EAEDFF, r 8
+              Text [692,480 97x16] "Đang giữ chỗ (1)" 12/600/16 #131B2E
+            Button – Đã bán (1) [810,474 92x28] col gap 0, pad 6 16 6 16, bg #EAEDFF, r 8
+              Text [826,480 60x16] "Đã bán (1)" 12/600/16 #131B2E
+            Button – Đã ẩn (1) [906,474 84x28] col gap 0, pad 6 16 6 16, bg #EAEDFF, r 8
+              Text [922,480 52x16] "Đã ẩn (1)" 12/600/16 #131B2E
+            Button – Đã gỡ (1) [995,474 85x28] col gap 0, pad 6 16 6 16, bg #EAEDFF, r 8
+              Text [1011,480 53x16] "Đã gỡ (1)" 12/600/16 #131B2E
+        4. Product Inventory Table [288,546 960x655] col gap 0, bg #FFFFFF, r 12, shadow
+          Container [288,546 960x587] col gap 0
+            Table [288,546 1279x587] col gap 0
+              Header → Row [288,546 1279x52] row gap 0, bg #F2F3FF
+                Cell [288,546 48x52] col gap 0, pad 16 16 20 16
+                  Input [304,562 16x16] bg #FFFFFF, border #767676, r 2
+                Cell [336,546 501x52] col gap 0, pad 18 16 18 16
+                  Text [352,563 180x16] "HÌNH ẢNH & TÊN SẢN PHẨM" 12/700/16 #434655
+                Cell [837,546 150x52] col gap 0, pad 18 16 18 16
+                  Text [853,563 71x16] "DANH MỤC" 12/700/16 #434655
+                Cell [987,546 160x52] col gap 0, pad 18 16 18 16
+                  Text [1003,563 81x16] "TÌNH TRẠNG" 12/700/16 #434655
+                Cell [1147,546 180x52] col gap 0, pad 18 16 18 16
+                  Text [1163,563 81x16] "TRẠNG THÁI" 12/700/16 #434655
+                Cell [1327,546 240x52] col gap 0, pad 18 16 18 16
+                  Text [1484,563 66x16] "THAO TÁC" 12/700/16 #434655
+              Body [288,598 1279x535] col gap 0
+                Row 1: Có thể đấu giá (Available) [288,598 1279x88] row gap 0
+                  Data [288,598 48x88] col gap 0, pad 34 16 38 16
+                    Input [304,632 16x16] bg #FFFFFF, border #767676, r 2
+                  Data [336,614 485x56] row gap 16, pad 0 0 0 16
+                    Background [352,614 56x56] col gap 0, bg #EAEDFF, r 8
+                      AB6AXuDMiq03AKZqmkDD8Vb4oBKOyxoHTexOIVaZurNMauNEBu [352,614 56x56]
+                    Container [424,623 326x38] col gap 0
+                      Container [424,623 326x20] col gap 0
+                        Text [424,623 326x20] "Đồng hồ Thụy Sỹ Omega Seamaster Diver 300M" 14/600/20 #131B2E
+                      Margin [424,643 326x18] col gap 0, pad 2 0 0 0
+                        Container [424,645 326x16] row gap 0
+                          Container [424,645 326x16] col gap 0
+                            SKU: PRD-7721 [424,645 326x16] "SKU: PRD-7721" 12/400/16 #747686
+                  Data [821,598 166x88] col gap 0, pad 34 16 34 32
+                    Text [853,632 112x20] "Đồng hồ cao cấp" 14/400/20 #131B2E
+                  Data [987,598 160x88] col gap 0, pad 24 16 24 16
+                    Container [1003,622 126x40] row gap 4
+                      Container [1003,635 14x14] col gap 0
+                      Container [1022,622 108x40] col gap 0, pad 0 4 0 0
+                        Text [1022,622 104x40] "Đã qua sử dụng
+- 98%" 14/400/20 #434655
+                  Data [1147,598 180x88] col gap 0, pad 31 16 33 16
+                    Background [1163,629 125x24] row gap 6, pad 4 10 4 10, bg #D5E3FC, r 4
+                      Container [1173,634 13x13] col gap 0
+                      Container [1192,633 86x16] col gap 0
+                        Text [1192,633 86x16] "Có thể đấu giá" 12/600/16 #0D1C2E
+                  Data [1327,598 240x88] col gap 0, pad 26 16 26 16
+                    Container [1363,624 187x36] row gap 4
+                      Button – Tạo phiên [1363,624 107x36] row gap 4, pad 0 16 0 16, bg #1D4ED8, r 8, shadow
+                        Container [1379,635 12x12] col gap 0
+                        Container [1395,634 59x16] col gap 0
+                          Text [1395,634 59x16] "Tạo phiên" 12/600/16 #FFFFFF
+                      Link – Sửa [1475,624 39x36] col gap 0, pad 10 8 10 8, r 8
+                        Text [1483,633 23x16] "Sửa" 12/600/16 #434655
+                      Link – Gỡ [1518,624 32x36] col gap 0, pad 10 8 10 8, r 8
+                        Text [1526,633 16x16] "Gỡ" 12/600/16 #434655
+                Row 2: Đang đấu giá (In Auction) [288,686 1279x88] row gap 0, bg #F2F3FF@0.20
+                  Data [288,686 48x88] col gap 0, pad 34 16 38 16
+                    Input [304,720 16x16] bg #FFFFFF, border #767676, r 2
+                  Data [336,702 485x56] row gap 16, pad 0 0 0 16
+                    Background [352,702 56x56] col gap 0, bg #EAEDFF, r 8
+                      AB6AXuCLy0mjPHrCM_WEsF5xb2WSS23rnouPJVfgsalr8SrWmg [352,702 56x56]
+                      Background [352,730 56x28] col gap 0, pad 2 0 2 0, bg #1D4ED8
+                        Text [368,732 23x24] "LIVE" 9/700/24 #FFFFFF
+                    Container [424,711 397x38] col gap 0
+                      Container [424,711 397x20] col gap 0
+                        Text [424,711 397x20] "Máy ảnh Leica M3 Double Stroke + Lens Summicron 50mm" 14/600/20 #131B2E
+                      Margin [424,731 397x18] col gap 0, pad 2 0 0 0
+                        Container [424,733 397x16] row gap 0
+                          Container [424,733 397x16] col gap 0
+                            SKU: PRD-8840 [424,733 397x16] "SKU: PRD-8840" 12/400/16 #747686
+                  Data [821,686 166x88] col gap 4, pad 22 16 22 32
+                    Text [853,708 117x20] "Nhiếp ảnh & Thiết" 14/400/20 #131B2E
+                    Text [853,732 86x20] "bị quang học" 14/400/20 #131B2E
+                  Data [987,686 160x88] col gap 0, pad 26 16 22 16
+                    Container [1003,711 128x40] row gap 0
+                      Container [1003,711 128x40] col gap 0, pad 0 3 0 0
+                        Text [1003,711 124x40] "Cổ vật nguyên bản
+(Grade A)" 14/400/20 #434655
+                  Data [1147,708 164x44] col gap 4, pad 0 0 0 16
+                    Background [1163,708 112x24] row gap 6, pad 4 10 4 10, bg #DCE1FF, r 4
+                      Background [1173,716 8x8] bg #1D4ED8, r 9999
+                      Container [1187,712 78x16] col gap 0
+                        Text [1187,712 78x16] "Đang đấu giá" 12/600/16 #001551
+                    Text [1163,736 123x16] "Hiện có 18 lượt trả giá" 12/500/16 #0037B0
+                  Data [1311,686 256x88] col gap 0, pad 26 16 26 32
+                    Container [1458,712 93x36] row gap 4
+                      Disabled Actions with Tooltip [1458,712 56x36] col gap 0
+                        Button – Sửa [1458,712 56x36] row gap 4, pad 0 8 0 8, bg #EAEDFF, r 8
+                          Container [1466,723 13x13] col gap 0
+                          Container [1483,722 23x16] col gap 0
+                            Text [1483,722 23x16] "Sửa" 12/600/16 #747686
+                      Container [1518,712 32x36] col gap 0
+                        Button – Gỡ [1518,712 32x36] row gap 0, pad 10 8 10 8, bg #EAEDFF, r 8
+                          Text [1526,721 16x16] "Gỡ" 12/600/16 #747686
+                Row 3: Đang giữ chỗ (Reserved) [288,774 1279x90] row gap 0
+                  Data [288,774 48x90] col gap 0, pad 35 16 39 16
+                    Input [304,809 16x16] bg #FFFFFF, border #767676, r 2
+                  Data [336,791 485x56] row gap 16, pad 0 0 0 16
+                    Background [352,791 56x56] col gap 0, bg #EAEDFF, r 8
+                      AB6AXuCPYVKh6-PWoEuajOJGNdXaCQFFk_RewbRWTSztm82eiF [352,791 56x56]
+                    Container [424,800 305x38] col gap 0
+                      Container [424,800 305x20] col gap 0
+                        Text [424,800 305x20] "Đồng hồ Thụy Sỹ Chronograph Heritage 1972" 14/600/20 #131B2E
+                      Margin [424,820 305x18] col gap 0, pad 2 0 0 0
+                        Container [424,822 305x16] row gap 0
+                          Container [424,822 305x16] col gap 0
+                            SKU: PRD-8821 [424,822 305x16] "SKU: PRD-8821" 12/400/16 #747686
+                  Data [821,774 166x90] col gap 4, pad 24 16 22 32
+                    Text [853,797 111x20] "Đồng hồ & Trang" 14/400/20 #131B2E
+                    Text [853,821 24x20] "sức" 14/400/20 #131B2E
+                  Data [987,774 160x90] col gap 0, pad 26 16 24 16
+                    Container [1003,800 128x40] row gap 0
+                      Container [1003,800 128x40] col gap 0, pad 0 32 0 0
+                        Text [1003,800 96x40] "Hoàn hảo - Đã
+kiểm định" 14/400/20 #434655
+                  Data [1147,790 164x58] col gap 2, pad 0 0 0 16
+                    Background [1163,790 116x24] row gap 6, pad 4 10 4 10, bg #FFDBCF, r 4
+                      Container [1173,795 10x13] col gap 0
+                      Container [1190,794 79x16] col gap 0
+                        Text [1190,794 79x16] "Đang giữ chỗ" 12/600/16 #390C00
+                    Container [1163,816 148x32] col gap 0, pad 0 19 0 0
+                      Text [1163,816 128x32] "Chờ thanh toán #ORD-
+8841" 12/400/16 #747686
+                  Data [1311,774 256x90] col gap 0, pad 27 16 27 32
+                    Container [1460,801 90x36] row gap 4
+                      Container [1460,801 53x36] col gap 0
+                        Button – Sửa [1460,801 53x36] row gap 4, pad 0 8 0 8, bg #EAEDFF, r 8
+                          Container [1468,812 10x14] col gap 0
+                          Container [1483,811 23x16] col gap 0
+                            Text [1483,811 23x16] "Sửa" 12/600/16 #747686
+                      Button – Gỡ [1518,801 32x36] col gap 0, pad 10 8 10 8, bg #EAEDFF, r 8
+                        Text [1526,810 16x16] "Gỡ" 12/600/16 #747686
+                Row 4: Đã bán (Sold) [288,864 1279x88] row gap 0
+                  Data [288,864 48x88] col gap 0, pad 34 16 38 16
+                    Input [304,898 16x16] bg #FFFFFF, border #767676, r 2
+                  Data [336,880 485x56] row gap 16, pad 0 0 0 16
+                    Background [352,880 56x56] col gap 0, bg #EAEDFF, r 8
+                      AB6AXuCjxnHtuj5HF-SXZDV9AZBzmuAEm8vjUjMmtj8KiYdhSa [352,880 56x56]
+                    Container [424,889 378x38] col gap 0
+                      Container [424,889 378x20] col gap 0
+                        Text [424,889 378x20] "Bộ bàn trà gỗ Mun hoa chạm khắc nghệ thuật đầu TK 20" 14/600/20 #131B2E
+                      Margin [424,909 378x18] col gap 0, pad 2 0 0 0
+                        Container [424,911 378x16] row gap 0
+                          Container [424,911 378x16] col gap 0
+                            SKU: PRD-6512 [424,911 378x16] "SKU: PRD-6512" 12/400/16 #747686
+                  Data [821,864 166x88] col gap 0, pad 34 16 34 32
+                    Text [853,898 100x20] "Đồ gỗ mỹ nghệ" 14/400/20 #131B2E
+                  Data [987,864 160x88] col gap 0, pad 26 16 22 16
+                    Container [1003,889 128x40] row gap 0
+                      Container [1003,889 128x40] col gap 0, pad 0 12 0 0
+                        Text [1003,889 115x40] "Nguyên khối - Đã
+phục chế" 14/400/20 #434655
+                  Data [1147,887 164x42] col gap 2, pad 0 0 0 16
+                    Background [1163,887 82x24] row gap 6, pad 4 10 4 10, bg #DAE2FD, r 4
+                      Container [1173,894 14x8] col gap 0
+                      Container [1194,891 42x16] col gap 0
+                        Text [1194,891 42x16] "Đã bán" 12/600/16 #434655
+                    Text [1163,913 138x16] "Khớp lệnh 12.500.000 ₫" 12/600/16 #131B2E
+                  Data [1311,864 256x88] col gap 0, pad 26 16 26 32
+                    Container [1389,890 162x36] row gap 0
+                      Button – Biên nhận bàn giao [1389,890 162x36] row gap 4, pad 0 16 0 16, bg #EAEDFF, r 8
+                        Container [1405,901 12x13] col gap 0
+                        Container [1421,900 114x16] col gap 0
+                          Text [1421,900 114x16] "Biên nhận bàn giao" 12/600/16 #131B2E
+                Row 5: Đã ẩn (Hidden by Admin) - STRICT CONSTRAINT [288,952 1279x93] row gap 0, pad 0 16 0 0, bg #FFDAD6@0.20
+                  Data [288,952 48x93] col gap 0, pad 36 16 40 16
+                    Input [304,988 16x16] bg #FFFFFF, border #767676, r 2
+                  Data [336,970 485x56] row gap 16, pad 0 0 0 16
+                    Background [352,970 56x56] col gap 0, bg #EAEDFF, r 8
+                      AB6AXuBfpBn-icnagAxB3KSGVT7sTRgSqeAZ-mfzCCgBxRHO7n [352,970 56x56] bg #FFFFFF
+                      Overlay [352,970 56x56] row gap 0, bg #D2D9F4@0.40
+                        Container [373,989 13x17] col gap 0
+                    Container [424,979 295x38] col gap 0
+                      Container [424,979 295x20] col gap 0
+                        Text [424,979 295x20] "Bộ tiền xu cổ Đông Dương mạ bạc năm 1907" 14/600/20 #131B2E
+                      Margin [424,999 295x18] col gap 0, pad 2 0 0 0
+                        Container [424,1001 295x16] row gap 0
+                          Container [424,1001 295x16] col gap 0
+                            SKU: PRD-5104 [424,1001 295x16] "SKU: PRD-5104" 12/400/16 #747686
+                  Data [821,952 166x93] col gap 0, pad 37 16 36 32
+                    Text [853,989 99x20] "Cổ vật sưu tầm" 14/400/20 #131B2E
+                  Data [987,952 160x93] col gap 0, pad 37 16 36 16
+                    Text [1003,989 104x20] "Chưa rõ xuất xứ" 14/400/20 #747686
+                  Data [1147,952 180x93] col gap 0, pad 34 16 36 16
+                    Background [1163,985 71x24] row gap 6, pad 4 10 4 10, bg #FFDAD6, r 4
+                      Container [1173,990 10x14] col gap 0
+                      Container [1190,989 34x16] col gap 0
+                        Text [1190,989 34x16] "Đã ẩn" 12/600/16 #93000A
+                  Data - NO ACTIONS ALLOWED: CRITICAL CONSTRAINT [1327,968 224x61] col gap 0, pad 8 8 8 24, bg #F2F3FF, r 8
+                    Container [1351,976 192x45] row gap 6
+                      Container [1368,976 170x45] col gap 0, pad 0 4 0 0
+                        Strong → Bị quản trị viên ẩn: [1368,976 165x45] "Bị quản trị viên ẩn: Hồ sơ
+chưa đủ chứng thư giám định
+niên đại." 12/700/15 #BA1A1A
+                Row 6: Đã gỡ (Delisted by Seller) [288,1045 1279x88] row gap 0
+                  Data [288,1045 48x88] col gap 0, pad 34 16 38 16
+                    Input [304,1079 16x16] bg #FFFFFF, border #767676, r 2
+                  Data [336,1061 485x56] row gap 16, pad 0 0 0 16
+                    Background [352,1061 56x56] col gap 0, bg #EAEDFF, r 8
+                      AB6AXuBQ1yA2YrRmRDgqVDn1zXXrwT5sgpuoJsljGr2y-e7NiD [352,1061 56x56]
+                    Container [424,1070 336x38] col gap 0
+                      Container [424,1070 336x20] col gap 0
+                        Text [424,1070 336x20] "Tranh sơn mài phong cảnh Tây Bắc bản khắc 1985" 14/600/20 #131B2E
+                      Margin [424,1090 336x18] col gap 0, pad 2 0 0 0
+                        Container [424,1092 336x16] row gap 0
+                          Container [424,1092 336x16] col gap 0
+                            SKU: PRD-4419 [424,1092 336x16] "SKU: PRD-4419" 12/400/16 #747686
+                  Data [821,1045 166x88] col gap 4, pad 22 16 22 32
+                    Text [853,1067 88x20] "Hội họa & Mỹ" 14/400/20 #131B2E
+                    Text [853,1091 33x20] "thuật" 14/400/20 #131B2E
+                  Data [987,1045 160x88] col gap 0, pad 34 16 34 16
+                    Text [1003,1079 121x20] "Khung gỗ tự nhiên" 14/400/20 #434655
+                  Data [1147,1045 180x88] col gap 0, pad 31 16 33 16
+                    Background [1163,1076 72x24] row gap 6, pad 4 10 4 10, bg #E2E7FF, r 4
+                      Container [1173,1082 12x12] col gap 0
+                      Container [1191,1080 34x16] col gap 0
+                        Text [1191,1080 34x16] "Đã gỡ" 12/600/16 #434655
+                  Data [1327,1045 240x88] col gap 0, pad 26 16 26 16
+                    Container [1347,1071 204x36] row gap 4
+                      Button – Khôi phục [1347,1071 105x36] row gap 4, pad 0 16 0 16, bg #EAEDFF, r 8
+                        Container [1363,1083 12x12] col gap 0
+                        Container [1379,1073 57x32] col gap 0, pad 0 14 0 14
+                          Text [1393,1073 30x32] "Khôi
+phục" 12/600/16 #131B2E
+                      Link – Xóa vĩnh viễn [1457,1071 94x36] col gap 0, pad 2 21 2 21, r 8
+                        Text [1478,1072 52x32] "Xóa vĩnh
+viễn" 12/600/16 #BA1A1A
+          Table Footer / Pagination [288,1133 960x68] row gap 516, pad 16, bg #F2F3FF@0.40
+            Container [304,1157 256x20] col gap 0
+              Text [304,1157 256x20] "Hiển thị 1 - 6 trong tổng số 8 sản phẩm" 14/400/20 #434655
+            Container [1076,1149 156x36] row gap 4
+              Button [1076,1149 36x36] row gap 0, bg #EAEDFF, r 8
+                Container [1090,1162 6x10] col gap 0
+              Button [1116,1149 36x36] row gap 0, pad 10 0 10 0, bg #1D4ED8, r 8, shadow
+                Text [1131,1158 5x16] "1" 12/600/16 #FFFFFF
+              Button [1156,1149 36x36] row gap 0, pad 10 0 10 0, bg #EAEDFF, r 8
+                Text [1170,1158 7x16] "2" 12/600/16 #131B2E
+              Button [1196,1149 36x36] row gap 0, bg #EAEDFF, r 8
+                Container [1210,1162 6x10] col gap 0
+    Footer [256,1249 1024x48] col gap 0, pad 16 0 16 0, bg #FFFFFF, shadow
+      Container [256,1265 1024x16] row gap 397, pad 0 32 0 32
+        Container [288,1265 341x16] col gap 0
+          © 2026 Sàn đấu giá trực tuyến OmniBid. Bảo lưu mọi [288,1265 341x16] "© 2026 Sàn đấu giá trực tuyến OmniBid. Bảo lưu mọi quyền." 12/400/16 #434655
+        Container [1029,1265 218x16] row gap 24
+          Container [1029,1265 123x16] col gap 0
+            Text [1029,1265 123x16] "Chính sách người bán" 12/400/16 #434655
+          Container [1177,1265 70x16] col gap 0
+            Text [1177,1265 70x16] "Quy chế sàn" 12/400/16 #434655
+  Sidebar [0,64 256x1233] col gap 0, pad 16 0 16 0, bg #FFFFFF, shadow
+    Container [0,80 256x148] col gap 16, pad 0 16 0 16
+      Container [16,80 224x16] col gap 0, pad 0 8 0 8
+        QUẢN LÝ CỬA HÀNG [24,80 208x16] "QUẢN LÝ CỬA HÀNG" 12/600/16 #747686
+      Nav [16,112 224x116] col gap 4
+        Nav – Sản phẩm của tôi [16,112 224x36] row gap 16, pad 8 16 8 16, bg #1D4ED8, r 8, shadow
+          Container [32,121 16x16] col gap 0
+          Container [64,120 116x20] col gap 0
+            Text [64,120 116x20] "Sản phẩm của tôi" 14/600/20 #FFFFFF
+        Nav – Phiên đấu giá [16,152 224x36] row gap 16, pad 8 16 8 16, r 8
+          Container [32,162 15x15] col gap 0
+          Container [63,160 90x20] col gap 0
+            Text [63,160 90x20] "Phiên đấu giá" 14/600/20 #515F74
+        Nav – Đơn hàng [16,192 224x36] row gap 16, pad 8 16 8 16, r 8
+          Container [32,201 15x16] col gap 0
+          Container [63,200 65x20] col gap 0
+            Text [63,200 65x20] "Đơn hàng" 14/600/20 #515F74
+  Header [0,0 1280x64] col gap 0, bg #FFFFFF@0.95, shadow
+    Container [0,0 1280x64] row gap 0, pad 0 32 0 32
+      Container [32,16 277x32] row gap 24
+        Container [32,16 124x32] row gap 8
+          Container [32,20 21x22] col gap 0
+          Container [61,16 95x32] col gap 0
+            OmniBid [61,16 95x32] "OmniBid" 24/600/32 #131B2E
+        Background [180,22 129x20] row gap 4, pad 2 8 2 8, bg #D5E3FC, r 4
+          Container [188,26 13x12] col gap 0
+          Text [205,24 96x16] "Kênh Người Bán" 12/600/16 #0D1C2E
+      Margin [309,10 510x44] col gap 0, pad 0 32 0 32
+        Container [341,10 446x44] row gap 0
+          Input [341,10 446x44] col gap 0, pad 14 16 14 40, bg #F2F3FF, r 8
+            Container [381,23 390x17] col gap 0
+              Tìm kiếm mã phiên, sản phẩm, đơn hàng... [381,23 390x17] "Tìm kiếm mã phiên, sản phẩm, đơn hàng..." 14/400/17 #747686
+      Container [819,11 428x42] row gap 16
+        Nav – Chuyển sang Mua hàng [819,14 210x36] row gap 4, pad 8 16 8 16
+          Container [835,26 15x12] col gap 0
+          Text [854,22 159x20] "Chuyển sang Mua hàng" 14/600/20 #434655
+        Button – Thông báo [1046,11 32x42] col gap 0, pad 8 8 14 8
+          Container [1054,19 16x20] row gap 0
+          Background [1062,17 10x10] col gap 0, bg #BA1A1A, r 9999
+            Overlay+Shadow [1062,17 10x10] bg #FFFFFF@0.00, r 9999, shadow
+        Container [1094,15 153x34] row gap 8, pad 0 0 0 8
+          Container [1102,15 105x34] col gap 0
+            Container [1102,15 105x18] col gap 0
+              Text [1102,15 105x18] "Nguyễn Văn An" 14/600/18 #131B2E
+            Container [1102,33 105x16] col gap 0
+              Text [1149,33 58x16] "Người bán" 12/400/16 #434655
+          Background [1216,16 32x32] row gap 0, bg #0037B0, r 9999
+            Container [1226,26 12x12] col gap 0

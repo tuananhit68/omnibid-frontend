@@ -1,0 +1,485 @@
+# Outline tự trích từ Figma JSON – S26 – Nhật ký thao tác (Admin)
+# Định dạng: tên layer [x,y wxh] (toạ độ so với góc frame) + thuộc tính; TEXT: "nội dung" size/weight/line-height màu
+
+S26 – Nhật ký thao tác (Admin) [0,0 1280x1544] col gap 0, pad 0 0 58 256, bg #FFFFFF
+  Main [256,0 1024x1544] col gap 0, pad 64 0 0 0, bg #FAF8FF
+    Container [256,64 1022x1416] col gap 24, pad 24
+      Breadcrumbs & Sync Info [280,88 974x20] row gap 0
+        Nav [280,88 249x20] row gap 8
+          Container [280,88 114x20] col gap 0
+            Text [280,88 114x20] "Quản trị hệ thống" 14/400/20 #747686
+          Container [402,94 4x8] col gap 0
+          Container [415,88 114x20] col gap 0
+            Text [415,88 114x20] "Nhật ký hệ thống" 14/500/20 #1D4ED8
+      Header Section [280,132 974x77] row gap 135, pad 0 0 20 0, border #C4C5D7@0.40
+        Container [280,132 867x56] col gap 4
+          Heading 1 [280,132 867x32] col gap 0
+            Text [280,132 181x32] "Nhật ký thao tác" 24/700/32 #131B2E
+          Container [280,168 867x20] col gap 0
+            Text [280,168 867x20] "Ghi nhận toàn bộ thao tác can thiệp quản trị của Admin nhằm bảo đảm tính minh bạ" 14/400/20 #434655
+      4 Stat Summary Cards in S23 Style [280,233 974x96] row gap 16
+        Card 1 [280,233 231x96] row gap 42, pad 20, bg #FFFFFF, border #E2E8F0, r 12, shadow
+          Container [301,254 129x54] col gap 6
+            Container [301,254 129x16] col gap 0
+              Text [301,254 129x16] "TỔNG SỐ THAO TÁC" 12/600/16 #747686
+            Paragraph [301,276 129x32]
+              Text [301,275 71x32] "1.482 " 24/700/32 #131B2E
+              Text [372,287 41x16] "bản ghi" 12/400/16 #747686
+          Background+Border [446,259 44x44] row gap 0, bg #EFF6FF, border #DBEAFE, r 12
+            Container [459,271 18x20] col gap 0
+        Card 2 [527,233 231x96] row gap 26, pad 20, bg #FFFFFF, border #E2E8F0, r 12, shadow
+          Container [548,254 145x54] col gap 6
+            Container [548,254 145x16] col gap 0
+              Text [548,254 145x16] "CAN THIỆP TÀI KHOẢN" 12/600/16 #747686
+            Paragraph [548,276 145x32]
+              Text [548,275 36x32] "45 " 24/700/32 #131B2E
+              Text [585,287 21x16] "lượt" 12/400/16 #747686
+          Background+Border [694,259 44x44] row gap 0, bg #FEF2F2, border #FEE2E2, r 12
+            Container [706,272 19x17] col gap 0
+        Card 3 [775,233 231x96] row gap 37, pad 20, bg #FFFFFF, border #E2E8F0, r 12, shadow
+          Container [796,254 134x54] col gap 6
+            Container [796,254 134x16] col gap 0
+              Text [796,254 134x16] "XỬ LÝ HÀNG & PHIÊN" 12/600/16 #747686
+            Paragraph [796,276 134x32]
+              Text [796,275 41x32] "112 " 24/700/32 #131B2E
+              Text [837,287 21x16] "lượt" 12/400/16 #747686
+          Background+Border [941,259 44x44] row gap 0, bg #FFF7ED, border #FFEDD5, r 12
+            Container [954,271 18x19] col gap 0
+        Card 4 [1022,233 231x96] row gap 27, pad 20, bg #FFFFFF, border #E2E8F0, r 12, shadow
+          Container [1043,254 145x54] col gap 6
+            Container [1043,254 145x16] col gap 0
+              Text [1043,254 145x16] "GIẢI QUYẾT KHIẾU NẠI" 12/600/16 #747686
+            Paragraph [1043,276 145x32]
+              Text [1043,275 47x32] "184 " 24/700/32 #131B2E
+              Text [1091,287 59x16] "quyết định" 12/400/16 #747686
+          Background+Border [1189,259 44x44] row gap 0, bg #F0FDF4, border #DCFCE7, r 12
+            Container [1201,272 20x18] col gap 0
+      S23 Style Toolbar / Filter Section [280,353 974x169] col gap 12, pad 16, bg #FFFFFF, border #E2E8F0, r 12, shadow
+        Container [297,370 940x40] row gap 12
+          Search Box [297,370 456x40] col gap 0
+            Input [297,370 456x40] row gap 0, pad 12 40 12 40, bg #F2F3FF, border #C4C5D7@0.40, r 8
+              Container [338,382 374x30] col gap 0
+                Tìm kiếm theo mã đối tượng (#USR-, #AUC-, #PRD-, # [338,382 374x30] "Tìm kiếm theo mã đối tượng (#USR-, #AUC-, #PRD-, #ORD-), chi tiết ghi chú..." 12/400/15 #747686
+            Container [311,381 13x18] col gap 0
+          Quick Range & Calendar [765,370 471x40] row gap 8
+            Background+Border [765,373 255x34] row gap 0, pad 4, bg #F2F3FF, border #C4C5D7@0.40, r 8
+              Link – Hôm nay [770,378 70x24] col gap 0, pad 4 10 4 10, r 6
+                Text [780,382 50x16] "Hôm nay" 12/500/16 #434655
+              Link – 7 ngày qua [841,378 82x24] col gap 0, pad 4 10 4 10, r 6
+                Text [851,382 62x16] "7 ngày qua" 12/500/16 #434655
+              Button – 30 ngày qua [924,378 91x24] col gap 0, pad 4 10 4 10, bg #FFFFFF, r 6, shadow
+                Text [934,382 71x16] "30 ngày qua" 12/600/16 #1D4ED8
+            Container [1029,370 208x40] row gap 0
+              Input [1029,370 208x40] col gap 0, pad 12 12 12 32, bg #F2F3FF, border #C4C5D7@0.40, r 8
+                Container [1062,382 162x15] col gap 0
+                  01/10/2026 - 29/10/2026 [1062,382 162x15] "01/10/2026 - 29/10/2026" 12/400/15 #131B2E
+        Dropdown Filters Row [297,422 940x45] row gap 12, pad 8 0 0 0, border #F1F5F9
+          Admin Selector [297,431 226x36] col gap 0
+            Options [297,431 226x36] row gap 0, pad 0 32 0 12, bg #F2F3FF, border #C4C5D7@0.40, r 8
+              Container [310,441 180x16] col gap 0
+                Quản trị viên cấp cao [310,441 180x16] "Quản trị viên cấp cao" 12/400/16 #131B2E
+            Container [504,440 9x18] col gap 0
+          Action Selector [535,431 226x36] col gap 0
+            Options [535,431 226x36] row gap 0, pad 0 32 0 12, bg #F2F3FF, border #C4C5D7@0.40, r 8
+              Container [548,441 180x16] col gap 0
+                Tất cả hành động [548,441 180x16] "Tất cả hành động" 12/400/16 #131B2E
+            Container [742,440 9x18] col gap 0
+          Target Type Selector [773,431 226x36] col gap 0
+            Options [773,431 226x36] row gap 0, pad 0 32 0 12, bg #F2F3FF, border #C4C5D7@0.40, r 8
+              Container [786,441 180x16] col gap 0
+                Tất cả đối tượng [786,441 180x16] "Tất cả đối tượng" 12/400/16 #131B2E
+            Container [980,440 9x18] col gap 0
+          Reset Filter Button [1011,431 226x36] row gap 8
+            Button – Đặt lại [1011,431 182x36] row gap 6, pad 0 12 0 12, bg #E2E7FF, border #C4C5D7@0.40, r 8
+              Container [1075,442 10x12] col gap 0
+              Container [1092,441 36x16] col gap 0
+                Text [1092,441 36x16] "Đặt lại" 12/600/16 #131B2E
+            Button [1201,431 35x36] row gap 0, pad 0 10 0 10, bg #F2F3FF, border #C4C5D7@0.40, r 8
+              Container [1212,442 13x13] col gap 0
+        Active Filters Feedback Tags [297,479 940x26] row gap 432, pad 4 0 0 0
+          Container [297,483 450x22] row gap 8
+            Container [297,486 82x16] col gap 0
+              Text [297,486 82x16] "Đang lọc theo:" 12/400/16 #747686
+            Background+Border [387,483 193x22] row gap 4, pad 2 8 2 8, bg #EAEDFF, border #C4C5D7@0.40, r 4
+              Text [396,486 163x16] "Admin: Quản trị viên cấp cao" 12/400/16 #131B2E
+              Container [563,490 7x7] col gap 0
+            Background+Border [588,483 159x22] row gap 4, pad 2 8 2 8, bg #EAEDFF, border #C4C5D7@0.40, r 4
+              Text [597,486 129x16] "Thời gian: 30 ngày qua" 12/400/16 #131B2E
+              Container [731,490 7x7] col gap 0
+          Container [1086,486 150x16] col gap 0
+            Text [1086,486 150x16] "Hiển thị: 10 / 1.482 bản ghi" 12/400/16 #747686
+      Data Table matching S23 [280,546 974x910] col gap 0, bg #FFFFFF, border #E2E8F0, r 12, shadow
+        Table [281,547 972x847] col gap -1
+          Header → Row [281,547 972x41] row gap 0, bg #F8FAFC, border #E2E8F0
+            Cell [228,547 154x40] col gap 0, pad 12 16 12 16
+              Text [244,559 62x16] "THỜI GIAN" 11/700/16 #747686
+            Cell [383,547 192x40] col gap 0, pad 12 16 12 16
+              Text [399,559 89x16] "QUẢN TRỊ VIÊN" 11/700/16 #747686
+            Cell [575,547 155x40] col gap 0, pad 12 16 12 16
+              Text [591,559 74x16] "HÀNH ĐỘNG" 11/700/16 #747686
+            Cell [731,547 131x40] col gap 0, pad 12 16 12 16
+              Text [747,559 99x16] "LOẠI ĐỐI TƯỢNG" 11/700/16 #747686
+            Cell [862,547 122x40] col gap 0, pad 12 16 12 16
+              Text [878,559 90x16] "MÃ ĐỐI TƯỢNG" 11/700/16 #747686
+            Cell [985,547 320x40] col gap 0, pad 12 16 12 16
+              Text [1001,559 104x16] "CHI TIẾT GHI CHÚ" 11/700/16 #747686
+          Body [281,587 972x807] col gap -1
+            Row 1 [281,587 972x87] row gap 0
+              Data [228,587 154x87] col gap 0, pad 28 16 28 16
+                Container [244,614 122x16] col gap 0
+                  29/10/2026 15:30:12 [244,614 122x16] "29/10/2026 15:30:12" 12/500/16 #131B2E
+                Container [244,630 122x16] col gap 0
+                  15 phút trước [244,630 122x16] "15 phút trước" 11/400/16 #747686
+              Data [383,616 176x28] row gap 10, pad 0 0 0 16
+                Background [399,616 28x28] row gap 0, bg #0037B0, r 9999
+                  Text [405,622 16x16] "AD" 11/700/16 #FFFFFF
+                Container [437,616 122x28] col gap 0
+                  Container [437,616 122x15] col gap 0
+                    Text [437,616 122x15] "Quản trị viên cấp cao" 12/600/15 #131B2E
+                  Container [437,631 122x13] col gap 0
+                    admin@OmniBid.vn [437,631 92x13] "admin@OmniBid.vn" 10/400/12 #747686
+              Data [559,587 171x87] col gap 0, pad 33 16 33 32
+                Background+Border [591,619 114x22] row gap 4, pad 2 10 2 10, bg #FEF2F2, border #FECACA, r 9999
+                  Container [602,625 10x10] col gap 0
+                  Text [617,622 78x16] "Khóa tài khoản" 11/500/16 #991B1B
+              Data [731,587 131x87] col gap 0, pad 34 16 34 16
+                Background [747,620 77x20] row gap 0, pad 2 8 2 8, bg #EAEDFF, r 4
+                  Text [755,622 61x16] "Người dùng" 11/500/16 #434655
+              Data [862,587 122x87] col gap 0, pad 34 16 37 16
+                Link – USR-88219 [878,621 82x16] row gap 4
+                  Container [878,624 10x10] col gap 0
+                  USR-88219 [893,621 68x16] "USR-88219" 12/700/16 #1D4ED8
+              Data [985,587 320x87] col gap 0, pad 14 16 14 16
+                Text [1001,601 279x59] "Khóa vĩnh viễn tài khoản Trần Ngọc (USR-88219)
+do tái diễn hành vi đăng bán túi " 12/400/20 #434655
+            Row 2 [281,673 972x90] row gap 0, border #F1F5F9
+              Data [228,674 154x89] col gap 0, pad 29 16 29 16
+                Container [244,703 122x16] col gap 0
+                  29/10/2026 14:18:05 [244,703 122x16] "29/10/2026 14:18:05" 12/500/16 #131B2E
+                Container [244,719 122x16] col gap 0
+                  1 giờ trước [244,719 122x16] "1 giờ trước" 11/400/16 #747686
+              Data [383,705 176x28] row gap 10, pad 0 0 0 16
+                Background [399,705 28x28] row gap 0, bg #515F74, r 9999
+                  Text [406,711 14x16] "PS" 11/700/16 #FFFFFF
+                Container [437,705 99x28] col gap 0
+                  Container [437,705 99x15] col gap 0
+                    Text [437,705 99x15] "Phạm Hoàng Sơn" 12/600/15 #131B2E
+                  Container [437,720 99x13] col gap 0
+                    Text [437,720 38x13] "Mod-02" 10/400/12 #747686
+              Data [559,674 171x89] col gap 0, pad 34 16 34 32
+                Background+Border [591,708 106x22] row gap 4, pad 2 10 2 10, bg #FFF7ED, border #FED7AA, r 9999
+                  Container [602,713 11x10] col gap 0
+                  Text [618,711 68x16] "Ẩn sản phẩm" 11/500/16 #9A3412
+              Data [731,674 131x89] col gap 0, pad 35 16 35 16
+                Background [747,709 68x20] row gap 0, pad 2 8 2 8, bg #EAEDFF, r 4
+                  Text [755,711 52x16] "Sản phẩm" 11/500/16 #434655
+              Data [862,674 122x89] col gap 0, pad 35 16 38 16
+                Link – #PRD-6612 [878,709 82x16] row gap 4
+                  Container [878,712 10x10] col gap 0
+                  #PRD-6612 [893,709 68x16] "#PRD-6612" 12/700/16 #1D4ED8
+              Data [985,674 320x89]
+                Text [1001,688 287x59] "Ẩn sản phẩm vi phạm bản quyền thương hiệu
+Patek Philippe theo yêu cầu kiểm định " 12/400/20 #434655
+                #REP-1039 [1025,729 64x20] "#REP-1039" 12/400/20 #1D4ED8
+                Text [1090,727 3x20] "." 12/400/20 #434655
+            Row 3 [281,763 972x69] row gap 0, border #F1F5F9
+              Data [228,764 154x68] col gap 0, pad 18 16 18 16
+                Container [244,782 122x16] col gap 0
+                  29/10/2026 11:05:44 [244,782 122x16] "29/10/2026 11:05:44" 12/500/16 #131B2E
+                Container [244,798 122x16] col gap 0
+                  4 giờ trước [244,798 122x16] "4 giờ trước" 11/400/16 #747686
+              Data [383,784 176x28] row gap 10, pad 0 0 0 16
+                Background [399,784 28x28] row gap 0, bg #0037B0, r 9999
+                  Text [405,790 16x16] "AD" 11/700/16 #FFFFFF
+                Container [437,784 122x28] col gap 0
+                  Container [437,784 122x15] col gap 0
+                    Text [437,784 122x15] "Quản trị viên cấp cao" 12/600/15 #131B2E
+                  Container [437,799 122x13] col gap 0
+                    admin@OmniBid.vn [437,799 92x13] "admin@OmniBid.vn" 10/400/12 #747686
+              Data [559,764 171x68] col gap 0, pad 23 16 23 32
+                Background+Border [591,787 90x22] row gap 4, pad 2 10 2 10, bg #FFF1F2, border #FECDD3, r 9999
+                  Container [602,792 10x10] col gap 0
+                  Text [617,790 53x16] "Hủy phiên" 11/500/16 #BE123C
+              Data [731,764 131x68] col gap 0, pad 24 16 24 16
+                Background [747,788 86x20] row gap 0, pad 2 8 2 8, bg #EAEDFF, r 4
+                  Text [755,790 70x16] "Phiên đấu giá" 11/500/16 #434655
+              Data [862,764 122x68] col gap 0, pad 24 16 28 16
+                Link – #AUC-2048 [878,788 86x16] row gap 4
+                  Container [878,791 10x10] col gap 0
+                  #AUC-2048 [893,788 72x16] "#AUC-2048" 12/700/16 #1D4ED8
+              Data [985,764 320x68] col gap 0, pad 14 16 15 16
+                Text [1001,778 273x39] "Hủy phiên đấu giá đồng hồ Rolex Submariner do
+phát hiện hành vi đẩy giá." 12/400/20 #434655
+            Row 4 [281,831 972x104] row gap 0, border #F1F5F9
+              Data [228,832 154x103] col gap 0, pad 28 16 28 16
+                Container [244,859 122x32] col gap 0
+                  29/10/2026 09:42:20 [244,859 122x32] "29/10/2026 09:42:20" 12/500/16 #131B2E
+                Container [244,891 122x16] col gap 0
+                  6 giờ trước [244,891 122x16] "6 giờ trước" 11/400/16 #747686
+              Data [383,869 176x28] row gap 10, pad 0 0 0 16
+                Background [399,869 28x28] row gap 0, bg #515F74, r 9999
+                  Text [406,875 13x16] "LV" 11/700/16 #FFFFFF
+                Container [437,869 79x28] col gap 0
+                  Container [437,869 79x15] col gap 0
+                    Text [437,869 79x15] "Lê Thanh Vân" 12/600/15 #131B2E
+                  Container [437,884 79x13] col gap 0
+                    Text [437,884 38x13] "Mod-05" 10/400/12 #747686
+              Data [559,840 171x87] col gap 0, pad 33 16 33 32
+                Background+Border [591,872 108x22] row gap 4, pad 2 10 2 10, bg #EFF6FF, border #BFDBFE, r 9999
+                  Container [602,878 10x10] col gap 0
+                  Text [617,875 71x16] "Xử lý báo cáo" 11/500/16 #1D4ED8
+              Data [731,840 131x87] col gap 0, pad 34 16 34 16
+                Background [747,873 58x20] row gap 0, pad 2 8 2 8, bg #EAEDFF, r 4
+                  Text [755,875 42x16] "Báo cáo" 11/500/16 #434655
+              Data [862,840 122x87] col gap 0, pad 34 16 37 16
+                Link – #REP-1042 [878,874 81x16] row gap 4
+                  Container [878,877 10x10] col gap 0
+                  #REP-1042 [893,874 67x16] "#REP-1042" 12/700/16 #1D4ED8
+              Data [985,840 320x87] col gap 0, pad 14 16 14 16
+                Text [1001,854 283x59] "Xác minh khiếu nại tranh chấp trạng thái hàng hóa
+sau trúng đấu giá. Kết luận: N" 12/400/20 #434655
+            Row 5 [281,934 972x90] row gap 0, border #F1F5F9
+              Data [228,935 154x89] col gap 0, pad 29 16 29 16
+                Container [244,964 122x16] col gap 0
+                  28/10/2026 19:12:33 [244,964 122x16] "28/10/2026 19:12:33" 12/500/16 #131B2E
+                Container [244,980 122x16] col gap 0
+                  Hôm qua [244,980 122x16] "Hôm qua" 11/400/16 #747686
+              Data [383,966 176x28] row gap 10, pad 0 0 0 16
+                Background [399,966 28x28] row gap 0, bg #0037B0, r 9999
+                  Text [405,972 16x16] "AD" 11/700/16 #FFFFFF
+                Container [437,966 122x28] col gap 0
+                  Container [437,966 122x15] col gap 0
+                    Text [437,966 122x15] "Quản trị viên cấp cao" 12/600/15 #131B2E
+                  Container [437,981 122x13] col gap 0
+                    admin@OmniBid.vn [437,981 92x13] "admin@OmniBid.vn" 10/400/12 #747686
+              Data [559,935 171x89] col gap 0, pad 34 16 34 32
+                Background+Border [591,969 110x22] row gap 4, pad 2 10 2 10, bg #FAF5FF, border #E9D5FF, r 9999
+                  Container [602,974 11x10] col gap 0
+                  Text [617,972 73x16] "Hủy đơn hàng" 11/500/16 #6B21A8
+              Data [731,935 131x89] col gap 0, pad 35 16 35 16
+                Background [747,970 66x20] row gap 0, pad 2 8 2 8, bg #EAEDFF, r 4
+                  Text [755,972 50x16] "Đơn hàng" 11/500/16 #434655
+              Data [862,935 122x89] col gap 0, pad 35 16 38 16
+                Link – #ORD-9088 [878,970 86x16] row gap 4
+                  Container [878,973 10x10] col gap 0
+                  #ORD-9088 [893,970 72x16] "#ORD-9088" 12/700/16 #1D4ED8
+              Data [985,935 320x89]
+                Text [1001,949 135x20] "Xác nhận hủy giao dịch " 12/400/20 #434655
+                #ORD-9088 [1136,951 69x20] "#ORD-9088" 12/400/20 #1D4ED8
+                Text [1201,949 77x20] " do người bán" 12/400/20 #434655
+                Text [1001,971 283x39] "quá 72h không giao hàng. Đơn hàng chuyển trạng
+thái Đã hủy." 12/400/20 #434655
+            Row 6 [281,1024 972x69] row gap 0, border #F1F5F9
+              Data [228,1025 154x68] col gap 0, pad 18 16 18 16
+                Container [244,1043 122x16] col gap 0
+                  28/10/2026 16:00:19 [244,1043 122x16] "28/10/2026 16:00:19" 12/500/16 #131B2E
+                Container [244,1059 122x16] col gap 0
+                  Hôm qua [244,1059 122x16] "Hôm qua" 11/400/16 #747686
+              Data [383,1045 176x28] row gap 10, pad 0 0 0 16
+                Background [399,1045 28x28] row gap 0, bg #0037B0, r 9999
+                  Text [405,1051 16x16] "AD" 11/700/16 #FFFFFF
+                Container [437,1045 122x28] col gap 0
+                  Container [437,1045 122x15] col gap 0
+                    Text [437,1045 122x15] "Quản trị viên cấp cao" 12/600/15 #131B2E
+                  Container [437,1060 122x13] col gap 0
+                    admin@OmniBid.vn [437,1060 92x13] "admin@OmniBid.vn" 10/400/12 #747686
+              Data [559,1025 171x68] col gap 0, pad 23 16 23 32
+                Background+Border [591,1048 120x22] row gap 4, pad 2 10 2 10, bg #F0FDF4, border #BBF7D0, r 9999
+                  Container [602,1054 9x9] col gap 0
+                  Text [616,1051 84x16] "Thêm danh mục" 11/500/16 #166534
+              Data [731,1025 131x68] col gap 0, pad 24 16 24 16
+                Background [747,1049 69x20] row gap 0, pad 2 8 2 8, bg #EAEDFF, r 4
+                  Text [755,1051 53x16] "Danh mục" 11/500/16 #434655
+              Data [862,1025 122x68] col gap 0, pad 24 16 28 16
+                Link – #CAT-082 [878,1049 76x16] row gap 4
+                  Container [878,1052 10x10] col gap 0
+                  #CAT-082 [893,1049 62x16] "#CAT-082" 12/700/16 #1D4ED8
+              Data [985,1025 320x68]
+                Text [1001,1039 227x20] "Tạo mới phân nhánh danh mục cao cấp " 12/400/20 #434655
+                Strong [1001,1041 282x34]
+                  Text [1228,1039 55x20] ""Đồng hồ" 12/600/20 #131B2E
+                  Text [1001,1058 214x20] "cổ điển Vintage & Sưu tầm quý hiếm"" 12/600/20 #131B2E
+                Text [1216,1058 3x20] "." 12/400/20 #434655
+            Row 7 [281,1092 972x108] row gap 0, border #F1F5F9
+              Data [228,1093 154x107] col gap 0, pad 38 16 38 16
+                Container [244,1130 122x16] col gap 0
+                  27/10/2026 21:40:11 [244,1130 122x16] "27/10/2026 21:40:11" 12/500/16 #131B2E
+                Container [244,1146 122x16] col gap 0
+                  2 ngày trước [244,1146 122x16] "2 ngày trước" 11/400/16 #747686
+              Data [383,1132 176x28] row gap 10, pad 0 0 0 16
+                Background [399,1132 28x28] row gap 0, bg #515F74, r 9999
+                  Text [406,1138 13x16] "LV" 11/700/16 #FFFFFF
+                Container [437,1132 79x28] col gap 0
+                  Container [437,1132 79x15] col gap 0
+                    Text [437,1132 79x15] "Lê Thanh Vân" 12/600/15 #131B2E
+                  Container [437,1147 79x13] col gap 0
+                    Text [437,1147 38x13] "Mod-05" 10/400/12 #747686
+              Data [559,1093 171x107] col gap 0, pad 42 16 42 32
+                Background+Border [591,1135 106x22] row gap 4, pad 2 10 2 10, bg #FFF7ED, border #FED7AA, r 9999
+                  Container [602,1141 11x10] col gap 0
+                  Text [618,1138 68x16] "Ẩn sản phẩm" 11/500/16 #9A3412
+              Data [731,1093 131x107] col gap 0, pad 44 16 44 16
+                Background [747,1136 68x20] row gap 0, pad 2 8 2 8, bg #EAEDFF, r 4
+                  Text [755,1138 52x16] "Sản phẩm" 11/500/16 #434655
+              Data [862,1093 122x107] col gap 0, pad 44 16 47 16
+                Link – #PRD-6580 [878,1137 84x16] row gap 4
+                  Container [878,1139 10x10] col gap 0
+                  #PRD-6580 [893,1137 70x16] "#PRD-6580" 12/700/16 #1D4ED8
+              Data [985,1093 320x107] col gap 0, pad 14 16 15 16
+                Text [1001,1107 268x78] "Ẩn bài đăng sản phẩm "Bộ tiền cổ Đông Dương
+1930" do phát hiện hình ảnh sao chép" 12/400/20 #434655
+            Row 8 [281,1199 972x88] row gap 0, border #F1F5F9
+              Data [228,1200 154x87] col gap 0, pad 28 16 28 16
+                Container [244,1227 122x16] col gap 0
+                  27/10/2026 14:10:02 [244,1227 122x16] "27/10/2026 14:10:02" 12/500/16 #131B2E
+                Container [244,1243 122x16] col gap 0
+                  2 ngày trước [244,1243 122x16] "2 ngày trước" 11/400/16 #747686
+              Data [383,1229 176x28] row gap 10, pad 0 0 0 16
+                Background [399,1229 28x28] row gap 0, bg #0037B0, r 9999
+                  Text [405,1235 16x16] "AD" 11/700/16 #FFFFFF
+                Container [437,1229 122x28] col gap 0
+                  Container [437,1229 122x15] col gap 0
+                    Text [437,1229 122x15] "Quản trị viên cấp cao" 12/600/15 #131B2E
+                  Container [437,1244 122x13] col gap 0
+                    admin@OmniBid.vn [437,1244 92x13] "admin@OmniBid.vn" 10/400/12 #747686
+              Data [559,1200 171x87] col gap 0, pad 33 16 33 32
+                Background+Border [591,1232 108x22] row gap 4, pad 2 10 2 10, bg #EFF6FF, border #BFDBFE, r 9999
+                  Container [602,1238 10x10] col gap 0
+                  Text [617,1235 71x16] "Xử lý báo cáo" 11/500/16 #1D4ED8
+              Data [731,1200 131x87] col gap 0, pad 34 16 34 16
+                Background [747,1233 58x20] row gap 0, pad 2 8 2 8, bg #EAEDFF, r 4
+                  Text [755,1235 42x16] "Báo cáo" 11/500/16 #434655
+              Data [862,1200 122x87] col gap 0, pad 34 16 37 16
+                Link – #REP-1025 [878,1234 80x16] row gap 4
+                  Container [878,1237 10x10] col gap 0
+                  #REP-1025 [893,1234 66x16] "#REP-1025" 12/700/16 #1D4ED8
+              Data [985,1200 320x87] col gap 0, pad 14 16 14 16
+                Text [1001,1214 284x59] "Xác minh vi phạm và xử phạt tài khoản người bán
+do đơn phương hủy giao dịch phiê" 12/400/20 #434655
+            Row 9 [281,1286 972x107] row gap 0, border #F1F5F9
+              Data [228,1287 154x106] col gap 0, pad 38 16 37 16
+                Container [244,1325 122x16] col gap 0
+                  26/10/2026 18:22:45 [244,1325 122x16] "26/10/2026 18:22:45" 12/500/16 #131B2E
+                Container [244,1341 122x16] col gap 0
+                  3 ngày trước [244,1341 122x16] "3 ngày trước" 11/400/16 #747686
+              Data [383,1326 176x28] row gap 10, pad 0 0 0 16
+                Background [399,1326 28x28] row gap 0, bg #515F74, r 9999
+                  Text [406,1332 14x16] "PS" 11/700/16 #FFFFFF
+                Container [437,1326 99x28] col gap 0
+                  Container [437,1326 99x15] col gap 0
+                    Text [437,1326 99x15] "Phạm Hoàng Sơn" 12/600/15 #131B2E
+                  Container [437,1341 99x13] col gap 0
+                    Text [437,1341 38x13] "Mod-02" 10/400/12 #747686
+              Data [559,1287 171x106] col gap 0, pad 42 16 42 32
+                Background+Border [591,1330 114x22] row gap 4, pad 2 10 2 10, bg #FEF2F2, border #FECACA, r 9999
+                  Container [602,1335 10x10] col gap 0
+                  Text [617,1333 78x16] "Khóa tài khoản" 11/500/16 #991B1B
+              Data [731,1287 131x106] col gap 0, pad 44 16 43 16
+                Background [747,1331 77x20] row gap 0, pad 2 8 2 8, bg #EAEDFF, r 4
+                  Text [755,1333 61x16] "Người dùng" 11/500/16 #434655
+              Data [862,1287 122x106] col gap 0, pad 44 16 46 16
+                Link – USR-54019 [878,1331 83x16] row gap 4
+                  Container [878,1334 10x10] col gap 0
+                  USR-54019 [893,1331 69x16] "USR-54019" 12/700/16 #1D4ED8
+              Data [985,1287 320x106]
+                Text [1001,1301 227x20] "Tạm khóa 30 ngày tài khoản người mua " 12/400/20 #434655
+                Strong [1001,1304 269x34]
+                  Text [1228,1301 42x20] "Vũ Đức" 12/600/20 #131B2E
+                  Text [1001,1321 17x20] "Tài" 12/600/20 #131B2E
+                Text [1018,1321 257x20] " vì từ chối nhận hàng và thanh toán liên tiếp 3" 12/400/20 #434655
+                Text [1001,1340 275x39] "phiên đấu giá điện thoại gập Samsung Z Fold mà
+không đưa ra lý do chính đáng." 12/400/20 #434655
+        Pagination bar matching S23 [281,1394 972x61] row gap 610, pad 14 16 14 16, bg #F8FAFC, border #E2E8F0
+          Container [297,1417 183x16] col gap 0
+            Text [297,1417 183x16] "Hiển thị 1 - 10 trên 1.482 bản ghi" 12/400/16 #434655
+          Container [985,1409 251x32] row gap 6
+            Button [985,1409 32x32] row gap 0, bg #FFFFFF, border #E2E8F0, r 8
+              Container [999,1421 4x8] col gap 0
+            Button [1023,1409 32x32] row gap 0, pad 8 0 8 0, bg #1D4ED8, r 8, shadow
+              Text [1036,1416 5x16] "1" 12/600/16 #FFFFFF
+            Button [1061,1409 32x32] row gap 0, pad 6 0 8 0, bg #FFFFFF, border #E2E8F0, r 8
+              Text [1073,1416 7x16] "2" 12/400/16 #131B2E
+            Button [1099,1409 32x32] row gap 0, pad 6 0 8 0, bg #FFFFFF, border #E2E8F0, r 8
+              Text [1111,1416 7x16] "3" 12/400/16 #131B2E
+            Container [1137,1417 23x16] col gap 0, pad 0 6 0 6
+              Text [1143,1417 11x16] "..." 12/600/16 #747686
+            Button – 149 [1167,1409 32x32] row gap 0, pad 6 0 8 0, bg #FFFFFF, border #E2E8F0, r 8
+              Text [1172,1416 20x16] "149" 12/400/16 #131B2E
+            Button [1205,1409 32x32] row gap 0, bg #FFFFFF, border #E2E8F0, r 8
+              Container [1218,1421 4x8] col gap 0
+    Footer [256,1480 1024x66] row gap 482, pad 24 0 24 0, bg #FFFFFF
+      Container [256,1505 389x16] col gap 0, pad 0 24 0 24
+        © 2026 Sàn đấu giá trực tuyến OmniBid. Bảo lưu mọi [280,1505 341x16] "© 2026 Sàn đấu giá trực tuyến OmniBid. Bảo lưu mọi quyền." 12/400/16 #515F74
+  Sidebar [0,65 256x1479] col gap 0, bg #FFFFFF, border #C4C5D7@0.60, shadow
+    Container [0,65 255x1479] col gap 0
+      Container [0,65 255x424] col gap 4, pad 8 16 8 16
+        Container [16,73 223x24] col gap 0, pad 4 8 4 8
+          QUẢN TRỊ HỆ THỐNG [24,77 207x16] "QUẢN TRỊ HỆ THỐNG" 12/600/16 #747686
+        Nav [16,101 223x380] col gap 4
+          Nav – Tổng quan [16,101 223x44] row gap 8, pad 10 16 10 16, r 8, shadow
+            Container [32,114 18x18] col gap 0
+            Container [58,111 82x24] col gap 0
+              Text [58,111 82x24] "Tổng quan" 16/600/24 #515F74
+          Nav – Người dùng [16,149 223x44] row gap 8, pad 10 16 10 16, r 8
+            Container [32,163 22x16] col gap 0
+            Container [62,159 89x24] col gap 0
+              Text [62,159 89x24] "Người dùng" 16/500/24 #515F74
+          Nav – Danh mục [16,197 223x44] row gap 8, pad 10 16 10 16, r 8
+            Container [32,209 19x20] col gap 0
+            Container [59,207 77x24] col gap 0
+              Text [59,207 77x24] "Danh mục" 16/500/24 #515F74
+          Nav – Sản phẩm [16,245 223x44] row gap 8, pad 10 16 10 16, r 8
+            Container [32,257 20x20] col gap 0
+            Container [60,255 76x24] col gap 0
+              Text [60,255 76x24] "Sản phẩm" 16/500/24 #515F74
+          Nav – Phiên đấu giá [16,293 223x44] row gap 8, pad 10 16 10 16, r 8
+            Container [32,305 18x19] col gap 0
+            Container [58,303 103x24] col gap 0
+              Text [58,303 103x24] "Phiên đấu giá" 16/500/24 #515F74
+          Nav – Đơn hàng [16,341 223x44] row gap 8, pad 10 16 10 16, r 8
+            Container [32,353 18x20] col gap 0
+            Container [58,351 73x24] col gap 0
+              Text [58,351 73x24] "Đơn hàng" 16/500/24 #515F74
+          Nav – Báo cáo vi phạm [16,389 223x44] row gap 8, pad 10 16 10 16, r 8
+            Container [32,402 18x18] col gap 0
+            Container [58,399 126x24] col gap 0
+              Text [58,399 126x24] "Báo cáo vi phạm" 16/500/24 #515F74
+          Nav – Nhật ký hệ thống [16,437 223x44] row gap 8, pad 10 16 10 16, bg #1D4ED8, r 8
+            Container [32,450 18x18] col gap 0
+            Container [58,447 130x24] col gap 0
+              Text [58,447 130x24] "Nhật ký hệ thống" 16/500/24 #FFFFFF
+  Header [0,0 1280x64] row gap 90, pad 0 24 0 24, bg #FFFFFF, border #C4C5D7@0.60, shadow
+    Container [24,11 674x40] row gap 32
+      Container [24,14 258x34] row gap 8
+        Container [24,22 18x19] col gap 0
+        Container [50,16 97x30] col gap 0
+          OmniBid [50,16 97x30] "OmniBid" 24/700/30 #131B2E
+        Margin [155,14 127x34] col gap 0, pad 0 0 0 4
+          Background+Border [159,14 123x34] row gap 6, pad 4 12 4 12, bg #E2E7FF, border #C4C5D7@0.60, r 9999
+            Container [172,21 18x20] col gap 0
+            Container [196,19 73x24] col gap 0
+              Text [196,19 73x24] "Quản trị viên" 12/600/24 #515F74
+      Container [314,11 384x40] row gap 0
+        Container [314,11 384x40] row gap 0
+          Input [314,11 384x40] col gap 0, pad 10 16 10 40, bg #FAF8FF, border #C4C5D7@0.60, r 8
+            Container [355,23 326x17] col gap 0
+              Text [355,23 379x17] "Tìm kiếm người dùng, phiên đấu giá, đơn hàng, báo cáo..." 14/400/17 #747686
+    Container [812,11 443x40] row gap 16
+      Button – Xem sàn đấu giá [812,13 167x36] row gap 6, pad 8 16 8 16, bg #F2F3FF, r 8
+        Container [828,22 18x18] col gap 0
+        Container [852,21 111x20] col gap 0
+          Text [852,21 111x20] "Xem sàn đấu giá" 14/600/20 #434655
+      Button – Thông báo [996,11 40x40] col gap 0
+        Button - Thông báo [996,11 40x40] row gap 0, r 8
+          Container [1008,21 16x20] col gap 0
+          Background [1020,19 8x8] col gap 0, bg #BA1A1A, r 9999
+            Overlay+Shadow [1020,19 8x8] bg #FFFFFF@0.00, r 9999, shadow
+      Vertical Divider [1052,15 1x32] bg #E2E7FF
+      Container [1069,15 186x32] row gap 12
+        Background [1069,15 32x32] row gap 0, bg #0037B0, r 9999
+          Container [1077,23 16x16] col gap 0
+        Container [1113,16 142x30] col gap 0
+          Container [1113,16 142x18] col gap 0
+            Text [1113,16 142x18] "Quản trị viên cấp cao" 14/600/18 #131B2E
+          Container [1113,34 142x12] col gap 0
+            admin@OmniBid.vn [1113,34 111x12] "admin@OmniBid.vn" 12/400/12 #434655

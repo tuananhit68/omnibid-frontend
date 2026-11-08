@@ -1,0 +1,409 @@
+# Outline tự trích từ Figma JSON – S01 – Danh sách phiên đấu giá (Khách)
+# Định dạng: tên layer [x,y wxh] (toạ độ so với góc frame) + thuộc tính; TEXT: "nội dung" size/weight/line-height màu
+
+S01 – Danh sách phiên đấu giá (Khách) [0,0 1280x1423] bg #FFFFFF
+  Main [0,65 1280x1273] col gap 0, pad 32
+    Container [32,97 1216x1209] col gap 0
+      Subtle Breadcrumb & Section Header Banner:margin [32,97 1216x118] col gap 0, pad 0 0 24 0
+        Subtle Breadcrumb & Section Header Banner [32,97 1216x94] col gap 4
+          Nav - Breadcrumb [32,97 1216x20] row gap 8
+            Link – Trang chủ [32,97 82x20] row gap 4
+              Container [32,100 12x13] col gap 0
+              Text [48,97 66x20] "Trang chủ" 14/400/20 #64748B
+            Container [122,103 4x8] col gap 0
+            Container [135,97 135x20] col gap 0
+              Text [135,97 135x20] "Tất cả phiên đấu giá" 14/500/20 #1D4ED8
+          Container [32,121 1216x70] row gap 0, pad 4 0 0 0
+            Container [32,125 623x66] col gap 4
+              Heading 1 [32,125 623x38] col gap 0
+                Text [32,125 278x38] "Tất cả phiên đấu giá" 30/700/38 #131B2E
+              Container [32,167 623x24] col gap 0
+                Text [32,167 623x24] "Khám phá và tham gia đấu giá các sản phẩm chính hãng với giá khởi điểm hấp dẫn" 16/400/24 #515F74
+      Main Grid: 2-Column Desktop Layout (Sidebar 280px  [32,215 1216x1091] row gap 24
+        Aside - Left Filter Sidebar [32,215 280x921] col gap 0, pad 24, bg #FFFFFF, border #C4C5D7, r 8, shadow
+          Header [57,240 230x73] row gap 0, pad 0 0 16 0, border #C4C5D7@0.60
+            Container [57,240 163x56] row gap 8
+              SVG [57,258 18x20]
+              Container [83,240 136x56] col gap 0, pad 0 42 0 0
+                Text [83,240 94x56] "Bộ lọc tìm
+kiếm" 20/600/28 #131B2E
+            Link – Xóa bộ lọc [220,248 66x40] col gap 0, pad 0 10 0 10
+              Text [230,248 47x40] "Xóa bộ
+lọc" 14/600/20 #1D4ED8
+          Filter Group 1: Danh mục sản phẩm [57,313 230x233] col gap 12, pad 20 0 20 0, border #C4C5D7@0.60
+            Label [57,333 230x20] col gap 0
+              Danh mục sản phẩm [57,333 230x20] "Danh mục sản phẩm" 14/600/20 #131B2E
+            Container [57,365 230x160] col gap 10
+              Label [57,365 230x40] row gap 12
+                Input [57,377 16x16] bg #1D4ED8, r 2
+                Container [85,365 174x40] col gap 0
+                  Điện thoại & Máy tính bảng [85,365 174x40] "Điện thoại & Máy tính
+bảng" 14/400/20 #131B2E
+                Container [271,377 15x16] col gap 0
+                  Text [271,377 15x16] "45" 12/500/16 #515F74
+              Label [57,415 230x20] row gap 12
+                Input [57,417 16x16] bg #FFFFFF, border #767676, r 2
+                Container [85,415 175x20] col gap 0
+                  Máy tính & Laptop [85,415 175x20] "Máy tính & Laptop" 14/400/20 #131B2E
+                Container [272,417 14x16] col gap 0
+                  Text [272,417 14x16] "32" 12/500/16 #515F74
+              Label [57,445 230x20] row gap 12
+                Input [57,447 16x16] bg #1D4ED8, r 2
+                Container [85,445 175x20] col gap 0
+                  Đồng hồ & Phụ kiện [85,445 175x20] "Đồng hồ & Phụ kiện" 14/400/20 #131B2E
+                Container [272,447 14x16] col gap 0
+                  Text [272,447 14x16] "28" 12/500/16 #515F74
+              Label [57,475 230x20] row gap 12
+                Input [57,477 16x16] bg #FFFFFF, border #767676, r 2
+                Container [85,475 177x20] col gap 0
+                  Máy ảnh & Ống kính [85,475 177x20] "Máy ảnh & Ống kính" 14/400/20 #131B2E
+                Container [274,477 12x16] col gap 0
+                  Text [274,477 12x16] "14" 12/500/16 #515F74
+              Label [57,505 230x20] row gap 12
+                Input [57,507 16x16] bg #FFFFFF, border #767676, r 2
+                Container [85,505 182x20] col gap 0
+                  Đồ gia dụng cao cấp [85,505 182x20] "Đồ gia dụng cao cấp" 14/400/20 #131B2E
+                Container [279,507 7x16] col gap 0
+                  Text [279,507 7x16] "9" 12/500/16 #515F74
+          Filter Group 2: Khoảng gi [57,546 230x213] col gap 8, pad 20 0 20 0, border #C4C5D7@0.60
+            Label [57,566 230x20] col gap 0
+              Khoảng giá (₫) [57,566 230x20] "Khoảng giá (₫)" 14/600/20 #131B2E
+            Container [57,594 230x68] row gap 8, pad 4 0 0 0
+              Container [57,598 111x64] col gap 4
+                Container [57,598 111x16] col gap 0
+                  Từ [57,598 111x16] "Từ" 12/400/16 #515F74
+                Input [57,618 111x44] row gap 0, pad 12, bg #FFFFFF, border #C4C5D7, r 8
+                  Container [70,631 85x17] col gap 0
+                    500.000 ₫ [70,631 85x17] "500.000 ₫" 14/400/17 #131B2E
+              Container [176,598 111x64] col gap 4
+                Container [176,598 111x16] col gap 0
+                  Đến [176,598 111x16] "Đến" 12/400/16 #515F74
+                Input [176,618 111x44] row gap 0, pad 12, bg #FFFFFF, border #C4C5D7, r 8
+                  Container [189,631 85x17] col gap 0
+                    Text [189,631 89x17] "20.000.000 ₫" 14/400/17 #131B2E
+            Container [57,670 230x16] col gap 0
+              Nhập khoảng giá bằng đồng (₫) [57,670 230x16] "Nhập khoảng giá bằng đồng (₫)" 12/400/16 #515F74
+            Button – Áp dụng giá [57,694 230x44] row gap 0, pad 12 16 10 16, bg #EAEDFF, border #C4C5D7, r 8
+              Text [131,707 81x20] "Áp dụng giá" 14/600/20 #131B2E
+          Filter Group 3: Trạng thái phiên [57,759 230x153] col gap 12, pad 20 0 20 0, border #C4C5D7@0.60
+            Label [57,779 230x20] col gap 0
+              Trạng thái phiên [57,779 230x20] "Trạng thái phiên" 14/600/20 #131B2E
+            Container [57,811 230x80] col gap 10
+              Label [57,811 230x20] row gap 12
+                Input [57,813 16x16] col gap 0, pad 0 3 0 3, bg #FFFFFF, border #1D4ED8, r 50
+                  Input:checked [60,816 9x9] bg #1D4ED8, r 50
+                Container [85,811 84x20] col gap 0
+                  Text [85,811 84x20] "Đang diễn ra" 14/400/20 #131B2E
+              Label [57,841 230x20] row gap 12
+                Input [57,843 16x16] bg #FFFFFF, border #767676, r 50
+                Container [85,841 74x20] col gap 0
+                  Text [85,841 74x20] "Sắp diễn ra" 14/400/20 #131B2E
+              Label [57,871 230x20] row gap 12
+                Input [57,873 16x16] bg #FFFFFF, border #767676, r 50
+                Container [85,871 41x20] col gap 0
+                  Text [85,871 41x20] "Tất cả" 14/400/20 #131B2E
+          Filter Group 4: Sắp xếp [57,912 230x112] col gap 8, pad 20 0 20 0
+            Label [57,932 230x20] col gap 0
+              Sắp xếp theo [57,932 230x20] "Sắp xếp theo" 14/600/20 #131B2E
+            Container [57,960 230x44] col gap 0
+              Options [57,960 230x44] row gap 0, pad 0 32 0 12, bg #FFFFFF, border #C4C5D7, r 8
+                Container [70,972 184x20] col gap 0
+                  Sắp kết thúc [70,972 184x20] "Sắp kết thúc" 14/400/20 #131B2E
+              SVG [259,974 16x16]
+          Action Footer [57,1024 230x87] col gap 12, pad 8 0 0 0
+            Button – Áp dụng bộ lọc [57,1032 230x44] row gap 8, pad 12 0 12 0, bg #1D4ED8, r 8, shadow
+              SVG [109,1045 16x16]
+              Text [133,1043 101x20] "Áp dụng bộ lọc" 14/600/20 #FFFFFF
+            Container [57,1088 230x23] col gap 0, pad 2 0 1 0
+              Link – Khôi phục mặc định [106,1090 131x20] row gap 0
+                Text [106,1090 131x20] "Khôi phục mặc định" 14/400/20 #515F74
+        Main Content Area [336,215 912x1091] col gap 24
+          Top Control Bar [336,215 912x62] row gap 80, pad 16, bg #FFFFFF, border #C4C5D7, r 8, shadow
+            Container [353,232 300x28] row gap 12
+              Heading 2 [353,232 159x28] col gap 0
+                Text [353,232 159x28] "128 phiên đấu giá" 20/600/28 #131B2E
+              Background [524,234 128x24] row gap 0, pad 4 10 4 10, bg #EAEDFF, r 9999
+                Text [534,238 108x16] "Đang hiển thị 1 - 9" 12/600/16 #515F74
+            Quick Active Filter Chips [733,232 497x28] row gap 8
+              Background+Border [733,232 196x28] row gap 6, pad 4 10 6 10, bg #DBEAFE, border #BFDBFE, r 8
+                Text [744,237 154x16] "Điện thoại & Máy tính bảng" 12/600/16 #1D4ED8
+                Button → SVG [905,238 14x14]
+              Background+Border [938,232 90x28] row gap 6, pad 4 10 6 10, bg #DBEAFE, border #BFDBFE, r 8
+                Text [949,237 48x16] "Đồng hồ" 12/600/16 #1D4ED8
+                Button → SVG [1004,238 14x14]
+              Background+Border [1037,232 193x28] row gap 6, pad 4 10 6 10, bg #DBEAFE, border #BFDBFE, r 8
+                Text [1048,237 151x16] "500.000 ₫ - 20.000.000 ₫" 12/600/16 #1D4ED8
+                Button → SVG [1206,238 14x14]
+          3-Column Grid of Auction Cards [336,301 912x907]
+            Article - Card 1: iPhone 15 Pro Max [336,301 288x441] col gap 0, bg #FFFFFF, border #C4C5D7, r 8, shadow
+              Image and Badges [337,302 286x214] col gap 0, bg #F2F3FF
+                AB6AXuBrZzQCRYcwb282X2XGDVzZPHcUoAMccWd2hhk2WojogU [337,302 286x214]
+                Container [349,314 262x26] row gap 29
+                  Countdown chip [349,314 122x26] row gap 6, pad 4 10 4 10, bg #FEF3C7, border #FDE68A, r 4, shadow
+                    SVG [360,320 14x14]
+                    Text [380,319 80x16] "Còn 02:14:35" 12/600/16 #B45309
+                  Status chip [500,314 110x26] row gap 6, pad 4 10 4 10, bg #DBEAFE, border #BFDBFE, r 4, shadow
+                    Background [511,324 6x6] bg #1D4ED8, r 9999
+                    Text [523,319 76x16] "Đang diễn ra" 12/600/16 #1D4ED8
+              Body [337,516 286x225] col gap 0, pad 16
+                Container [353,532 254x60] col gap 4
+                  Container [353,532 254x16] col gap 0
+                    MÃ PHIÊN: #AUC-9821 [353,532 254x16] "MÃ PHIÊN: #AUC-9821" 12/400/16 #515F74
+                  Heading 3 [353,552 254x40] col gap 0
+                    iPhone 15 Pro Max 256GB Titan Tự Nhiên - Chính Hãn [353,552 254x40] "iPhone 15 Pro Max 256GB Titan Tự
+Nhiên - Chính Hãng VN/A Nguyên…" 14/600/20 #131B2E
+                Price and Bid status:margin [353,592 254x133] col gap 0, pad 16 0 0 0
+                  Price and Bid status [353,608 254x117] col gap 16, pad 12 0 0 0, border #C4C5D7@0.50
+                    Container [353,621 254x44] row gap 55
+                      Container [353,621 122x44] col gap 0
+                        Container [353,621 122x16] col gap 0
+                          Text [353,621 63x16] "Giá hiện tại" 12/400/16 #515F74
+                        Text [353,637 122x28] "21.500.000 ₫" 20/600/28 #1D4ED8
+                      Container [530,645 76x20] row gap 4, pad 0 0 4 0
+                        SVG [530,646 14x14]
+                        Container [548,645 58x16] col gap 0
+                          Text [548,645 58x16] "18 lượt đặt" 12/400/16 #515F74
+                    Action buttons (min 44px) [353,681 254x44] row gap 8
+                      Button – Theo dõi [353,681 134x44] row gap 8, pad 0 12 0 12, bg #FFFFFF, border #C4C5D7, r 8
+                        SVG [378,695 16x16]
+                        Container [402,693 59x20] col gap 0
+                          Text [402,693 59x20] "Theo dõi" 14/600/20 #131B2E
+                      Button – Xem chi tiết [495,681 111x44] row gap 0, pad 12 16 12 16, bg #1D4ED8, r 8
+                        Text [511,693 79x20] "Xem chi tiết" 14/600/20 #FFFFFF
+            Article - Card 2: MacBook Pro 14 M3 [648,301 288x441] col gap 0, bg #FFFFFF, border #C4C5D7, r 8, shadow
+              Background [649,302 286x214] col gap 0, bg #F2F3FF
+                AB6AXuByvtTCHjqw5wtAIMhN8e-Du8_gYturZ6rbLDNDon4nl3 [649,302 286x214]
+                Container [661,314 262x26] row gap 29
+                  Background+Border+Shadow [661,314 122x26] row gap 6, pad 4 10 4 10, bg #FEF3C7, border #FDE68A, r 4, shadow
+                    SVG [672,320 14x14]
+                    Text [692,319 80x16] "Còn 00:45:12" 12/600/16 #B45309
+                  Background+Border+Shadow [812,314 110x26] row gap 6, pad 4 10 4 10, bg #DBEAFE, border #BFDBFE, r 4, shadow
+                    Background [823,324 6x6] bg #1D4ED8, r 9999
+                    Text [835,319 76x16] "Đang diễn ra" 12/600/16 #1D4ED8
+              Container [649,516 286x225] col gap 0, pad 16
+                Container [665,532 254x60] col gap 4
+                  Container [665,532 254x16] col gap 0
+                    MÃ PHIÊN: #AUC-9820 [665,532 254x16] "MÃ PHIÊN: #AUC-9820" 12/400/16 #515F74
+                  Heading 3 [665,552 254x40] col gap 0
+                    MacBook Pro 14 inch M3 Pro (18GB/512GB) Space Blac [665,552 254x40] "MacBook Pro 14 inch M3 Pro
+(18GB/512GB) Space Black likenew…" 14/600/20 #131B2E
+                Margin [665,592 254x133] col gap 0, pad 16 0 0 0
+                  HorizontalBorder [665,608 254x117] col gap 16, pad 12 0 0 0, border #C4C5D7@0.50
+                    Container [665,621 254x44] row gap 48
+                      Container [665,621 126x44] col gap 0
+                        Container [665,621 126x16] col gap 0
+                          Text [665,621 63x16] "Giá hiện tại" 12/400/16 #515F74
+                        Text [665,637 126x28] "38.200.000 ₫" 20/600/28 #1D4ED8
+                      Container [839,645 79x20] row gap 4, pad 0 0 4 0
+                        SVG [839,646 14x14]
+                        Container [857,645 61x16] col gap 0
+                          Text [857,645 61x16] "24 lượt đặt" 12/400/16 #515F74
+                    Container [665,681 254x44] row gap 8
+                      Button – Theo dõi [665,681 134x44] row gap 8, pad 0 12 0 12, bg #FFFFFF, border #C4C5D7, r 8
+                        SVG [690,695 16x16]
+                        Container [714,693 59x20] col gap 0
+                          Text [714,693 59x20] "Theo dõi" 14/600/20 #131B2E
+                      Button – Xem chi tiết [807,681 111x44] row gap 0, pad 12 16 12 16, bg #1D4ED8, r 8
+                        Text [823,693 79x20] "Xem chi tiết" 14/600/20 #FFFFFF
+            Article - Card 3: Seiko Presage Automatic (Sắp diễ [960,301 288x441] col gap 0, bg #FFFFFF, border #C4C5D7, r 8, shadow
+              Background [961,302 286x214] col gap 0, bg #F2F3FF
+                AB6AXuCNX1nkOLnFfKl1fQIK3HDorpcrDzbms-kU20NxrzNA2a [961,302 286x214]
+                Container [973,314 262x42] row gap 8
+                  Background+Border+Shadow [973,314 175x42] row gap 6, pad 4 21 4 10, bg #FEF3C7, border #FDE68A, r 4, shadow
+                    SVG [984,328 14x14]
+                    Text [1004,319 122x32] "Bắt đầu: 25/10/2026
+20:30" 12/600/16 #B45309
+                  Background+Border+Shadow [1156,314 78x42] row gap 0, pad 4 15 4 10, bg #FEF3C7, border #FDE68A, r 4, shadow
+                    Text [1167,319 52x32] "Sắp diễn
+ra" 12/600/16 #B45309
+              Container [961,516 286x225] col gap 0, pad 16
+                Container [977,532 254x60] col gap 4
+                  Container [977,532 254x16] col gap 0
+                    MÃ PHIÊN: #AUC-9819 [977,532 254x16] "MÃ PHIÊN: #AUC-9819" 12/400/16 #515F74
+                  Heading 3 [977,552 254x40] col gap 0
+                    Đồng hồ Nam Seiko Presage Sharp Edged Series SPB16 [977,552 254x40] "Đồng hồ Nam Seiko Presage Sharp
+Edged Series SPB167J1 Mặt Xanh" 14/600/20 #131B2E
+                Margin [977,592 254x133] col gap 0, pad 16 0 0 0
+                  HorizontalBorder [977,608 254x117] col gap 16, pad 12 0 0 0, border #C4C5D7@0.50
+                    Container [977,621 254x44] row gap 20
+                      Container [977,621 122x44] col gap 0
+                        Container [977,621 122x16] col gap 0
+                          Text [977,621 76x16] "Giá khởi điểm" 12/400/16 #515F74
+                        Text [977,637 122x28] "12.000.000 ₫" 20/600/28 #131B2E
+                      Container [1119,645 111x20] row gap 4, pad 0 0 4 0
+                        SVG [1119,646 14x14]
+                        Container [1137,645 93x16] col gap 0
+                          Text [1137,645 93x16] "Chưa có lượt đặt" 12/400/16 #515F74
+                    Container [977,681 254x44] row gap 8
+                      Button – Theo dõi [977,681 132x44] row gap 8, pad 0 12 0 12, bg #FFFFFF, border #C4C5D7, r 8
+                        SVG [1001,695 16x16]
+                        Container [1025,693 59x20] col gap 0
+                          Text [1025,693 59x20] "Theo dõi" 14/600/20 #131B2E
+                      Button – Xem chi tiết [1117,681 113x44] row gap 0, pad 10 16 12 16, bg #EAEDFF, border #C4C5D7, r 8
+                        Text [1134,693 79x20] "Xem chi tiết" 14/600/20 #131B2E
+            Article - Card 4: Sony Alpha A7 IV [336,766 288x441] col gap 0, bg #FFFFFF, border #C4C5D7, r 8, shadow
+              Background [337,767 286x214] col gap 0, bg #F2F3FF
+                AB6AXuDPHTl-2_56fuYR7yPMrPWfAVw7cUvNk7shMDbUcYAtGv [337,767 286x214]
+                Container [349,779 262x26] row gap 29
+                  Background+Border+Shadow [349,779 123x26] row gap 6, pad 4 10 4 10, bg #FEF3C7, border #FDE68A, r 4, shadow
+                    SVG [360,785 14x14]
+                    Text [380,784 81x16] "Còn 06:12:40" 12/600/16 #B45309
+                  Background+Border+Shadow [500,779 110x26] row gap 6, pad 4 10 4 10, bg #DBEAFE, border #BFDBFE, r 4, shadow
+                    Background [511,789 6x6] bg #1D4ED8, r 9999
+                    Text [523,784 76x16] "Đang diễn ra" 12/600/16 #1D4ED8
+              Container [337,982 286x225] col gap 0, pad 16
+                Container [353,998 254x60] col gap 4
+                  Container [353,998 254x16] col gap 0
+                    MÃ PHIÊN: #AUC-9818 [353,998 254x16] "MÃ PHIÊN: #AUC-9818" 12/400/16 #515F74
+                  Heading 3 [353,1018 254x40] col gap 0
+                    Máy ảnh Sony Alpha A7 Mark IV (Body) Chính Hãng Mớ [353,1018 254x40] "Máy ảnh Sony Alpha A7 Mark IV
+(Body) Chính Hãng Mới 99% 1500…" 14/600/20 #131B2E
+                Margin [353,1058 254x133] col gap 0, pad 16 0 0 0
+                  HorizontalBorder [353,1074 254x117] col gap 16, pad 12 0 0 0, border #C4C5D7@0.50
+                    Container [353,1087 254x44] row gap 51
+                      Container [353,1087 126x44] col gap 0
+                        Container [353,1087 126x16] col gap 0
+                          Text [353,1087 63x16] "Giá hiện tại" 12/400/16 #515F74
+                        Text [353,1103 126x28] "42.500.000 ₫" 20/600/28 #1D4ED8
+                      Container [530,1111 76x20] row gap 4, pad 0 0 4 0
+                        SVG [530,1112 14x14]
+                        Container [548,1111 58x16] col gap 0
+                          Text [548,1111 58x16] "31 lượt đặt" 12/400/16 #515F74
+                    Container [353,1147 254x44] row gap 8
+                      Button – Theo dõi [353,1147 134x44] row gap 8, pad 0 12 0 12, bg #FFFFFF, border #C4C5D7, r 8
+                        SVG [378,1161 16x16]
+                        Container [402,1159 59x20] col gap 0
+                          Text [402,1159 59x20] "Theo dõi" 14/600/20 #131B2E
+                      Button – Xem chi tiết [495,1147 111x44] row gap 0, pad 12 16 12 16, bg #1D4ED8, r 8
+                        Text [511,1158 79x20] "Xem chi tiết" 14/600/20 #FFFFFF
+            Article - Card 5: iPad Air 5 M1 [648,766 288x441] col gap 0, bg #FFFFFF, border #C4C5D7, r 8, shadow
+              Background [649,767 286x214] col gap 0, bg #F2F3FF
+                AB6AXuDjaS2ZPoyAcmX2pnrt6_n000OvDhHbX6W-oi_NuWbkcu [649,767 286x214]
+                Container [661,779 262x26] row gap 32
+                  Background+Border+Shadow [661,779 120x26] row gap 6, pad 4 10 4 10, bg #FEF3C7, border #FDE68A, r 4, shadow
+                    SVG [672,785 14x14]
+                    Text [692,784 78x16] "Còn 01:05:19" 12/600/16 #B45309
+                  Background+Border+Shadow [812,779 110x26] row gap 6, pad 4 10 4 10, bg #DBEAFE, border #BFDBFE, r 4, shadow
+                    Background [823,789 6x6] bg #1D4ED8, r 9999
+                    Text [835,784 76x16] "Đang diễn ra" 12/600/16 #1D4ED8
+              Container [649,982 286x225] col gap 0, pad 16
+                Container [665,998 254x60] col gap 4
+                  Container [665,998 254x16] col gap 0
+                    MÃ PHIÊN: #AUC-9817 [665,998 254x16] "MÃ PHIÊN: #AUC-9817" 12/400/16 #515F74
+                  Heading 3 [665,1018 254x40] col gap 0
+                    iPad Air 5 64GB Wifi Màu Starlight Fullbox phụ kiệ [665,1018 254x40] "iPad Air 5 64GB Wifi Màu Starlight
+Fullbox phụ kiện zin theo máy" 14/600/20 #131B2E
+                Margin [665,1058 254x133] col gap 0, pad 16 0 0 0
+                  HorizontalBorder [665,1074 254x117] col gap 16, pad 12 0 0 0, border #C4C5D7@0.50
+                    Container [665,1087 254x44] row gap 59
+                      Container [665,1087 118x44] col gap 0
+                        Container [665,1087 118x16] col gap 0
+                          Text [665,1087 63x16] "Giá hiện tại" 12/400/16 #515F74
+                        Text [665,1103 118x28] "11.800.000 ₫" 20/600/28 #1D4ED8
+                      Container [842,1111 76x20] row gap 4, pad 0 0 4 0
+                        SVG [842,1112 14x14]
+                        Container [860,1111 58x16] col gap 0
+                          Text [860,1111 58x16] "14 lượt đặt" 12/400/16 #515F74
+                    Container [665,1147 254x44] row gap 8
+                      Button – Theo dõi [665,1147 134x44] row gap 8, pad 0 12 0 12, bg #FFFFFF, border #C4C5D7, r 8
+                        SVG [690,1161 16x16]
+                        Container [714,1159 59x20] col gap 0
+                          Text [714,1159 59x20] "Theo dõi" 14/600/20 #131B2E
+                      Button – Xem chi tiết [807,1147 111x44] row gap 0, pad 12 16 12 16, bg #1D4ED8, r 8
+                        Text [823,1158 79x20] "Xem chi tiết" 14/600/20 #FFFFFF
+            Article - Card 6: Apple Watch Ultra 2 (Sắp diễn ra [960,766 288x441] col gap 0, bg #FFFFFF, border #C4C5D7, r 8, shadow
+              Background [961,767 286x214] col gap 0, bg #F2F3FF
+                AB6AXuDTTtLi_QgDtfj44uGe2ugOh2yHXGb4GxN0k9tUqO_s3o [961,767 286x214]
+                Container [973,779 262x42] row gap 8
+                  Background+Border+Shadow [973,779 175x42] row gap 6, pad 4 20 4 10, bg #FEF3C7, border #FDE68A, r 4, shadow
+                    SVG [984,793 14x14]
+                    Text [1004,784 122x32] "Bắt đầu: 26/10/2026
+09:00" 12/600/16 #B45309
+                  Background+Border+Shadow [1156,779 78x42] row gap 0, pad 4 14 4 10, bg #FEF3C7, border #FDE68A, r 4, shadow
+                    Text [1167,784 52x32] "Sắp diễn
+ra" 12/600/16 #B45309
+              Container [961,982 286x225] col gap 0, pad 16
+                Container [977,998 254x60] col gap 4
+                  Container [977,998 254x16] col gap 0
+                    MÃ PHIÊN: #AUC-9816 [977,998 254x16] "MÃ PHIÊN: #AUC-9816" 12/400/16 #515F74
+                  Heading 3 [977,1018 254x40] col gap 0
+                    Apple Watch Ultra 2 GPS + Cellular 49mm Dây Ocean  [977,1018 254x40] "Apple Watch Ultra 2 GPS + Cellular
+49mm Dây Ocean Cam nguyên seal" 14/600/20 #131B2E
+                Margin [977,1058 254x133] col gap 0, pad 16 0 0 0
+                  HorizontalBorder [977,1074 254x117] col gap 16, pad 12 0 0 0, border #C4C5D7@0.50
+                    Container [977,1087 254x44] row gap 60
+                      Container [977,1087 121x44] col gap 0
+                        Container [977,1087 121x16] col gap 0
+                          Text [977,1087 76x16] "Giá khởi điểm" 12/400/16 #515F74
+                        Text [977,1103 121x28] "16.500.000 ₫" 20/600/28 #131B2E
+                      Container [1159,1111 71x20] row gap 4, pad 0 0 4 0
+                        SVG [1159,1112 14x14]
+                        Container [1177,1111 53x16] col gap 0
+                          Text [1177,1111 53x16] "0 lượt đặt" 12/400/16 #515F74
+                    Container [977,1147 254x44] row gap 8
+                      Button – Theo dõi [977,1147 132x44] row gap 8, pad 0 12 0 12, bg #FFFFFF, border #C4C5D7, r 8
+                        SVG [1001,1161 16x16]
+                        Container [1025,1159 59x20] col gap 0
+                          Text [1025,1159 59x20] "Theo dõi" 14/600/20 #131B2E
+                      Button – Xem chi tiết [1117,1147 113x44] row gap 0, pad 10 16 12 16, bg #EAEDFF, border #C4C5D7, r 8
+                        Text [1134,1158 79x20] "Xem chi tiết" 14/600/20 #131B2E
+          Pagination Component [336,1232 912x74] row gap 249, pad 16, bg #FFFFFF, border #C4C5D7, r 8, shadow
+            Container [353,1259 243x20] col gap 0
+              Text [353,1259 243x20] "Hiển thị 1 - 9 trong tổng số 128 phiên" 14/400/20 #515F74
+            Nav [845,1249 385x40] row gap 6
+              Button Prev [845,1249 85x40] row gap 4, pad 0 12 0 12, bg #FFFFFF, border #C4C5D7, r 8
+                SVG [858,1261 16x16]
+                Container [878,1259 39x20] col gap 0
+                  Text [878,1259 39x20] "Trước" 14/600/20 #747686
+              Button - Numbers [937,1249 40x40] row gap 0, pad 10 0 10 0, bg #1D4ED8, r 8, shadow
+                Text [954,1258 5x20] "1" 14/600/20 #FFFFFF
+              Button [983,1249 40x40] row gap 0, pad 8 0 10 0, bg #FFFFFF, border #C4C5D7, r 8
+                Text [998,1258 8x20] "2" 14/600/20 #131B2E
+              Button [1029,1249 40x40] row gap 0, pad 8 0 10 0, bg #FFFFFF, border #C4C5D7, r 8
+                Text [1044,1258 8x20] "3" 14/600/20 #131B2E
+              Container [1075,1249 32x40] row gap 0
+                Text [1084,1257 13x24] "..." 16/400/24 #515F74
+              Button [1113,1249 40x40] row gap 0, pad 8 0 10 0, bg #FFFFFF, border #C4C5D7, r 8
+                Text [1126,1258 14x20] "15" 14/600/20 #131B2E
+              Button Next [1159,1249 71x40] row gap 4, pad 0 12 0 12, bg #FFFFFF, border #C4C5D7, r 8
+                Container [1172,1259 25x20] col gap 0
+                  Text [1172,1259 25x20] "Sau" 14/600/20 #131B2E
+                SVG [1202,1261 16x16]
+  Footer [0,1338 1280x85] col gap 0, pad 32, bg #FFFFFF, border #C4C5D7
+    Container [32,1371 1216x20] row gap 281
+      Container [32,1371 397x20] col gap 0
+        © 2026 Sàn đấu giá trực tuyến OmniBid. Bảo lưu mọi [32,1371 397x20] "© 2026 Sàn đấu giá trực tuyến OmniBid. Bảo lưu mọi quyền." 14/400/20 #434655
+      Container [715,1371 532x20] row gap 24
+        Link – Điều khoản dịch vụ [715,1371 126x20] col gap 0
+          Text [715,1371 126x20] "Điều khoản dịch vụ" 14/400/20 #434655
+        Link – Quy chế vận hành [865,1371 119x20] col gap 0
+          Text [865,1371 119x20] "Quy chế vận hành" 14/400/20 #434655
+        Link – Bảo mật thông tin [1009,1371 116x20] col gap 0
+          Text [1009,1371 116x20] "Bảo mật thông tin" 14/400/20 #434655
+        Link – Hỗ trợ kỹ thuật [1150,1371 97x20] col gap 0
+          Text [1150,1371 97x20] "Hỗ trợ kỹ thuật" 14/400/20 #434655
+  Header [0,0 1280x65] col gap 0, pad 0 32 0 32, bg #FFFFFF, border #E2E8F0
+    Container [32,0 1216x64] row gap 64
+      Container [32,0 373x64] row gap 32
+        Logo [32,16 126x32] row gap 8
+          Container [32,20 21x22] col gap 0
+          Container [61,16 97x32] col gap 0
+            OmniBid [61,16 97x32] "OmniBid" 24/700/32 #1E293B
+        Nav [190,0 215x64] row gap 0
+          Nav – Trang chủ [190,17 91x30] row gap 0, pad 4 12 4 12
+            Text [202,21 67x20] "Trang chủ" 14/500/20 #475569
+          Link:margin [281,17 124x30] col gap 0, pad 0 0 0 4
+            Nav – Phiên đấu giá [285,17 120x30] row gap 0, pad 4 12 4 12, border #1D4ED8
+              Text [297,21 96x20] "Phiên đấu giá" 14/700/20 #1D4ED8
+      Margin [469,13 496x38] col gap 0, pad 0 24 0 24
+        Container [493,13 448x38] col gap 0
+          Input [493,13 448x38] row gap 0, pad 9 16 10 40, bg #F8FAFC, border #CBD5E1, r 8
+            Container [534,23 390x17] col gap 0
+              Tìm kiếm phiên đấu giá... [534,23 390x17] "Tìm kiếm phiên đấu giá..." 14/400/17 #94A3B8
+          Container [493,13 28x38] row gap 0, pad 0 0 0 12
+            SVG [505,24 16x16]
+      Container [1029,13 205x38] row gap 12
+        Button – Đăng ký [1029,13 89x38] col gap 0, pad 8 16 8 16, border #CBD5E1, r 8
+          Text [1046,22 55x20] "Đăng ký" 14/500/20 #334155
+        Button – Đăng nhập [1130,14 104x36] col gap 0, pad 8 16 8 16, bg #1D4ED8, r 8, shadow
+          Text [1146,22 72x20] "Đăng nhập" 14/500/20 #FFFFFF
