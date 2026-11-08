@@ -25,3 +25,4 @@ export interface NotificationWsData {
   createdAt: string;
   unreadCount?: number;
 }
+

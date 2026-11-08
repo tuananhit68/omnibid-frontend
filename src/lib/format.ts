@@ -66,6 +66,22 @@ export function formatDateTime(
   value: string | Date | null | undefined,
   template = "DD/MM/YYYY HH:mm"
 ): string {
+  if (!value) return "--";
+
+  if (typeof value === "string") {
+    // Phân tích chuỗi ISO của backend mà không gọi new Date() để an toàn cho SSR / prerender
+    const match = value.match(
+      /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2}))?)?/
+    );
+    if (match) {
+      const [, y, m, d, hh = "00", mm = "00"] = match;
+      if (template === "DD/MM/YYYY HH:mm") return `${d}/${m}/${y} ${hh}:${mm}`;
+      if (template === "DD/MM HH:mm") return `${d}/${m} ${hh}:${mm}`;
+      if (template === "DD/MM/YYYY") return `${d}/${m}/${y}`;
+      if (template === "HH:mm") return `${hh}:${mm}`;
+    }
+  }
+
   const d = parseBackendDateTime(value);
   if (!d || !d.isValid()) return "--";
   return d.format(template);
@@ -217,3 +233,4 @@ export function formatDisplayCode(prefix: string, id: string | number): string {
 }
 
 export { dayjs };
+

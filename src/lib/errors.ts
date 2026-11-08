@@ -123,3 +123,4 @@ export function extractApiError(error: unknown): {
     message: getErrorMessage("INTERNAL_ERROR"),
   };
 }
+

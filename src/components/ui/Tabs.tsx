@@ -181,3 +181,4 @@ export function TabContent({ value, children, className }: TabContentProps) {
     </div>
   );
 }
+

@@ -73,3 +73,4 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(
 );
 
 StatCard.displayName = "StatCard";
+

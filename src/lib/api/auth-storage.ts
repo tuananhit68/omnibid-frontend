@@ -51,3 +51,4 @@ export function clearAuthSession(): void {
   removeCookie(COOKIE_TOKEN);
   removeCookie(COOKIE_ROLE);
 }
+

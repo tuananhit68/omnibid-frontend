@@ -63,3 +63,4 @@ export function subscribeWsStatus(listener: (connected: boolean) => void): () =>
     listeners.delete(listener);
   };
 }
+

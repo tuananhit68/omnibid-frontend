@@ -59,3 +59,4 @@ export function AuthLayout({
     </div>
   );
 }
+

@@ -32,3 +32,4 @@ export interface AuthResponse {
   fullName: string;
   role: "USER" | "ADMIN";
 }
+

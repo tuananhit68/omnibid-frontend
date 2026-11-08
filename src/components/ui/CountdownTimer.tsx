@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore, useRef, useEffect, useCallback } from "react";
 import { cn } from "@/lib/cn";
 import {
   calculateCountdown,
@@ -15,31 +15,53 @@ export interface CountdownTimerProps {
   className?: string;
 }
 
+const defaultCountdown: CountdownInfo = {
+  hours: "00",
+  minutes: "00",
+  seconds: "00",
+  totalSeconds: 0,
+  formatted: "00:00:00",
+  isLessThanFiveMinutes: false,
+  isZero: false,
+};
+
 export function CountdownTimer({
   endTime,
   serverOffsetMs = 0,
   onExpire,
   className,
 }: CountdownTimerProps) {
-  const [countdown, setCountdown] = useState<CountdownInfo>(() =>
-    calculateCountdown(endTime, serverOffsetMs)
+  const onExpireRef = useRef(onExpire);
+  useEffect(() => {
+    onExpireRef.current = onExpire;
+  }, [onExpire]);
+
+  const subscribe = useCallback((callback: () => void) => {
+    const interval = setInterval(callback, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const getSnapshot = useCallback(() => {
+    return calculateCountdown(endTime, serverOffsetMs);
+  }, [endTime, serverOffsetMs]);
+
+  const getServerSnapshot = useCallback(() => {
+    return defaultCountdown;
+  }, []);
+
+  const countdown = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot
   );
 
+  const hasTriggeredRef = useRef(false);
   useEffect(() => {
-    let hasTriggeredExpire = false;
-
-    const interval = setInterval(() => {
-      const current = calculateCountdown(endTime, serverOffsetMs);
-      setCountdown(current);
-
-      if (current.isZero && !hasTriggeredExpire) {
-        hasTriggeredExpire = true;
-        onExpire?.();
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [endTime, serverOffsetMs, onExpire]);
+    if (countdown.isZero && !hasTriggeredRef.current) {
+      hasTriggeredRef.current = true;
+      onExpireRef.current?.();
+    }
+  }, [countdown.isZero]);
 
   const formattedEnd = formatDateTime(endTime, "DD/MM/YYYY HH:mm");
   const isUrgent = countdown.isLessThanFiveMinutes;
