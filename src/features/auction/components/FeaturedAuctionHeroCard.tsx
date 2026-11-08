@@ -65,7 +65,7 @@ export function FeaturedAuctionHeroCard({
         <div className="mt-4 p-4 bg-surface-subtle rounded-lg border border-border-brand/60 grid grid-cols-2 gap-3 text-small">
           <div>
             <span className="label block text-text-tertiary">Giá hiện tại</span>
-            <span className="text-[20px] leading-[28px] font-bold text-primary-700 tabular block mt-0.5">
+            <span className="text-price-lg font-bold text-primary-700 tabular block mt-0.5">
               {formatMoney(auction.currentPrice)}
             </span>
           </div>
