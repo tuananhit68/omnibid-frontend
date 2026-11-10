@@ -32,3 +32,4 @@ export interface MyBidsParams {
   page?: number;
   size?: number;
 }
+

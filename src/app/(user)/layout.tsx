@@ -8,3 +8,4 @@ export default function UserGroupLayout({
 }) {
   return <PublicLayout>{children}</PublicLayout>;
 }
+

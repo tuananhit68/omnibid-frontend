@@ -67,3 +67,4 @@ export function MyBidMobileCard({ row }: MyBidMobileCardProps) {
     </article>
   );
 }
+

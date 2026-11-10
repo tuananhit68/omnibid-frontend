@@ -29,3 +29,4 @@ export async function getMyBids(
 export async function getMyBidsSummary(): Promise<MyBidsSummary> {
   return apiClient.get<unknown, MyBidsSummary>("/bids/mine/summary");
 }
+

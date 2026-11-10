@@ -133,7 +133,7 @@ Màu: bắt buộc dùng đúng token ở cột giữa.
 
 ## API
 
-- `GET /bids/mine?status&auctionStatus&q&page&size (mỗi phiên một dòng)`
+- `GET /bids/mine?status&auctionStatus&q&page&size (mỗi phiên một dòng; auctionStatus nhiều giá trị; không có sort)`
 - `GET /bids/mine/summary (hàng KPI)`
 
 Body, DTO, mã lỗi chi tiết ở `design/backend-contract.md` – **file đó thắng mục này**.
@@ -152,7 +152,7 @@ Body, DTO, mã lỗi chi tiết ở `design/backend-contract.md` – **file đó
 
 ## Chỗ lệch Figma ↔ backend
 
-Áp dụng cách xử lý mặc định trong `design/gaps.md` cho: **G18**. Không vẽ dữ liệu giả cho các phần đã ẩn.
+Áp dụng cách xử lý mặc định trong `design/gaps.md` cho: **G18**, **G22**. Không vẽ dữ liệu giả cho các phần đã ẩn.
 
 ## Accessibility
 

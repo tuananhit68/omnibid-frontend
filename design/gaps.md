@@ -31,6 +31,7 @@ Quy tắc chung: **backend là chuẩn nghiệp vụ, Figma là chuẩn giao di�
 | G19 | S19 | Bộ chọn "Hôm nay / 7 ngày / 30 ngày / Tuỳ chọn", biểu đồ lượt đặt giá 7 ngày | Phụ thuộc `/admin/statistics` | Truyền `range` nếu API hỗ trợ; nếu không thì hiện 1 khoảng cố định và ẩn bộ chọn |
 | G20 | S12 | "Đơn vị: Vận chuyển mô phỏng", SĐT che `0908 ••• 419` | Có `carrier_name`, `phone_number` | Giữ nguyên, che 3 số giữa ở frontend |
 | G21 | S18 | Dropdown "Chuyển trạng thái tiếp theo" | Chỉ có đúng 1 trạng thái kế tiếp hợp lệ | Thay dropdown bằng nhãn cố định "Trạng thái tiếp theo: Đã lấy hàng" + nút xác nhận (tránh chọn sai thứ tự) |
+| G22 | S06 | Select "Thời gian: Mới nhất"; chip tình trạng ("Mới 100%", "Like New 99%"); lý do vô hiệu khi hover (i) | `GET /bids/mine` không có `sort` (luôn mới nhất trước), có `status`; `MyBidResponse` không có `productCondition`, không có lý do vô hiệu | Thay select bằng **lọc trạng thái lượt đặt**: Tất cả trạng thái · Dẫn đầu · Bị vượt · Đã thắng · Không thắng · Bị vô hiệu (truyền `status`). Ẩn chip tình trạng. `INVALIDATED`: icon (i) có tooltip mở được bằng hover và focus, câu chung "Lượt đặt này đã bị hệ thống vô hiệu và không được tính vào kết quả phiên."; dòng phụ hiện "n lượt đặt" từ `myBidCount` |
 
 ## 2. Màn hình còn thiếu trong Figma
 

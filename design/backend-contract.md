@@ -76,7 +76,7 @@ Tin trên kênh cá nhân: `NotificationResponse` (`id, type, title, content, re
 | S02, S05, S17 | `GET /auctions/{id}` | | `AuctionDetailResponse` (mục 2.6) |
 | S02, S05, S17 | `GET /auctions/{id}/bids` | `limit?` (1–100) | Mảng bid, giá giảm dần. Không truyền `limit` → toàn bộ |
 | S05 | `POST /bids` | `{ auctionId, amount }` | 201 → `BidResponse`. `BID_TOO_LOW` (409, `data.minNextBid`), `ALREADY_LEADING` (409), `SELF_BID_NOT_ALLOWED` (422), `AUCTION_NOT_ACTIVE` (409), `ACCOUNT_BANNED` (403) |
-| S06 | `GET /bids/mine` | `status?` (BidStatus của lượt cao nhất của tôi), `auctionStatus?`, `q?`, `page`, `size` | `PageResponse<MyBidResponse>`, **mỗi phiên một dòng** (mục 2.6), sắp `myLastBidAt` giảm dần |
+| S06 | `GET /bids/mine` | `status?` (BidStatus của lượt cao nhất của tôi, một giá trị), `auctionStatus?` (nhiều giá trị, phẩy – vd `ENDED,UNSOLD,CANCELLED`), `q?`, `page`, `size` | `PageResponse<MyBidResponse>`, **mỗi phiên một dòng** (mục 2.6). **Không có `sort`**: luôn sắp `myLastBidAt` giảm dần. Tab S06: Tất cả = không truyền · Đang diễn ra = `ACTIVE` · Đã kết thúc = `ENDED,UNSOLD,CANCELLED` |
 | S06 | `GET /bids/mine/summary` | | `{ totalAuctions, totalBids, leading, outbid, won }` |
 | S07, S00–S02 | `POST /watchlist/{auctionId}` | | 201 (200 nếu đã theo dõi) `{ auctionId, watchedAt }`. `SELF_WATCH_NOT_ALLOWED` (422), 404 |
 | S07 | `DELETE /watchlist/{auctionId}` | | 200 (kể cả khi chưa theo dõi) |
@@ -143,7 +143,7 @@ Tin trên kênh cá nhân: `NotificationResponse` (`id, type, title, content, re
 | `minNextBid` | Backend tính, dùng chung với kiểm tra `BID_TOO_LOW`; null khi phiên không ACTIVE/SCHEDULED |
 | `ProductSummaryResponse` | `id, title, categoryId, categoryName, condition, status, primaryImageUrl, imageCount, activeAuctionId, activeAuctionStatus, createdAt, updatedAt` |
 | `ProductDetailResponse` | Summary + `description, images[{ id, url, isPrimary, createdAt }], hiddenReason` |
-| `MyBidResponse` | `auctionId, productTitle, primaryImageUrl, categoryName, auctionStatus, currentPrice, endTime, closedAt, myHighestBid, myBidCount, myLastBidAt, myStatus, isLeading, orderId` |
+| `MyBidResponse` | `auctionId, productTitle, primaryImageUrl, categoryName, auctionStatus, currentPrice, endTime, closedAt, myHighestBid, myBidCount, myLastBidAt, myStatus, isLeading, orderId`. **Không có** `productCondition` và lý do vô hiệu – xem `gaps.md` G22 |
 
 ## 3. Ẩn/hiện nút trong đơn hàng: dùng `allowedActions`
 
