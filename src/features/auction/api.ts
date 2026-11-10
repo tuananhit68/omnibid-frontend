@@ -5,6 +5,8 @@ import type {
   AuctionListParams,
   BidItem,
   CategoryItem,
+  CreateReportRequest,
+  PlaceBidRequest,
 } from "./types";
 
 /**
@@ -83,4 +85,20 @@ export async function getAuctionBids(
   return apiClient.get<unknown, BidItem[]>(`/auctions/${id}/bids`, {
     params: limit !== undefined ? { limit } : undefined,
   });
+}
+
+/**
+ * Đặt giá vào phiên đang ACTIVE
+ * Endpoint: POST /api/v1/bids
+ */
+export async function placeBid(body: PlaceBidRequest): Promise<BidItem> {
+  return apiClient.post<unknown, BidItem>("/bids", body);
+}
+
+/**
+ * Gửi báo cáo vi phạm hoặc khiếu nại
+ * Endpoint: POST /api/v1/reports
+ */
+export async function createReport(body: CreateReportRequest): Promise<unknown> {
+  return apiClient.post("/reports", body);
 }

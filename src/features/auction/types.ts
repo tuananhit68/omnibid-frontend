@@ -90,3 +90,16 @@ export interface CategoryItem {
   iconUrl?: string | null;
   auctionCount?: number;
 }
+
+export interface PlaceBidRequest {
+  auctionId: number;
+  amount: number;
+}
+
+export interface CreateReportRequest {
+  reportType: "VIOLATION" | "COMPLAINT";
+  reportedUserId?: number;
+  reportedProductId?: number;
+  orderId?: number;
+  reason: string;
+}

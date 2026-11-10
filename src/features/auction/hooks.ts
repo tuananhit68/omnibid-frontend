@@ -17,6 +17,8 @@ import {
   getCategories,
   watchAuction,
   unwatchAuction,
+  placeBid,
+  createReport,
 } from "./api";
 import type {
   AuctionDetail,
@@ -24,6 +26,8 @@ import type {
   AuctionListParams,
   BidItem,
   BidPlacedWsPayload,
+  CreateReportRequest,
+  PlaceBidRequest,
 } from "./types";
 
 export const auctionKeys = {
@@ -53,6 +57,8 @@ export function useAuctionDetail(
     queryKey: auctionKeys.detail(id),
     queryFn: () => getAuctionDetail(id),
     initialData: initialData ?? undefined,
+    // Refetch on mount để khi đã đăng nhập lấy được isWatched thật thay vì giá trị guest SSR
+    refetchOnMount: "always",
     enabled: Boolean(id),
   });
 }
@@ -104,6 +110,28 @@ export function useToggleWatchlist() {
       queryClient.invalidateQueries({ queryKey: auctionKeys.all });
       queryClient.invalidateQueries({ queryKey: ["watchlist"] });
     },
+  });
+}
+
+export function usePlaceBid() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: PlaceBidRequest) => placeBid(body),
+    onSuccess: (_bid, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: auctionKeys.detail(variables.auctionId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["auctions", "bids", variables.auctionId],
+      });
+    },
+  });
+}
+
+export function useCreateReport() {
+  return useMutation({
+    mutationFn: (body: CreateReportRequest) => createReport(body),
   });
 }
 
