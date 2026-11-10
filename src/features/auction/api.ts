@@ -1,5 +1,11 @@
 import { apiClient, type Page } from "@/lib/api";
-import type { AuctionItem, AuctionListParams, CategoryItem } from "./types";
+import type {
+  AuctionDetail,
+  AuctionItem,
+  AuctionListParams,
+  BidItem,
+  CategoryItem,
+} from "./types";
 
 /**
  * Lấy danh sách phiên đấu giá từ backend
@@ -56,4 +62,25 @@ export async function watchAuction(
  */
 export async function unwatchAuction(auctionId: number): Promise<void> {
   await apiClient.delete(`/watchlist/${auctionId}`);
+}
+
+/**
+ * Lấy chi tiết phiên đấu giá
+ * Endpoint: GET /api/v1/auctions/{id}
+ */
+export async function getAuctionDetail(id: number): Promise<AuctionDetail> {
+  return apiClient.get<unknown, AuctionDetail>(`/auctions/${id}`);
+}
+
+/**
+ * Lấy lịch sử đặt giá của phiên
+ * Endpoint: GET /api/v1/auctions/{id}/bids
+ */
+export async function getAuctionBids(
+  id: number,
+  limit?: number
+): Promise<BidItem[]> {
+  return apiClient.get<unknown, BidItem[]>(`/auctions/${id}/bids`, {
+    params: limit !== undefined ? { limit } : undefined,
+  });
 }
