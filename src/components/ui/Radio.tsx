@@ -52,12 +52,12 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
             <div
               className={cn(
                 "size-4.5 rounded-full border border-border-strong bg-surface transition-colors flex items-center justify-center",
-                "peer-checked:border-primary-600 peer-checked:bg-surface",
+                "peer-checked:border-primary-600 peer-checked:bg-surface peer-checked:[&>div]:opacity-100",
                 "peer-focus-visible:ring-2 peer-focus-visible:ring-focus/30 peer-focus-visible:ring-offset-2",
                 error && "border-danger"
               )}
             >
-              <div className="size-2 rounded-full bg-primary-600 opacity-0 peer-checked:opacity-100 transition-opacity" />
+              <div className="size-2 rounded-full bg-primary-600 opacity-0 transition-opacity" />
             </div>
           </div>
 

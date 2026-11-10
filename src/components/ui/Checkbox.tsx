@@ -53,12 +53,12 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             <div
               className={cn(
                 "size-4.5 rounded-[4px] border border-border-strong bg-surface transition-colors flex items-center justify-center",
-                "peer-checked:bg-primary-600 peer-checked:border-primary-600 peer-checked:text-text-inverse",
+                "peer-checked:bg-primary-600 peer-checked:border-primary-600 peer-checked:text-text-inverse peer-checked:[&>svg]:opacity-100",
                 "peer-focus-visible:ring-2 peer-focus-visible:ring-focus/30 peer-focus-visible:ring-offset-2",
                 error && "border-danger"
               )}
             >
-              <CheckIcon className="size-3.5 stroke-[2.5] opacity-0 peer-checked:opacity-100 transition-opacity text-white" />
+              <CheckIcon className="size-3.5 stroke-[2.5] opacity-0 transition-opacity text-white" />
             </div>
           </div>
 
