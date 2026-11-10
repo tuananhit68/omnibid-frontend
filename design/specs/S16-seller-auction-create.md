@@ -107,9 +107,10 @@ Màu: bắt buộc dùng đúng token ở cột giữa.
 ## API
 
 - `POST /auctions { productId, startPrice, bidIncrement, reservePrice?, startTime, endTime }`
-- `⛔ B1 chọn sản phẩm AVAILABLE – chưa có API, tạm nhập productId hoặc mock`
+- `GET /products/mine?status=AVAILABLE (đổi sản phẩm)`
+- `Lỗi mới: PRODUCT_IMAGE_REQUIRED`
 
-Đối chiếu từ code backend ngày 08/11/2026. Body, DTO, mã lỗi chi tiết và bảng endpoint chưa có (⛔ B…) ở `design/backend-contract.md` – **file đó thắng mục này**.
+Body, DTO, mã lỗi chi tiết ở `design/backend-contract.md` – **file đó thắng mục này**.
 
 ## Trạng thái và tương tác
 

@@ -108,7 +108,7 @@ Màu: bắt buộc dùng đúng token ở cột giữa.
 - `GET /admin/products?status&sellerId&categoryId&page&size`
 - `PATCH /admin/products/{id} { status: HIDDEN, reason }`
 
-Đối chiếu từ code backend ngày 08/11/2026. Body, DTO, mã lỗi chi tiết và bảng endpoint chưa có (⛔ B…) ở `design/backend-contract.md` – **file đó thắng mục này**.
+Body, DTO, mã lỗi chi tiết ở `design/backend-contract.md` – **file đó thắng mục này**.
 
 ## Trạng thái và tương tác
 

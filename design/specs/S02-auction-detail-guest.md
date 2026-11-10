@@ -100,12 +100,12 @@ Màu: bắt buộc dùng đúng token ở cột giữa.
 
 ## API
 
-- `GET /auctions/{id}`
-- `GET /auctions/{id}/bids (mảng đầy đủ, cắt 5 dòng)`
+- `GET /auctions/{id} → AuctionDetailResponse (ảnh, mô tả, danh mục, tình trạng, reserveStatus, minNextBid, serverTime, isWatched)`
+- `GET /auctions/{id}/bids?limit=5`
 - `WS /ws-auction → /topic/auction/{id} (khách vẫn xem realtime)`
-- `⛔ B4 ảnh, mô tả, danh mục, tình trạng, giá sàn – chưa có trong AuctionResponse`
+- `POST/DELETE /watchlist/{auctionId}`
 
-Đối chiếu từ code backend ngày 08/11/2026. Body, DTO, mã lỗi chi tiết và bảng endpoint chưa có (⛔ B…) ở `design/backend-contract.md` – **file đó thắng mục này**.
+Body, DTO, mã lỗi chi tiết ở `design/backend-contract.md` – **file đó thắng mục này**.
 
 ## Trạng thái và tương tác
 

@@ -19,4 +19,3 @@ Tạo nhánh `feature/phase-0-foundation` theo `AGENTS.md` mục 7. Làm lần l
 10. **Trang `/dev/ui`**: hiển thị mọi component, variant, state; 4 layout với nội dung giả.
 
 Xong khi: `/dev/ui` hiển thị đầy đủ, đi được bằng bàn phím, đúng ở 375/768/1280px, `npm run build` pass. Chưa làm trang nghiệp vụ nào.
-

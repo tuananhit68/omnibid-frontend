@@ -114,10 +114,10 @@ Màu: bắt buộc dùng đúng token ở cột giữa.
 - `GET /auctions/{id}/bids`
 - `POST /bids { auctionId, amount } → 201 BidResponse (lỗi BID_TOO_LOW có data.minNextBid)`
 - `WS /ws-auction → /topic/auction/{id}: BID_PLACED (BidResponse), AUCTION_UPDATED (AuctionResponse)`
-- `⛔ B4 minNextBid, ảnh, giá sàn chưa có – minNextBid tự tính để gợi ý`
+- `minNextBid, reserveStatus lấy từ dữ liệu phiên và tin BID_PLACED – không tự tính`
 - `POST /reports (VIOLATION, reportedProductId) từ nút báo cáo`
 
-Đối chiếu từ code backend ngày 08/11/2026. Body, DTO, mã lỗi chi tiết và bảng endpoint chưa có (⛔ B…) ở `design/backend-contract.md` – **file đó thắng mục này**.
+Body, DTO, mã lỗi chi tiết ở `design/backend-contract.md` – **file đó thắng mục này**.
 
 ## Trạng thái và tương tác
 

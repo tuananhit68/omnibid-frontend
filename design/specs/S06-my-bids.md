@@ -133,9 +133,10 @@ Màu: bắt buộc dùng đúng token ở cột giữa.
 
 ## API
 
-- `⛔ B7 lượt đặt giá của tôi – backend chưa có; ẩn mục menu, làm giao diện với mock`
+- `GET /bids/mine?status&auctionStatus&q&page&size (mỗi phiên một dòng)`
+- `GET /bids/mine/summary (hàng KPI)`
 
-Đối chiếu từ code backend ngày 08/11/2026. Body, DTO, mã lỗi chi tiết và bảng endpoint chưa có (⛔ B…) ở `design/backend-contract.md` – **file đó thắng mục này**.
+Body, DTO, mã lỗi chi tiết ở `design/backend-contract.md` – **file đó thắng mục này**.
 
 ## Trạng thái và tương tác
 

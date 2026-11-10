@@ -135,10 +135,12 @@ Màu: bắt buộc dùng đúng token ở cột giữa.
 
 ## API
 
-- `⛔ B6 watchlist – backend chưa có; làm giao diện với mock`
+- `GET /watchlist?status&page&size`
+- `GET /watchlist/summary (hàng KPI)`
+- `DELETE /watchlist/{auctionId} (nút tim)`
 - `WS /topic/auction/{id} cho các phiên ACTIVE đang hiển thị (tối đa số thẻ trên trang)`
 
-Đối chiếu từ code backend ngày 08/11/2026. Body, DTO, mã lỗi chi tiết và bảng endpoint chưa có (⛔ B…) ở `design/backend-contract.md` – **file đó thắng mục này**.
+Body, DTO, mã lỗi chi tiết ở `design/backend-contract.md` – **file đó thắng mục này**.
 
 ## Trạng thái và tương tác
 

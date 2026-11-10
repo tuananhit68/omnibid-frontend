@@ -132,7 +132,7 @@ Màu: bắt buộc dùng đúng token ở cột giữa.
 - `POST /admin/orders/{id}/cancel { reason }`
 - `GET /orders/{id} + /payments + /shipment (trang chi tiết dùng lại S18 ở chế độ admin)`
 
-Đối chiếu từ code backend ngày 08/11/2026. Body, DTO, mã lỗi chi tiết và bảng endpoint chưa có (⛔ B…) ở `design/backend-contract.md` – **file đó thắng mục này**.
+Body, DTO, mã lỗi chi tiết ở `design/backend-contract.md` – **file đó thắng mục này**.
 
 ## Trạng thái và tương tác
 
