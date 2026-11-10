@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
@@ -11,7 +11,7 @@ import {
   maskName,
   parseBackendDateTime,
 } from "@/lib/format";
-import { ApiError, getStoredUser } from "@/lib/api";
+import { ApiError, type AuthResponse } from "@/lib/api";
 import { getErrorMessage } from "@/lib/errors";
 import { useWsConnectionStatus } from "@/lib/ws";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
@@ -24,6 +24,8 @@ import { Tabs, TabList, TabTrigger, TabContent } from "@/components/ui/Tabs";
 import { useToast } from "@/components/ui/Toast";
 import {
   AlertCircleIcon,
+  ArrowRightIcon,
+  CheckCircleIcon,
   FileTextIcon,
   FlagIcon,
   HeartIcon,
@@ -45,6 +47,8 @@ import { ImageGallery } from "./ImageGallery";
 import { PricePanel } from "./PricePanel";
 import { BidHistoryTable } from "./BidHistoryTable";
 import { SellerSummaryCard } from "./SellerSummaryCard";
+import { BidForm } from "./BidForm";
+import { ReportViolationModal } from "./ReportViolationModal";
 
 export interface AuctionDetailClientProps {
   auctionId: number;
@@ -55,6 +59,22 @@ export interface AuctionDetailClientProps {
 interface ParsedDescription {
   specs: { label: string; value: string }[];
   notes: string[];
+}
+
+function subscribeStorage(callback: () => void) {
+  window.addEventListener("storage", callback);
+  return () => window.removeEventListener("storage", callback);
+}
+
+function getClientRawUser(): string | null {
+  return (
+    localStorage.getItem("omnibid_user") ||
+    sessionStorage.getItem("omnibid_user")
+  );
+}
+
+function getServerRawUser(): string | null {
+  return null;
 }
 
 function parseProductDescription(raw?: string): ParsedDescription {
@@ -93,8 +113,28 @@ export function AuctionDetailClient({
 }: AuctionDetailClientProps) {
   const router = useRouter();
   const toast = useToast();
+
+  const rawUser = useSyncExternalStore(
+    subscribeStorage,
+    getClientRawUser,
+    getServerRawUser
+  );
+  const currentUser = useMemo<AuthResponse | null>(() => {
+    if (!rawUser) return null;
+    try {
+      return JSON.parse(rawUser) as AuthResponse;
+    } catch {
+      return null;
+    }
+  }, [rawUser]);
+
   const [priceFlash, setPriceFlash] = useState(false);
   const [serverOffsetMs, setServerOffsetMs] = useState(0);
+  const [countdownExpired, setCountdownExpired] = useState(false);
+  const [showAllBids, setShowAllBids] = useState(false);
+  const [userSelectedTab, setUserSelectedTab] = useState<string | null>(null);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const expireRefetchRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -114,7 +154,11 @@ export function AuctionDetailClient({
     isError: bidsError,
     error: bidsErrObj,
     refetch: refetchBids,
-  } = useAuctionBids(auctionId, 5, initialBids);
+  } = useAuctionBids(
+    auctionId,
+    showAllBids ? undefined : 5,
+    showAllBids ? undefined : initialBids
+  );
 
   const triggerPriceFlash = () => {
     setPriceFlash(false);
@@ -147,6 +191,7 @@ export function AuctionDetailClient({
   const toggleWatchMutation = useToggleWatchlist();
 
   const handleCountdownExpire = () => {
+    setCountdownExpired(true);
     if (expireRefetchRef.current) clearTimeout(expireRefetchRef.current);
     expireRefetchRef.current = setTimeout(() => {
       refetchDetail();
@@ -155,22 +200,22 @@ export function AuctionDetailClient({
   };
 
   const handleGuestActionRedirect = () => {
-    router.push(`/login?redirect=${encodeURIComponent(`/auctions/${auctionId}`)}`);
+    router.push(
+      `/login?redirect=${encodeURIComponent(`/auctions/${auctionId}`)}`
+    );
   };
 
   const handleReportClick = () => {
-    const user = getStoredUser();
-    if (!user) {
+    if (!currentUser) {
       handleGuestActionRedirect();
       return;
     }
-    toast.info("Tính năng gửi báo cáo vi phạm sẽ sẵn sàng ở màn hình S13.");
+    setReportModalOpen(true);
   };
 
   const handleToggleWatch = () => {
     if (!auction) return;
-    const user = getStoredUser();
-    if (!user) {
+    if (!currentUser) {
       handleGuestActionRedirect();
       return;
     }
@@ -251,9 +296,24 @@ export function AuctionDetailClient({
     : null;
 
   const isWatched = Boolean(auction.isWatched);
-  const canBidPhase =
+  const isOwner = Boolean(currentUser && currentUser.userId === auction.sellerId);
+  const isAlreadyLeading = Boolean(
+    currentUser &&
+      auction.status === AuctionStatus.ACTIVE &&
+      currentUser.userId === auction.highestBidderId
+  );
+  const isEligibleBidder = Boolean(
+    currentUser &&
+      !isOwner &&
+      !isAlreadyLeading &&
+      auction.status === AuctionStatus.ACTIVE &&
+      !countdownExpired
+  );
+  const canGuestBidPhase =
     auction.status === AuctionStatus.ACTIVE ||
     auction.status === AuctionStatus.SCHEDULED;
+
+  const activeTab = userSelectedTab ?? (currentUser ? "history" : "description");
 
   const breadcrumbItems = [
     { label: "Trang chủ", href: "/" },
@@ -279,7 +339,7 @@ export function AuctionDetailClient({
       : undefined;
 
   return (
-    <div className="space-y-6">
+    <div className={cn("space-y-6", isEligibleBidder && "pb-24 lg:pb-0")}>
       {/* Banner mất kết nối WebSocket quá 3s */}
       {reconnecting && (
         <div
@@ -298,18 +358,20 @@ export function AuctionDetailClient({
             className="[&_ol]:flex-nowrap [&_li:last-child]:min-w-0 [&_li:last-child>span]:truncate [&_li:last-child>span]:block"
           />
         </div>
-        <Button
-          variant="tertiary"
-          size="md"
-          leftIcon={<FlagIcon className="size-4" />}
-          onClick={handleReportClick}
-          className="self-start sm:self-auto shrink-0"
-        >
-          Báo cáo phiên này
-        </Button>
+        {!isOwner && (
+          <Button
+            variant="tertiary"
+            size="md"
+            leftIcon={<FlagIcon className="size-4" />}
+            onClick={handleReportClick}
+            className="self-start sm:self-auto shrink-0"
+          >
+            Báo cáo phiên này
+          </Button>
+        )}
       </div>
 
-      {/* 2. Lưới 2 cột 8/4 (trái Gallery + Seller, phải Giá + CTA) */}
+      {/* 2. Lưới 2 cột 8/4 (trái Gallery + Seller, phải Giá + CTA/BidForm) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Cột trái */}
         <div className="lg:col-span-7 space-y-4">
@@ -413,52 +475,136 @@ export function AuctionDetailClient({
             {/* Khối giá */}
             <PricePanel auction={auction} priceFlash={priceFlash} />
 
-            {/* Các nút CTA khách */}
-            <div className="space-y-2.5 pt-1">
-              {canBidPhase && (
-                <Link
-                  href={`/login?redirect=${encodeURIComponent(
-                    `/auctions/${auction.id}`
-                  )}`}
-                  className="block w-full"
+            {/* Khối tương tác theo vai trò & trạng thái */}
+            {!currentUser ? (
+              /* Khách (S02) */
+              <div className="space-y-2.5 pt-1">
+                {canGuestBidPhase && (
+                  <Link
+                    href={`/login?redirect=${encodeURIComponent(
+                      `/auctions/${auction.id}`
+                    )}`}
+                    className="block w-full"
+                  >
+                    <Button variant="primary" size="xl" className="w-full">
+                      Đăng nhập để đặt giá
+                    </Button>
+                  </Link>
+                )}
+
+                <Button
+                  variant="outline"
+                  size="lg"
+                  aria-pressed={isWatched}
+                  loading={toggleWatchMutation.isPending}
+                  onClick={handleToggleWatch}
+                  leftIcon={
+                    <HeartIcon
+                      filled={isWatched}
+                      className={cn(
+                        "size-4",
+                        isWatched ? "text-danger" : "text-text-tertiary"
+                      )}
+                    />
+                  }
+                  className={cn(
+                    "w-full",
+                    isWatched &&
+                      "border-danger-border bg-danger-bg/40 text-danger"
+                  )}
                 >
-                  <Button variant="primary" size="xl" className="w-full">
-                    Đăng nhập để đặt giá
+                  {isWatched ? "Đang theo dõi phiên này" : "Theo dõi phiên này"}
+                </Button>
+              </div>
+            ) : isOwner ? (
+              /* Chủ phiên (SELF_BID_NOT_ALLOWED) */
+              <div className="bg-surface-subtle border border-border-brand rounded-xl p-4 space-y-3">
+                <p className="text-small font-semibold text-text">
+                  Đây là phiên đấu giá của bạn
+                </p>
+                <p className="text-caption text-text-secondary">
+                  Bạn không thể tự đặt giá cho sản phẩm của chính mình.
+                </p>
+                <Link href={`/seller/auctions/${auction.id}`} className="block">
+                  <Button variant="outline" size="lg" className="w-full">
+                    Quản lý phiên đấu giá
                   </Button>
                 </Link>
-              )}
-
-              <Button
-                variant="outline"
-                size="lg"
-                aria-pressed={isWatched}
-                loading={toggleWatchMutation.isPending}
-                onClick={handleToggleWatch}
-                leftIcon={
-                  <HeartIcon
-                    filled={isWatched}
-                    className={cn(
-                      "size-4",
-                      isWatched ? "text-danger" : "text-text-tertiary"
-                    )}
-                  />
-                }
-                className={cn(
-                  "w-full",
-                  isWatched &&
-                    "border-danger-border bg-danger-bg/40 text-danger"
+              </div>
+            ) : (
+              /* Người mua đã đăng nhập (S05) */
+              <div className="space-y-3">
+                {isAlreadyLeading && (
+                  <div
+                    role="status"
+                    className="bg-success-bg border border-success-border rounded-xl p-4 flex items-start gap-3"
+                  >
+                    <CheckCircleIcon className="size-5 text-success-strong shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="text-small font-semibold text-success">
+                        Bạn đang dẫn đầu với{" "}
+                        <span className="tabular font-bold">
+                          {formatMoney(auction.currentPrice)}
+                        </span>
+                      </p>
+                      <p className="text-caption text-text-secondary">
+                        Hệ thống sẽ thông báo ngay nếu có người đặt giá cao hơn.
+                      </p>
+                    </div>
+                  </div>
                 )}
-              >
-                {isWatched ? "Đang theo dõi phiên này" : "Theo dõi phiên này"}
-              </Button>
-            </div>
+
+                {isEligibleBidder && (
+                  <BidForm
+                    auction={auction}
+                    onRefetchAuction={() => refetchDetail()}
+                  />
+                )}
+
+                {auction.status === AuctionStatus.ACTIVE &&
+                  countdownExpired &&
+                  !isAlreadyLeading && (
+                    <div className="bg-warning-subtle-bg border border-warning-border rounded-xl p-4 text-small text-warning-strong font-medium">
+                      Phiên đang chốt kết quả, tạm khoá chức năng đặt giá.
+                    </div>
+                  )}
+
+                {canGuestBidPhase && (
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    aria-pressed={isWatched}
+                    loading={toggleWatchMutation.isPending}
+                    onClick={handleToggleWatch}
+                    leftIcon={
+                      <HeartIcon
+                        filled={isWatched}
+                        className={cn(
+                          "size-4",
+                          isWatched ? "text-danger" : "text-text-tertiary"
+                        )}
+                      />
+                    }
+                    className={cn(
+                      "w-full",
+                      isWatched &&
+                        "border-danger-border bg-danger-bg/40 text-danger"
+                    )}
+                  >
+                    {isWatched
+                      ? "Đang theo dõi phiên này"
+                      : "Theo dõi phiên này"}
+                  </Button>
+                )}
+              </div>
+            )}
           </Card>
         </div>
       </div>
 
       {/* 3. Card Tabs dưới cùng: Mô tả sản phẩm & Lịch sử đặt giá */}
       <Card>
-        <Tabs defaultValue="description">
+        <Tabs value={activeTab} onValueChange={setUserSelectedTab}>
           <TabList variant="underline">
             <TabTrigger value="description">
               <span className="inline-flex items-center gap-2">
@@ -492,7 +638,9 @@ export function AuctionDetailClient({
                           key={`${item.label}-${idx}`}
                           className={cn(
                             "grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 px-4 py-3 text-small",
-                            idx % 2 === 0 ? "bg-surface-subtle/60" : "bg-surface"
+                            idx % 2 === 0
+                              ? "bg-surface-subtle/60"
+                              : "bg-surface"
                           )}
                         >
                           <div className="font-medium text-text-secondary">
@@ -521,16 +669,53 @@ export function AuctionDetailClient({
             )}
           </TabContent>
 
-          <TabContent value="history" className="pt-6">
+          <TabContent value="history" className="pt-6 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h2 className="text-h3 font-semibold text-text">
+                  Nhật ký đặt giá thời gian thực
+                </h2>
+                <p className="text-small text-text-tertiary tabular">
+                  {showAllBids || auction.bidCount <= 5
+                    ? `Hiển thị ${bids.length} lượt đặt giá`
+                    : `Hiển thị ${bids.length} lượt gần nhất (Tổng ${auction.bidCount} lượt)`}
+                </p>
+              </div>
+            </div>
+
             <BidHistoryTable
               bids={bids}
+              currentUserId={currentUser?.userId}
               loading={bidsLoading && bids.length === 0}
               error={bidsErrMsg}
               onRetry={() => refetchBids()}
             />
+
+            {!showAllBids && auction.bidCount > 5 && (
+              <div className="pt-1">
+                <Button
+                  variant="ghost"
+                  size="md"
+                  rightIcon={<ArrowRightIcon className="size-4" />}
+                  onClick={() => setShowAllBids(true)}
+                  className="px-2"
+                >
+                  Xem toàn bộ {auction.bidCount} lượt đặt giá
+                </Button>
+              </div>
+            )}
           </TabContent>
         </Tabs>
       </Card>
+
+      {/* Modal báo cáo vi phạm */}
+      <ReportViolationModal
+        open={reportModalOpen}
+        onClose={() => setReportModalOpen(false)}
+        auctionId={auction.id}
+        productId={auction.productId}
+        productTitle={auction.productTitle}
+      />
     </div>
   );
 }
