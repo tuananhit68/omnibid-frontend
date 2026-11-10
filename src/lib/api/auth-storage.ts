@@ -9,10 +9,12 @@ function isClient(): boolean {
   return typeof window !== "undefined";
 }
 
-function setCookie(name: string, value: string, days = 1) {
+function setCookie(name: string, value: string, persistent: boolean, days = 1) {
   if (!isClient()) return;
-  const expires = new Date(Date.now() + days * 864e5).toUTCString();
-  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
+  const expiresPart = persistent
+    ? `; expires=${new Date(Date.now() + days * 864e5).toUTCString()}`
+    : "";
+  document.cookie = `${name}=${encodeURIComponent(value)}${expiresPart}; path=/; SameSite=Lax`;
 }
 
 function removeCookie(name: string) {
@@ -22,12 +24,12 @@ function removeCookie(name: string) {
 
 export function getStoredToken(): string | null {
   if (!isClient()) return null;
-  return localStorage.getItem(TOKEN_KEY);
+  return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
 }
 
 export function getStoredUser(): AuthResponse | null {
   if (!isClient()) return null;
-  const raw = localStorage.getItem(USER_KEY);
+  const raw = localStorage.getItem(USER_KEY) || sessionStorage.getItem(USER_KEY);
   if (!raw) return null;
   try {
     return JSON.parse(raw) as AuthResponse;
@@ -36,19 +38,28 @@ export function getStoredUser(): AuthResponse | null {
   }
 }
 
-export function saveAuthSession(auth: AuthResponse): void {
+export function saveAuthSession(auth: AuthResponse, rememberMe = true): void {
   if (!isClient()) return;
-  localStorage.setItem(TOKEN_KEY, auth.accessToken);
-  localStorage.setItem(USER_KEY, JSON.stringify(auth));
-  setCookie(COOKIE_TOKEN, auth.accessToken, 1);
-  setCookie(COOKIE_ROLE, auth.role, 1);
+
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
+  sessionStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(USER_KEY);
+
+  const storage = rememberMe ? localStorage : sessionStorage;
+  storage.setItem(TOKEN_KEY, auth.accessToken);
+  storage.setItem(USER_KEY, JSON.stringify(auth));
+
+  setCookie(COOKIE_TOKEN, auth.accessToken, rememberMe, 1);
+  setCookie(COOKIE_ROLE, auth.role, rememberMe, 1);
 }
 
 export function clearAuthSession(): void {
   if (!isClient()) return;
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
+  sessionStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(USER_KEY);
   removeCookie(COOKIE_TOKEN);
   removeCookie(COOKIE_ROLE);
 }
-
