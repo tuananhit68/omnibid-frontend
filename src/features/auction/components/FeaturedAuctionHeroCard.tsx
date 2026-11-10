@@ -57,7 +57,7 @@ export function FeaturedAuctionHeroCard({
         {/* Tên sản phẩm */}
         <div className="mt-4">
           <h3 className="text-h3 font-semibold text-text line-clamp-2 hover:text-primary-700 transition-colors">
-            <Link href={`/auctions/${auction.id}`}>{auction.productName}</Link>
+            <Link href={`/auctions/${auction.id}`}>{auction.productTitle}</Link>
           </h3>
         </div>
 
@@ -80,8 +80,8 @@ export function FeaturedAuctionHeroCard({
           <div>
             <span className="label block text-text-tertiary">Người dẫn đầu</span>
             <span className="font-medium text-text tabular block mt-0.5">
-              {auction.leadingBidderName
-                ? maskName(auction.leadingBidderName)
+              {auction.highestBidderName
+                ? maskName(auction.highestBidderName)
                 : "Chưa có"}
             </span>
           </div>

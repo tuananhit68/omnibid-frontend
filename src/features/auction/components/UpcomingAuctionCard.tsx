@@ -24,7 +24,7 @@ export function UpcomingAuctionCard({
       <div className="flex gap-4">
         {/* Ảnh 96px */}
         <div className="size-24 rounded-lg bg-surface-subtle shrink-0 border border-border-subtle flex items-center justify-center text-text-tertiary font-bold text-h3">
-          {auction.productName.charAt(0)}
+          {auction.productTitle.charAt(0)}
         </div>
 
         {/* Thông tin bên phải ảnh */}
@@ -34,7 +34,7 @@ export function UpcomingAuctionCard({
           </span>
 
           <h4 className="text-body font-semibold text-text line-clamp-2 group-hover:text-primary-700 transition-colors">
-            <Link href={`/auctions/${auction.id}`}>{auction.productName}</Link>
+            <Link href={`/auctions/${auction.id}`}>{auction.productTitle}</Link>
           </h4>
 
           <div className="pt-1 flex items-center gap-2 text-caption text-text-tertiary">
