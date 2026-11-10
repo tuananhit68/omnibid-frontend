@@ -1,7 +1,17 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { getAuctions, getCategories } from "./api";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  keepPreviousData,
+} from "@tanstack/react-query";
+import {
+  getAuctions,
+  getCategories,
+  watchAuction,
+  unwatchAuction,
+} from "./api";
 import type { AuctionListParams } from "./types";
 
 export const auctionKeys = {
@@ -15,6 +25,7 @@ export function useAuctions(params?: AuctionListParams) {
   return useQuery({
     queryKey: auctionKeys.list(params),
     queryFn: () => getAuctions(params),
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -26,3 +37,27 @@ export function useCategories() {
   });
 }
 
+export function useToggleWatchlist() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      auctionId,
+      currentlyWatched,
+    }: {
+      auctionId: number;
+      currentlyWatched: boolean;
+    }) => {
+      if (currentlyWatched) {
+        await unwatchAuction(auctionId);
+        return { auctionId, watched: false };
+      }
+      await watchAuction(auctionId);
+      return { auctionId, watched: true };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: auctionKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["watchlist"] });
+    },
+  });
+}

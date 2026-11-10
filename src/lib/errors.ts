@@ -17,15 +17,23 @@ export const ERROR_MESSAGES: Record<string, string> = {
 
   // Đăng ký & tài khoản
   EMAIL_ALREADY_EXISTS: "Email này đã được sử dụng bởi một tài khoản khác.",
+  WRONG_PASSWORD: "Mật khẩu hiện tại không chính xác.",
 
-  // Đấu giá & Đặt giá
+  // Đấu giá & Đặt giá & Theo dõi
   BID_TOO_LOW: "Mức giá đặt phải bằng hoặc cao hơn mức giá tối thiểu yêu cầu.",
   ALREADY_LEADING: "Bạn đang là người dẫn đầu mức giá của phiên này.",
   SELF_BID_NOT_ALLOWED: "Bạn không thể tự đặt giá cho sản phẩm của chính mình.",
+  SELF_WATCH_NOT_ALLOWED: "Bạn không thể theo dõi phiên đấu giá của chính mình.",
   AUCTION_NOT_ACTIVE: "Phiên đấu giá chưa bắt đầu hoặc đã kết thúc.",
   CANNOT_CANCEL: "Không thể huỷ phiên đấu giá khi đã có người đặt giá.",
   PRODUCT_NOT_AVAILABLE: "Sản phẩm hiện không khả dụng để đưa vào đấu giá.",
+  PRODUCT_NOT_EDITABLE: "Không thể chỉnh sửa sản phẩm ở trạng thái hiện tại.",
+  PRODUCT_IMAGE_LIMIT: "Mỗi sản phẩm chỉ được tải lên tối đa 5 ảnh.",
+  PRODUCT_IMAGE_REQUIRED: "Sản phẩm cần có ít nhất 1 ảnh trước khi đưa vào đấu giá.",
+  INVALID_IMAGE: "Định dạng ảnh không hợp lệ (chỉ hỗ trợ PNG, JPG, WEBP).",
+  IMAGE_TOO_LARGE: "Dung lượng ảnh vượt quá giới hạn cho phép (tối đa 10MB).",
   AUCTION_NOT_EDITABLE: "Không thể chỉnh sửa phiên đấu giá ở trạng thái hiện tại.",
+  CATEGORY_NOT_FOUND: "Không tìm thấy danh mục yêu cầu.",
 
   // Đơn hàng & Thanh toán & Vận chuyển
   PAYMENT_IN_PROGRESS: "Giao dịch thanh toán đang được xử lý, vui lòng chờ trong giây lát.",
