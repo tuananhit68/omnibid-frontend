@@ -101,12 +101,12 @@ Màu: bắt buộc dùng đúng token ở cột giữa.
 ## API
 
 - `GET /auctions/{id}`
-- `PATCH /auctions/{id} (chỉ SCHEDULED; AUCTION_NOT_EDITABLE; clearReservePrice)`
+- `⛔ B8 PATCH /auctions/{id} – chưa có; form chỉ đọc`
 - `POST /auctions/{id}/cancel { reason? }`
 - `GET /auctions/{id}/bids`
 - `WS /topic/auction/{id}`
 
-Body, DTO, mã lỗi chi tiết ở `design/backend-contract.md` – **file đó thắng mục này**.
+Đối chiếu từ code backend ngày 08/11/2026. Body, DTO, mã lỗi chi tiết và bảng endpoint chưa có (⛔ B…) ở `design/backend-contract.md` – **file đó thắng mục này**.
 
 ## Trạng thái và tương tác
 

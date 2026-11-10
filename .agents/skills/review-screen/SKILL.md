@@ -56,3 +56,4 @@ Rà lại code của màn hình, **không sửa ngay**: lập danh sách vấn �
 - [ ] `'use client'` chỉ ở component lá cần thiết.
 
 Có thể bổ sung một lượt kiểm tra bằng skill thiết kế theo `.agents/rules/design-skills.md` (chỉ audit, không đổi phong cách).
+

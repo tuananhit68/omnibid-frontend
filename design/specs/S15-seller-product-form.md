@@ -99,14 +99,10 @@ Màu: bắt buộc dùng đúng token ở cột giữa.
 
 ## API
 
-- `POST /products { title, categoryId, condition, description }`
-- `GET/PATCH /products/{id}`
-- `POST /products/{id}/images (multipart file, một ảnh mỗi request)`
-- `DELETE /products/{id}/images/{imageId}`
-- `PATCH /products/{id}/images/{imageId}/primary`
-- `GET /categories`
+- `⛔ B1 tạo/sửa sản phẩm và upload ảnh – backend chưa có; làm giao diện với mock`
+- `⛔ B2 GET /categories – chưa có`
 
-Body, DTO, mã lỗi chi tiết ở `design/backend-contract.md` – **file đó thắng mục này**.
+Đối chiếu từ code backend ngày 08/11/2026. Body, DTO, mã lỗi chi tiết và bảng endpoint chưa có (⛔ B…) ở `design/backend-contract.md` – **file đó thắng mục này**.
 
 ## Trạng thái và tương tác
 

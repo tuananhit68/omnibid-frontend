@@ -56,7 +56,7 @@ Tài khoản demo: lấy từ dữ liệu seed của backend (USER và ADMIN).
 ```text
 .agents/
   rules/            # quy tắc cho agent Antigravity (tự nạp theo ngữ cảnh)
-  workflows/        # lệnh /phase-0-foundation, /build-screen, /review-screen, /new-component, /swap-mocks
+  workflows/        # lệnh /phase-0-foundation, /build-screen, /review-screen, /new-component
 AGENTS.md           # hướng dẫn tổng cho agent (luôn được nạp)
 design/             # bàn giao từ Figma – chỉ đọc
   README.md         # mục lục 28 màn hình
