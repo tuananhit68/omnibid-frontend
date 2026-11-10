@@ -53,7 +53,6 @@ export function PricePanel({
 
       {/* Giá lớn */}
       <div
-        aria-live="polite"
         className={cn(
           "text-timer md:text-price-xl font-bold text-primary-700 tabular px-1 -mx-1",
           priceFlash && "price-flash"
@@ -61,6 +60,10 @@ export function PricePanel({
       >
         {formatMoney(displayPrice)}
       </div>
+
+      <span className="sr-only" aria-live="polite">
+        {priceLabel} {formatMoney(displayPrice)}, {auction.bidCount} lượt đặt
+      </span>
 
       {/* Bảng 4 thông số */}
       <dl className="bg-surface border border-border-brand rounded-lg p-3.5 space-y-2.5 text-small">

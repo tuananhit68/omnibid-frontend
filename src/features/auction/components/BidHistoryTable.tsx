@@ -9,6 +9,7 @@ import type { BidItem } from "../types";
 
 export interface BidHistoryTableProps {
   bids: BidItem[];
+  currentUserId?: number | null;
   loading?: boolean;
   error?: string;
   onRetry?: () => void;
@@ -17,6 +18,7 @@ export interface BidHistoryTableProps {
 
 export function BidHistoryTable({
   bids,
+  currentUserId,
   loading = false,
   error,
   onRetry,
@@ -28,6 +30,7 @@ export function BidHistoryTable({
       header: "Người đặt",
       render: (row) => {
         const isLeading = row.status === BidStatus.LEADING;
+        const isMe = currentUserId != null && row.bidderId === currentUserId;
         const display = maskName(row.bidderName);
         return (
           <div className="flex items-center gap-2.5">
@@ -35,7 +38,7 @@ export function BidHistoryTable({
               aria-hidden="true"
               className={cn(
                 "size-8 rounded-full flex items-center justify-center text-caption font-bold shrink-0",
-                isLeading
+                isLeading || isMe
                   ? "bg-primary-50 text-primary-700"
                   : "bg-neutral-bg text-neutral"
               )}
@@ -50,6 +53,11 @@ export function BidHistoryTable({
             >
               {display}
             </span>
+            {isMe && (
+              <span className="px-1.5 py-0.5 rounded-sm bg-primary-50 border border-primary-200 text-primary-700 text-caption font-semibold whitespace-nowrap">
+                Bạn
+              </span>
+            )}
           </div>
         );
       },
