@@ -23,6 +23,7 @@ export interface DataTableProps<T> {
   onRetry?: () => void;
   highlightRow?: (row: T) => boolean;
   selectedRow?: (row: T) => boolean;
+  rowClassName?: (row: T) => string | undefined;
   className?: string;
 }
 
@@ -37,6 +38,7 @@ export function DataTable<T>({
   onRetry,
   highlightRow,
   selectedRow,
+  rowClassName,
   className,
 }: DataTableProps<T>) {
   return (
@@ -109,6 +111,7 @@ export function DataTable<T>({
             data.map((row, index) => {
               const isHighlighted = highlightRow?.(row);
               const isSelected = selectedRow?.(row);
+              const extraRowClass = rowClassName?.(row);
 
               return (
                 <tr
@@ -116,7 +119,8 @@ export function DataTable<T>({
                   className={cn(
                     "h-[52px] transition-colors hover:bg-surface-subtle/70",
                     isHighlighted && "bg-surface-info",
-                    isSelected && "bg-primary-50 font-semibold"
+                    isSelected && "bg-primary-50 font-semibold",
+                    extraRowClass
                   )}
                 >
                   {columns.map((col) => {
