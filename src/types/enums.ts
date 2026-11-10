@@ -413,3 +413,24 @@ export const NOTIFICATION_TYPE_META: Record<NotificationType, StatusMeta> = {
   },
 };
 
+// --------------------------------------------------
+// 12. ProductCondition
+// --------------------------------------------------
+export const ProductCondition = {
+  NEW: "NEW",
+  LIKE_NEW: "LIKE_NEW",
+  GOOD: "GOOD",
+  FAIR: "FAIR",
+  POOR: "POOR",
+} as const;
+export type ProductCondition =
+  (typeof ProductCondition)[keyof typeof ProductCondition];
+
+export const PRODUCT_CONDITION_LABEL: Record<ProductCondition, string> = {
+  [ProductCondition.NEW]: "Mới",
+  [ProductCondition.LIKE_NEW]: "Như mới",
+  [ProductCondition.GOOD]: "Tốt",
+  [ProductCondition.FAIR]: "Khá",
+  [ProductCondition.POOR]: "Cũ",
+};
+

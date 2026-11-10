@@ -5,3 +5,8 @@ export * from "./UpcomingAuctionCard";
 export * from "./FilterPanel";
 export * from "./FilterChips";
 export * from "./AuctionListClient";
+export * from "./ImageGallery";
+export * from "./PricePanel";
+export * from "./BidHistoryTable";
+export * from "./SellerSummaryCard";
+export * from "./AuctionDetailClient";

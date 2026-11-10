@@ -1,4 +1,9 @@
-import type { AuctionStatus, ReservePriceStatus } from "@/types/enums";
+import type {
+  AuctionStatus,
+  BidStatus,
+  ProductCondition,
+  ReservePriceStatus,
+} from "@/types/enums";
 
 export type AuctionSortOption =
   | "endTime,asc"
@@ -7,6 +12,12 @@ export type AuctionSortOption =
   | "currentPrice,desc"
   | "bidCount,desc"
   | "createdAt,desc";
+
+export interface AuctionImage {
+  id: number;
+  url: string;
+  isPrimary: boolean;
+}
 
 export interface AuctionItem {
   id: number;
@@ -30,11 +41,34 @@ export interface AuctionItem {
   createdAt?: string;
   categoryId?: number;
   categoryName?: string;
-  productCondition?: string;
+  productCondition?: ProductCondition | string;
   primaryImageUrl?: string | null;
   minNextBid?: number | null;
   reserveStatus?: ReservePriceStatus;
   isWatched?: boolean | null;
+}
+
+export interface AuctionDetail extends AuctionItem {
+  productDescription?: string;
+  images?: AuctionImage[];
+  serverTime?: string;
+}
+
+export interface BidItem {
+  id: number;
+  auctionId: number;
+  bidderId: number;
+  bidderName: string; // đã che ở backend
+  amount: number;
+  status: BidStatus;
+  createdAt: string;
+}
+
+export interface BidPlacedWsPayload extends BidItem {
+  auctionCurrentPrice?: number;
+  auctionBidCount?: number;
+  minNextBid?: number | null;
+  reserveStatus?: ReservePriceStatus;
 }
 
 export interface AuctionListParams {

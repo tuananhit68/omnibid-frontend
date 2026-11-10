@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { Suspense, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
@@ -22,8 +22,40 @@ export interface PublicLayoutProps {
   children: ReactNode;
 }
 
-export function PublicLayout({ children }: PublicLayoutProps) {
+interface NavItem {
+  label: string;
+  href: string;
+}
+
+function PublicNavLinks({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
+  return (
+    <>
+      {items.map((item) => {
+        const isActive =
+          item.href === "/"
+            ? pathname === "/"
+            : pathname.startsWith(item.href);
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={cn(
+              "transition-colors py-1 relative",
+              isActive
+                ? "text-primary-600 font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary-600"
+                : "text-text-secondary hover:text-text"
+            )}
+          >
+            {item.label}
+          </Link>
+        );
+      })}
+    </>
+  );
+}
+
+export function PublicLayout({ children }: PublicLayoutProps) {
   const router = useRouter();
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -78,26 +110,19 @@ export function PublicLayout({ children }: PublicLayoutProps) {
               aria-label="Điều hướng chính"
               className="hidden lg:flex items-center gap-6 text-small font-medium"
             >
-              {navItems.map((item) => {
-                const isActive =
-                  item.href === "/"
-                    ? pathname === "/"
-                    : pathname.startsWith(item.href);
-                return (
+              <Suspense
+                fallback={navItems.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={cn(
-                      "transition-colors py-1 relative",
-                      isActive
-                        ? "text-primary-600 font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary-600"
-                        : "text-text-secondary hover:text-text"
-                    )}
+                    className="transition-colors py-1 relative text-text-secondary hover:text-text"
                   >
                     {item.label}
                   </Link>
-                );
-              })}
+                ))}
+              >
+                <PublicNavLinks items={navItems} />
+              </Suspense>
             </nav>
           </div>
 
