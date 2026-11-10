@@ -27,6 +27,18 @@ export function PublicLayout({ children }: PublicLayoutProps) {
   const router = useRouter();
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = searchQuery.trim();
+    if (trimmed) {
+      router.push(`/auctions?q=${encodeURIComponent(trimmed)}`);
+    } else {
+      router.push("/auctions");
+    }
+    setMobileDrawerOpen(false);
+  };
 
   // Lấy thông tin user hiện tại
   const currentUser = typeof window !== "undefined" ? getStoredUser() : null;
@@ -90,16 +102,23 @@ export function PublicLayout({ children }: PublicLayoutProps) {
           </div>
 
           {/* Ô tìm kiếm desktop */}
-          <div className="hidden md:flex items-center flex-1 max-w-[380px] mx-4">
+          <form
+            onSubmit={handleSearchSubmit}
+            role="search"
+            className="hidden md:flex items-center flex-1 max-w-[380px] mx-4"
+          >
             <div className="relative w-full">
               <input
                 type="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label="Tìm kiếm phiên đấu giá"
                 placeholder="Tìm kiếm phiên đấu giá, sản phẩm…"
-                className="w-full h-10 pl-9 pr-4 text-small text-text bg-surface-subtle border border-border-brand rounded-md outline-none focus-visible:border-primary-600 focus-visible:ring-2 focus-visible:ring-focus/20"
+                className="w-full h-10 pl-9 pr-4 text-small text-text placeholder:text-text-placeholder bg-surface-subtle border border-border-brand rounded-md outline-none focus-visible:border-primary-600 focus-visible:ring-2 focus-visible:ring-focus/20"
               />
               <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-text-tertiary pointer-events-none" />
             </div>
-          </div>
+          </form>
 
           {/* Khối bên phải (Đăng nhập / User menu) */}
           <div className="hidden lg:flex items-center gap-3">
@@ -193,11 +212,18 @@ export function PublicLayout({ children }: PublicLayoutProps) {
           </div>
 
           {/* Nút Hamburger Mobile */}
-          <div className="flex lg:hidden items-center gap-2">
+          <div className="flex lg:hidden items-center gap-1">
+            <Link
+              href="/auctions"
+              className="md:hidden size-11 inline-flex items-center justify-center rounded-md text-text-tertiary hover:bg-surface-subtle"
+              aria-label="Tìm kiếm phiên đấu giá"
+            >
+              <SearchIcon className="size-5" />
+            </Link>
             {isAuthenticated && (
               <Link
                 href="/notifications"
-                className="p-2 text-text-tertiary"
+                className="size-11 inline-flex items-center justify-center rounded-md text-text-tertiary hover:bg-surface-subtle"
                 aria-label="Thông báo"
               >
                 <BellIcon className="size-5" />
@@ -206,7 +232,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
             <IconButton
               label="Mở menu"
               icon={<MenuIcon />}
-              size="md"
+              size="lg"
               onClick={() => setMobileDrawerOpen(true)}
             />
           </div>
@@ -226,6 +252,20 @@ export function PublicLayout({ children }: PublicLayoutProps) {
                 onClick={() => setMobileDrawerOpen(false)}
               />
             </div>
+
+            <form onSubmit={handleSearchSubmit} role="search" className="mt-4">
+              <div className="relative w-full">
+                <input
+                  type="search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  aria-label="Tìm kiếm phiên đấu giá"
+                  placeholder="Tìm kiếm phiên đấu giá…"
+                  className="w-full h-11 pl-9 pr-4 text-body-lg md:text-small text-text placeholder:text-text-placeholder bg-surface-subtle border border-border-brand rounded-md outline-none focus-visible:border-primary-600"
+                />
+                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-text-tertiary pointer-events-none" />
+              </div>
+            </form>
 
             <nav className="flex flex-col gap-2 mt-4 flex-1">
               {navItems.map((item) => (
