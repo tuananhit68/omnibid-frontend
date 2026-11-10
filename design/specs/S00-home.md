@@ -139,11 +139,10 @@ Màu: bắt buộc dùng đúng token ở cột giữa.
 
 - `GET /auctions?status=ACTIVE&sort=endTime,asc&size=4 (phiên sắp kết thúc; phiên đầu làm phiên nổi bật)`
 - `GET /auctions?status=SCHEDULED&sort=startTime,asc&size=3`
-- `GET /auctions?status=ACTIVE&size=1 và …SCHEDULED&size=1 (lấy totalElements cho số liệu hero)`
-- `GET /categories (auctionCount)`
-- `POST/DELETE /watchlist/{auctionId} (nút Theo dõi – cần đăng nhập)`
+- `⛔ B2 GET /categories – chưa có, dùng mock`
+- `⛔ B6 watchlist – chưa có, ẩn nút Theo dõi`
 
-Body, DTO, mã lỗi chi tiết ở `design/backend-contract.md` – **file đó thắng mục này**.
+Đối chiếu từ code backend ngày 08/11/2026. Body, DTO, mã lỗi chi tiết và bảng endpoint chưa có (⛔ B…) ở `design/backend-contract.md` – **file đó thắng mục này**.
 
 ## Trạng thái và tương tác
 

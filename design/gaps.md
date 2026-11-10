@@ -2,7 +2,7 @@
 
 Figma được vẽ đẹp hơn và "rộng" hơn backend hiện có. Nếu để agent code y nguyên ảnh, nó sẽ tự bịa API hoặc dữ liệu giả. Bảng dưới liệt kê từng chỗ lệch kèm **cách xử lý mặc định** đã được ghi vào spec. Nhóm chỉ cần sửa cột "Quyết định" nếu muốn khác.
 
-Bảng G dưới đây là chỗ Figma vẽ dư so với dữ liệu backend (đã tính cả API theo đặc tả P1–P11 trong `backend-contract.md`).
+Đã đối chiếu với code backend ngày 08/11/2026 – xem thêm `backend-contract.md` mục 4 (bảng B: endpoint backend chưa có, như API sản phẩm, theo dõi, hồ sơ). Bảng G dưới đây là chỗ Figma vẽ dư so với dữ liệu; bảng B là chỗ backend còn thiếu.
 
 Quy tắc chung: **backend là chuẩn nghiệp vụ, Figma là chuẩn giao diện.** Thứ gì Figma có mà backend không có thì ẩn đi hoặc thay bằng dữ liệu thật gần nhất; không tạo endpoint mới trong phạm vi frontend.
 
@@ -18,16 +18,16 @@ Quy tắc chung: **backend là chuẩn nghiệp vụ, Figma là chuẩn giao di�
 | G6 | S15 | "Tình trạng hiện tại" dạng chữ tự do ("Như mới (Like New 99%…)") | ENUM `NEW, LIKE_NEW, GOOD, FAIR, POOR` | Select 5 lựa chọn: Mới, Như mới, Tốt, Khá, Cũ |
 | G7 | S16 | "Mã dự kiến: #AUC-2055" trước khi tạo | ID chỉ có sau khi tạo | Ẩn chip mã dự kiến |
 | G8 | S07 | "142 người đăng ký nhận tin", nút "Đặt nhắc nhở", badge "Tạm ngưng" | Không có nhắc nhở cho phiên; không có trạng thái tạm ngưng | Nút đổi thành "Xem chi tiết"; ẩn số người đăng ký; phiên CANCELLED chỉ hiện badge "Đã huỷ" + `cancelReason` |
-| G9 | S08 | Ảnh đại diện, tải/gỡ ảnh, chip "Người mua" | Có `GET/PATCH /users/me`, `POST/DELETE /users/me/avatar` | Làm đủ tải/gỡ ảnh đại diện; bỏ chip vai trò (chỉ có USER/ADMIN) |
+| G9 | S08 | Ảnh đại diện, tải/gỡ ảnh, chip "Người mua" | Không có API hồ sơ nào (B5) | Hiện avatar chữ cái đầu + thông tin từ `AuthResponse`; ẩn tải/gỡ ảnh, bỏ chip vai trò; form khoá cho tới khi có B5 |
 | G10 | S11 | "Họ và tên người nhận", "Ghi chú giao hàng" | `orders` chỉ có `shipping_address`, `phone_number` | Bỏ 2 ô này; tên người nhận lấy từ hồ sơ, chỉ hiển thị |
 | G11 | S11 | Không có khu vực lịch sử thanh toán và kết quả lần thanh toán gần nhất | Use Case yêu cầu hiển thị; có `GET /orders/{id}/payments` | **Bổ sung** khối "Lịch sử thanh toán" dưới khối thanh toán, cùng style card bên phải |
 | G12 | S11 | Một phương thức "Cổng thanh toán mô phỏng" | `method`: MOCK_CARD, MOCK_BANK, MOCK_WALLET; `simulateResult`: SUCCESS, FAILED, PROCESSING | Radio 3 phương thức; select "Kết quả mô phỏng" (Thành công / Thất bại / Đang xử lý) chỉ khi `NEXT_PUBLIC_DEMO_MODE=true` |
 | G13 | S13 | Ô "Lý do khiếu nại" + "Mô tả chi tiết" + tải lên bằng chứng ảnh/video | `reports.reason` là 1 trường TEXT, không có tệp đính kèm | Gộp: `reason = "<Lý do>: <Mô tả>"`; ẩn vùng tải bằng chứng |
 | G14 | S25 | "Bằng chứng đính kèm (2 ảnh)" | Không có | Ẩn khối bằng chứng |
-| G15 | S09, S09a | "Đánh dấu đã đọc tất cả", lọc theo loại, "Xem biên lai" | Có `read-all`, `unread-count`; `GET /notifications?type=` | Dùng read-all, unread-count; chip lọc loại gọi API với `type`; bỏ "Xem biên lai"; nội dung lấy từ `title`/`content` |
+| G15 | S09, S09a | "Đánh dấu đã đọc tất cả", lọc theo loại, "Xem biên lai" | Có `PATCH /notifications/read-all`, `GET /notifications/unread-count`; **không** lọc theo loại | Dùng read-all và unread-count; chip lọc loại lọc phía client trên trang đang xem (hoặc bỏ); bỏ "Xem biên lai"; nội dung lấy từ `title`/`content` |
 | G16 | S20 | Cột "Vai trò: Người bán / Người mua", KPI "Người bán (Sellers)" | Vai trò chỉ USER/ADMIN | Cột vai trò hiện "Người dùng"/"Quản trị viên"; bỏ KPI người bán hoặc thay bằng "Quản trị viên" |
 | G17 | S21 | Mô tả danh mục, trạng thái Hiển thị/Ẩn, số sản phẩm | `categories`: name, slug, icon_url | Bỏ cột mô tả và trạng thái; số sản phẩm chỉ hiện nếu API trả `productCount` |
-| G18 | S06, S07, S10, S14, S19–S26 | Các thẻ KPI | Có `/bids/mine/summary`, `/watchlist/summary`, `/orders/summary`, `/products/mine/summary`; admin có `/admin/statistics` | KPI lấy từ các endpoint summary tương ứng; số nào không có trong response thì ẩn thẻ đó |
+| G18 | S06, S07, S10, S14, S19–S26 | Các thẻ KPI | Chỉ admin có `/admin/statistics` (đủ số cho S19–S26); trang người dùng không có số tổng | KPI admin lấy từ `/admin/statistics`; KPI trang người dùng: S10 tính được từ `totalElements` của từng `status` (gọi `size=1`), S06/S07/S14 ẩn hàng KPI |
 | G19 | S19 | Bộ chọn "Hôm nay / 7 ngày / 30 ngày / Tuỳ chọn", biểu đồ lượt đặt giá 7 ngày | Phụ thuộc `/admin/statistics` | Truyền `range` nếu API hỗ trợ; nếu không thì hiện 1 khoảng cố định và ẩn bộ chọn |
 | G20 | S12 | "Đơn vị: Vận chuyển mô phỏng", SĐT che `0908 ••• 419` | Có `carrier_name`, `phone_number` | Giữ nguyên, che 3 số giữa ở frontend |
 | G21 | S18 | Dropdown "Chuyển trạng thái tiếp theo" | Chỉ có đúng 1 trạng thái kế tiếp hợp lệ | Thay dropdown bằng nhãn cố định "Trạng thái tiếp theo: Đã lấy hàng" + nút xác nhận (tránh chọn sai thứ tự) |

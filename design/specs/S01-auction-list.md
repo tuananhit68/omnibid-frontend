@@ -133,11 +133,12 @@ Màu: bắt buộc dùng đúng token ở cột giữa.
 
 ## API
 
-- `GET /auctions?status&q&categoryIds&minPrice&maxPrice&sort&page&size=9 (q, categoryIds, minPrice, maxPrice, sort giới hạn)`
-- `GET /categories (auctionCount cho checkbox)`
-- `POST/DELETE /watchlist/{auctionId}`
+- `GET /auctions?status&page&size=9&sort (chỉ lọc trạng thái)`
+- `⛔ B3 lọc keyword/danh mục/giá – chưa có, ẩn các bộ lọc này`
+- `⛔ B2 GET /categories – chưa có`
+- `⛔ B6 watchlist – chưa có`
 
-Body, DTO, mã lỗi chi tiết ở `design/backend-contract.md` – **file đó thắng mục này**.
+Đối chiếu từ code backend ngày 08/11/2026. Body, DTO, mã lỗi chi tiết và bảng endpoint chưa có (⛔ B…) ở `design/backend-contract.md` – **file đó thắng mục này**.
 
 ## Trạng thái và tương tác
 

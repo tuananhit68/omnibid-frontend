@@ -14,3 +14,4 @@ description: Tạo một component UI dùng chung theo design/components.md. Cá
 4. Thêm vào `src/app/dev/ui/page.tsx`: mỗi variant × size × state một mẫu.
 5. Chạy `npm run lint` và `npm run typecheck`.
 6. Commit `feat(ui): add <Tên> component` (không push). Báo lại props cuối cùng và chỗ nào lệch với Figma (nếu có) kèm lý do.
+

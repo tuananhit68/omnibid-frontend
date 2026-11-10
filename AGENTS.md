@@ -65,7 +65,7 @@ src/types/enums.ts      # enum giống hệt backend + label + tone
 2. Không dùng emoji làm icon. Icon lấy từ `src/components/icons` (SVG Figma).
    2a. Font Be Vietnam Pro, không dùng Inter. Không dùng `uppercase`, `tracking-wide/wider/widest`, không đặt nhãn chữ nhỏ phía trên tiêu đề. Không dùng viền màu một bên (`border-l-4`, `border-t-4`… có màu) để nhấn card, hàng, hộp thông báo.
 3. Component trong `src/components/ui` không gọi API, không import từ `src/features`.
-4. Mọi lời gọi API đi qua `src/lib/api`. Envelope `{ success, errorCode, message, data, timestamp }`. Endpoint, DTO, mã lỗi theo `design/backend-contract.md` – file này thắng mục API trong spec. Không bịa endpoint hay tên trường ngoài file đó.
+4. Mọi lời gọi API đi qua `src/lib/api`. Envelope `{ success, errorCode, message, data, timestamp }`. Endpoint, DTO, mã lỗi theo `design/backend-contract.md` – file này thắng mục API trong spec. Endpoint backend chưa có: dùng mock hoặc ẩn theo bảng B, không bịa.
 5. Mọi enum, nhãn trạng thái và màu badge lấy từ `src/types/enums.ts`. Không viết lại nhãn trong trang.
 6. Không hiển thị con số **giá sàn** (`reservePrice`) ở bất kỳ trang nào của người mua, kể cả trong DOM ẩn. Chỉ chủ phiên (S17) và admin được thấy.
 7. Không tự tính kết quả nghiệp vụ để chặn người dùng (giá tối thiểu, quyền, hạn thanh toán, trạng thái). Frontend chỉ gợi ý, khoá nút để dẫn hướng; backend quyết định và frontend xử lý mã lỗi trả về.
@@ -81,7 +81,7 @@ src/types/enums.ts      # enum giống hệt backend + label + tone
 - **Trước khi làm màn hình Sxx**: đọc `design/README.md`, `design/style-overrides.md`, `design/gaps.md`, `design/layouts.md`, `design/components.md`, rồi `design/specs/Sxx-*.md`. Màu lấy đúng token; số đo trong spec là điểm xuất phát, được chỉnh cho gọn và đều.
 - **Thiếu thông tin** (API chưa rõ, Figma không vẽ trạng thái): hỏi lại, hoặc làm theo mặc định trong `design/gaps.md` và ghi rõ đã giả định gì.
 - **Tái dùng trước khi tạo mới**: tìm trong `src/components/ui` và `src/features/*/components` trước. Không tạo bản sao gần giống.
-- Dùng workflow `/build-screen`, `/review-screen`, `/new-component`, `/swap-mocks` trong `.agents/workflows/`.
+- Dùng workflow `/build-screen`, `/review-screen`, `/new-component` trong `.agents/workflows/`.
 
 ## 7. Git
 
@@ -92,7 +92,7 @@ Agent **tự tạo nhánh và commit trên máy**; người dùng review, push, 
 - Commit sau mỗi bước code xong **và** đã pass `lint` + `typecheck` (vd: types+api+hooks · component · trang). Conventional Commits tiếng Anh: `feat(bid): add bid panel for S05`, `fix(order): handle PAYMENT_RATE_LIMITED`. Commit nhỏ, đúng phạm vi màn hình.
 - `git add` từng file/thư mục đã sửa, không `git add -A` mù. Không commit `.env*`, file build, file trong `design/` và `.agents/` (trừ khi được yêu cầu).
 - **Cấm**: `git push` (mọi dạng), `--force`, `merge`, `rebase`, `reset --hard`, `clean -fd`, xoá nhánh, sửa commit đã có (`--amend` trên commit cũ), đổi `git config`, đụng repo backend.
-- Kết thúc: in `git log --oneline develop..HEAD` và `git diff --stat develop...HEAD`, đề xuất tiêu đề + mô tả PR (màn hình, ảnh chụp cần đính kèm, checklist `/review-screen`, giả định đã dùng).
+- Kết thúc: in `git log --oneline develop..HEAD` và `git diff --stat develop...HEAD`, đề xuất tiêu đề + mô tả PR (màn hình, ảnh chụp cần đính kèm, checklist `/review-screen`, giả định, mục B/G đang dùng mock).
 
 ## 8. Định nghĩa "xong" cho một màn hình
 

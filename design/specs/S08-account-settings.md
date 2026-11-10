@@ -106,12 +106,9 @@ Màu: bắt buộc dùng đúng token ở cột giữa.
 
 ## API
 
-- `GET /users/me`
-- `PATCH /users/me { fullName, phoneNumber, address }`
-- `PATCH /users/me/password { currentPassword, newPassword } (WRONG_PASSWORD)`
-- `POST/DELETE /users/me/avatar (multipart file)`
+- `⛔ B5 hồ sơ và đổi mật khẩu – backend chưa có; hiển thị từ AuthResponse, khoá form`
 
-Body, DTO, mã lỗi chi tiết ở `design/backend-contract.md` – **file đó thắng mục này**.
+Đối chiếu từ code backend ngày 08/11/2026. Body, DTO, mã lỗi chi tiết và bảng endpoint chưa có (⛔ B…) ở `design/backend-contract.md` – **file đó thắng mục này**.
 
 ## Trạng thái và tương tác
 
