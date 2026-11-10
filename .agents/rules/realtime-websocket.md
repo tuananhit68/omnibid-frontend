@@ -16,7 +16,7 @@ description: Áp dụng khi làm đặt giá realtime, đồng hồ đếm ngư�
 
 | Hook | Kênh | Việc làm |
 | --- | --- | --- |
-| `useAuctionChannel(auctionId)` | `/topic/auction/{id}` (**số ít**) | tin `{ type, auctionId, data }`: `BID_PLACED` (`data` = BidResponse) → chèn đầu lịch sử, `currentPrice = amount`, `bidCount + 1`, người dẫn đầu = `bidderName`; `AUCTION_UPDATED` (`data` = AuctionResponse) → thay cả object phiên (mở, đóng, huỷ) |
+| `useAuctionChannel(auctionId)` | `/topic/auction/{id}` (**số ít**) | tin `{ type, auctionId, data }`: `BID_PLACED` (`data` = BidResponse + `auctionCurrentPrice, auctionBidCount, minNextBid, reserveStatus`) → chèn đầu lịch sử, lấy giá, số lượt, `minNextBid`, `reserveStatus` từ tin, người dẫn đầu = `bidderName`; `AUCTION_UPDATED` (`data` = AuctionResponse) → thay cả object phiên (mở, đóng, huỷ) |
 | `useUserNotifications()` | `/user/queue/notifications` | tin = NotificationResponse; badge chuông = `unreadCount` trong tin; chèn thông báo mới; `OUTBID`, `PAYMENT_RESULT`, `ORDER_CREATED`… → invalidate query liên quan |
 
 - Subscribe trong `useEffect`, **unsubscribe khi unmount** hoặc khi đổi `auctionId`.
@@ -26,7 +26,7 @@ description: Áp dụng khi làm đặt giá realtime, đồng hồ đếm ngư�
 
 ## Đồng hồ đếm ngược
 
-- Tính từ `endTime` (giờ VN, không múi giờ – xem `api-data.md`) và độ lệch giờ: `serverOffsetMs = Date.parse(response.headers.date) − Date.now()` lấy từ lần gọi `GET /auctions/{id}` (backend chưa có trường `serverTime`).
+- Tính từ `endTime` (giờ VN, không múi giờ – xem `api-data.md`) và độ lệch giờ: `serverOffsetMs = parseVN(detail.serverTime) − Date.now()` lấy từ `GET /auctions/{id}`; thiếu `serverTime` thì dùng header `Date`.
 - Cập nhật mỗi giây bằng một `setInterval` chung, không tạo interval cho từng thẻ.
 - Về 0: hiện "Đang chốt phiên…", khoá khối đặt giá, chờ sự kiện kết thúc qua WebSocket; nếu 10 giây chưa có thì refetch. **Không tự đặt trạng thái ENDED/UNSOLD.**
 - Không gia hạn đồng hồ ở frontend.
@@ -34,7 +34,7 @@ description: Áp dụng khi làm đặt giá realtime, đồng hồ đếm ngư�
 ## Đặt giá
 
 - Gửi `POST /bids { auctionId, amount }` → 201 `BidResponse`. Trong lúc chờ: khoá nút, không optimistic update.
-- `minNextBid` backend không trả trong dữ liệu phiên → frontend tính để **gợi ý**: `bidCount === 0 ? startPrice : currentPrice + bidIncrement`. Ô nhập mặc định bằng giá trị này.
+- `minNextBid` lấy từ backend (dữ liệu phiên, tin `BID_PLACED`, `data` của lỗi `BID_TOO_LOW`). Không tự tính. Ô nhập mặc định bằng giá trị này.
 - Xử lý mã lỗi: `BID_TOO_LOW` (409 – điền `error.data.minNextBid`), `ALREADY_LEADING` (409), `SELF_BID_NOT_ALLOWED` (422), `AUCTION_NOT_ACTIVE` (409), `ACCOUNT_BANNED` (403 – đăng xuất).
 
 ## Thanh toán bất đồng bộ

@@ -105,10 +105,12 @@ Màu: bắt buộc dùng đúng token ở cột giữa.
 
 ## API
 
-- `⛔ B1 API sản phẩm – backend chưa có; làm giao diện với mock`
-- `⛔ B2 GET /categories – chưa có`
+- `GET /products/mine?status&categoryId&q&page&size`
+- `GET /products/mine/summary (hàng KPI)`
+- `DELETE /products/{id} (đổi REMOVED; PRODUCT_NOT_EDITABLE)`
+- `GET /categories`
 
-Đối chiếu từ code backend ngày 08/11/2026. Body, DTO, mã lỗi chi tiết và bảng endpoint chưa có (⛔ B…) ở `design/backend-contract.md` – **file đó thắng mục này**.
+Body, DTO, mã lỗi chi tiết ở `design/backend-contract.md` – **file đó thắng mục này**.
 
 ## Trạng thái và tương tác
 

@@ -52,14 +52,13 @@ src/features/auction/
 
 ## Upload ảnh
 
-- **Backend chưa có endpoint ảnh (B1).** Khi có: gửi `multipart/form-data` lên backend (backend đẩy lên Cloudinary), không gọi Cloudinary trực tiếp từ trình duyệt.
+- `POST /products/{id}/images` (part `file`, **một ảnh mỗi request**) và `POST /users/me/avatar`; backend lưu Cloudinary hoặc thư mục `/uploads`. Không gọi Cloudinary trực tiếp từ trình duyệt.
+- Khai báo cả domain Cloudinary và `localhost:8080/uploads` trong `images.remotePatterns`.
 - Kiểm tra trước khi gửi: PNG/JPG/WEBP, ≤ 10MB, tối đa 5 ảnh/sản phẩm. Tải tuần tự, có tiến trình và nút thử lại từng ảnh.
 
-## Endpoint chưa có
+## Mock cũ
 
-Backend chưa có một số API (sản phẩm, danh mục công khai, hồ sơ, theo dõi, lượt đặt của tôi, lọc phiên – `backend-contract.md` mục 4). Với màn hình phụ thuộc:
-- Không tự bịa endpoint. Viết hàm trong `api.ts` gọi tới `src/mocks/<feature>.ts` (dữ liệu mẫu đúng type dự kiến) và đánh dấu `// TODO(backend B1): thay bằng API thật`.
-- Hoặc ẩn tính năng theo cột "Frontend làm gì" trong bảng B.
+Backend đã có đủ API trong `backend-contract.md`. Không tạo dữ liệu mock mới; mock cũ trong `src/mocks` thay bằng API thật và xoá đi.
 
 ## Bảo mật
 
