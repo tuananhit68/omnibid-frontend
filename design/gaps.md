@@ -6,6 +6,13 @@ Bảng G dưới đây là chỗ Figma vẽ dư so với dữ liệu backend (đ
 
 Quy tắc chung: **backend là chuẩn nghiệp vụ, Figma là chuẩn giao diện.** Thứ gì Figma có mà backend không có thì ẩn đi hoặc thay bằng dữ liệu thật gần nhất; không tạo endpoint mới trong phạm vi frontend.
 
+## 0. Quy tắc chung cho thanh công cụ (tìm kiếm, lọc, sắp xếp)
+
+- Chỉ hiện ô tìm kiếm, bộ lọc, dropdown sắp xếp khi endpoint của màn hình có tham số tương ứng trong `backend-contract.md`. Không có → **ẩn** điều khiển đó, giữ các điều khiển còn lại đúng vị trí.
+- **Không** lọc hay sắp xếp phía client trên dữ liệu đã phân trang (kết quả sẽ sai khi có nhiều trang).
+- Tab trạng thái luôn gọi API với tham số trạng thái; tab gộp nhiều trạng thái truyền danh sách phẩy (`backend-contract.md` mục 4).
+- Áp dụng cho mọi màn hình; không cần hỏi lại. Muốn có thêm tham số thì ghi vào báo cáo cuối để nhóm backend bổ sung.
+
 ## 1. Dữ liệu Figma có nhưng backend không có
 
 | # | Màn hình | Trong Figma | Backend hiện có | Xử lý mặc định trong spec |
@@ -32,6 +39,7 @@ Quy tắc chung: **backend là chuẩn nghiệp vụ, Figma là chuẩn giao di�
 | G20 | S12 | "Đơn vị: Vận chuyển mô phỏng", SĐT che `0908 ••• 419` | Có `carrier_name`, `phone_number` | Giữ nguyên, che 3 số giữa ở frontend |
 | G21 | S18 | Dropdown "Chuyển trạng thái tiếp theo" | Chỉ có đúng 1 trạng thái kế tiếp hợp lệ | Thay dropdown bằng nhãn cố định "Trạng thái tiếp theo: Đã lấy hàng" + nút xác nhận (tránh chọn sai thứ tự) |
 | G22 | S06 | Select "Thời gian: Mới nhất"; chip tình trạng ("Mới 100%", "Like New 99%"); lý do vô hiệu khi hover (i) | `GET /bids/mine` không có `sort` (luôn mới nhất trước), có `status`; `MyBidResponse` không có `productCondition`, không có lý do vô hiệu | Thay select bằng **lọc trạng thái lượt đặt**: Tất cả trạng thái · Dẫn đầu · Bị vượt · Đã thắng · Không thắng · Bị vô hiệu (truyền `status`). Ẩn chip tình trạng. `INVALIDATED`: icon (i) có tooltip mở được bằng hover và focus, câu chung "Lượt đặt này đã bị hệ thống vô hiệu và không được tính vào kết quả phiên."; dòng phụ hiện "n lượt đặt" từ `myBidCount` |
+| G23 | S07 | Ô tìm kiếm, dropdown sắp xếp; tab "Đã kết thúc" gộp kết thúc + huỷ | `GET /watchlist` không có `q`, `sort`; `status` nhận nhiều giá trị | Ẩn ô tìm kiếm và dropdown sắp xếp (mục 0); tab Đã kết thúc truyền `ENDED,UNSOLD,CANCELLED`; 5 thẻ KPI lấy từ `GET /watchlist/summary` (`ended` = ENDED + UNSOLD, `cancelled` riêng) |
 
 ## 2. Màn hình còn thiếu trong Figma
 

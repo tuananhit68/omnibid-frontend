@@ -135,7 +135,7 @@ Màu: bắt buộc dùng đúng token ở cột giữa.
 
 ## API
 
-- `GET /watchlist?status&page&size`
+- `GET /watchlist?status&page&size (status nhiều giá trị; không có q, sort)`
 - `GET /watchlist/summary (hàng KPI)`
 - `DELETE /watchlist/{auctionId} (nút tim)`
 - `WS /topic/auction/{id} cho các phiên ACTIVE đang hiển thị (tối đa số thẻ trên trang)`
@@ -158,7 +158,7 @@ Body, DTO, mã lỗi chi tiết ở `design/backend-contract.md` – **file đó
 
 ## Chỗ lệch Figma ↔ backend
 
-Áp dụng cách xử lý mặc định trong `design/gaps.md` cho: **G8**, **G18**. Không vẽ dữ liệu giả cho các phần đã ẩn.
+Áp dụng cách xử lý mặc định trong `design/gaps.md` cho: **G8**, **G18**, **G23**. Không vẽ dữ liệu giả cho các phần đã ẩn.
 
 ## Accessibility
 

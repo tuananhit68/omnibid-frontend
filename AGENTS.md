@@ -91,6 +91,7 @@ Agent **tự tạo nhánh và commit trên máy**; người dùng review, push, 
 - Bắt đầu việc: `git status` phải sạch – nếu có thay đổi chưa commit thì **dừng và hỏi**, không stash/xoá. Rồi `git switch develop && git pull --ff-only && git switch -c <nhánh>`. Nhánh đã có thì `git switch <nhánh>`, không tạo lại.
 - Commit sau mỗi bước code xong **và** đã pass `lint` + `typecheck` (vd: types+api+hooks · component · trang). Conventional Commits tiếng Anh: `feat(bid): add bid panel for S05`, `fix(order): handle PAYMENT_RATE_LIMITED`. Commit nhỏ, đúng phạm vi màn hình.
 - `git add` từng file/thư mục đã sửa, không `git add -A` mù. Không commit `.env*`, file build, file trong `design/` và `.agents/` (trừ khi được yêu cầu).
+- Sandbox chặn ghi `.git/`: xin phép chạy **ngoài sandbox** cho lệnh git cục bộ (`switch`, `pull --ff-only`, `add`, `commit`, `status`, `log`, `diff`); người dùng đã đồng ý trước cho các lệnh này. Không bao giờ xin chạy `push` hay lệnh trong danh sách cấm dưới đây.
 - **Cấm**: `git push` (mọi dạng), `--force`, `merge`, `rebase`, `reset --hard`, `clean -fd`, xoá nhánh, sửa commit đã có (`--amend` trên commit cũ), đổi `git config`, đụng repo backend.
 - Kết thúc: in `git log --oneline develop..HEAD` và `git diff --stat develop...HEAD`, đề xuất tiêu đề + mô tả PR (màn hình, ảnh chụp cần đính kèm, checklist `/review-screen`, giả định đã dùng).
 

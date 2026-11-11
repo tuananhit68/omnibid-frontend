@@ -80,7 +80,7 @@ Tin trên kênh cá nhân: `NotificationResponse` (`id, type, title, content, re
 | S06 | `GET /bids/mine/summary` | | `{ totalAuctions, totalBids, leading, outbid, won }` |
 | S07, S00–S02 | `POST /watchlist/{auctionId}` | | 201 (200 nếu đã theo dõi) `{ auctionId, watchedAt }`. `SELF_WATCH_NOT_ALLOWED` (422), 404 |
 | S07 | `DELETE /watchlist/{auctionId}` | | 200 (kể cả khi chưa theo dõi) |
-| S07 | `GET /watchlist` | `status?`, `page`, `size` | `PageResponse<AuctionResponse + watchedAt>`, sắp `watchedAt` giảm dần |
+| S07 | `GET /watchlist` | `status?` (nhiều giá trị, phẩy), `page`, `size` | `PageResponse<AuctionResponse + watchedAt>`. **Không có `q`, `sort`**: luôn sắp `watchedAt` giảm dần. Tab S07: Tất cả = không truyền · Đang diễn ra = `ACTIVE` · Sắp diễn ra = `SCHEDULED` · Đã kết thúc = `ENDED,UNSOLD,CANCELLED` |
 | S07 | `GET /watchlist/summary` | | `{ total, active, scheduled, ended (ENDED + UNSOLD), cancelled }` |
 
 ### 2.3. Kênh người bán
@@ -161,6 +161,8 @@ Tin trên kênh cá nhân: `NotificationResponse` (`id, type, title, content, re
 
 ## 4. Lưu ý khi nối
 
+- **Tham số trạng thái phiên** (`status` của `GET /auctions`, `GET /watchlist`, `GET /auctions/mine`; `auctionStatus` của `GET /bids/mine`) đều nhận nhiều giá trị phân tách dấu phẩy. Tab "Đã kết thúc" ở mọi màn hình = `ENDED,UNSOLD,CANCELLED`.
+- Endpoint nào không ghi `q` hoặc `sort` thì **không có** – xem quy tắc chung ở `gaps.md` mục 0.
 - `GET /auctions/{id}` và `GET /auctions`, tin WebSocket: không bao giờ có `reservePrice` cho người không phải chủ phiên/admin – frontend không được dựa vào trường này ở trang người mua.
 - `GET /auctions/mine` cần token (không thuộc nhóm `GET /auctions/**` công khai).
 - Ảnh: backend lưu Cloudinary hoặc thư mục cục bộ (`http://localhost:8080/uploads/...`) – khai báo cả hai trong `images.remotePatterns` của `next.config`.
