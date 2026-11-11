@@ -27,10 +27,10 @@ export interface ToastItem {
 }
 
 interface ToastContextValue {
-  showToast: (toast: Omit<ToastItem, "id">) => void;
-  success: (message: ReactNode, title?: string) => void;
-  error: (message: ReactNode, title?: string) => void;
-  info: (message: ReactNode, title?: string) => void;
+  showToast: (toast: Omit<ToastItem, "id">) => string;
+  success: (message: ReactNode, title?: string) => string;
+  error: (message: ReactNode, title?: string) => string;
+  info: (message: ReactNode, title?: string) => string;
   dismiss: (id: string) => void;
 }
 
@@ -60,6 +60,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           dismiss(id);
         }, autoDismissDuration);
       }
+      return id;
     },
     [dismiss]
   );
