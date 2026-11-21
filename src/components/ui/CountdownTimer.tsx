@@ -45,6 +45,10 @@ function getSharedNowMs(): number {
   return sharedNowMs;
 }
 
+export function useSharedNowMs(): number {
+  return useSyncExternalStore(subscribeSharedTicker, getSharedNowMs, () => 0);
+}
+
 const defaultCountdown: CountdownInfo = {
   days: 0,
   hours: "00",

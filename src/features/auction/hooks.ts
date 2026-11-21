@@ -8,7 +8,13 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useAuctionChannel, type AuctionEvent } from "@/lib/ws";
-import type { AuctionDetail, BidHistoryItem, Page } from "@/lib/api/contract";
+import type {
+  AuctionDetail,
+  AuctionSummary,
+  BidHistoryItem,
+  Category,
+  Page,
+} from "@/lib/api/contract";
 import {
   getAuctionBids,
   getAuctionDetailWithMeta,
@@ -27,11 +33,16 @@ export const auctionKeys = {
   categories: ["categories"] as const,
 };
 
-export function useAuctions(params?: AuctionListParams) {
+export function useAuctions(
+  params?: AuctionListParams,
+  initialData?: Page<AuctionSummary> | null
+) {
   return useQuery({
     queryKey: auctionKeys.list(params),
     queryFn: () => getAuctions(params),
+    initialData: initialData ?? undefined,
     placeholderData: keepPreviousData,
+    staleTime: 30_000,
   });
 }
 
@@ -65,13 +76,14 @@ export function useAuctionBids(
   });
 }
 
-export function useCategories() {
+export function useCategories(initialData?: Category[] | null) {
   return useQuery({
     queryKey: auctionKeys.categories,
     queryFn: async () => {
-      const page = await getCategories(50);
+      const page = await getCategories(100);
       return page.content;
     },
+    initialData: initialData ?? undefined,
     staleTime: 5 * 60 * 1000,
   });
 }

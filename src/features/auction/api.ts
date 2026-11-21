@@ -36,7 +36,7 @@ export async function getAuctions(
   });
 }
 
-export async function getCategories(size = 50): Promise<Page<Category>> {
+export async function getCategories(size = 100): Promise<Page<Category>> {
   return apiRequest<Page<Category>>({
     method: "GET",
     url: "/categories",
