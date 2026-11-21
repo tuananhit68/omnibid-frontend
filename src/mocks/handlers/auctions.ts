@@ -675,6 +675,36 @@ export function handleCancelAuction(
     product.updatedAt = nowIso;
   }
 
+  // Thông báo AUCTION_CANCELLED cho người bán và người đang dẫn đầu (nếu có) — BR §7
+  const productTitle = product?.title ?? `Phiên AUC-${auction.id}`;
+  db.notifications.push({
+    id: db.nextIds.notification++,
+    userId: auction.sellerId,
+    type: NotificationType.AUCTION_CANCELLED,
+    title: `Phiên đấu giá AUC-${auction.id} đã bị hủy`,
+    content: `Phiên "${productTitle}" đã bị hủy với lý do: ${reason}`,
+    refType: "AUCTION",
+    refId: auction.id,
+    isRead: false,
+    createdAt: nowIso,
+  });
+  if (
+    auction.highestBidderId !== null &&
+    auction.highestBidderId !== auction.sellerId
+  ) {
+    db.notifications.push({
+      id: db.nextIds.notification++,
+      userId: auction.highestBidderId,
+      type: NotificationType.AUCTION_CANCELLED,
+      title: `Phiên đấu giá AUC-${auction.id} đã bị hủy`,
+      content: `Phiên "${productTitle}" bạn đang dẫn đầu đã bị hủy. Lý do: ${reason}`,
+      refType: "AUCTION",
+      refId: auction.id,
+      isRead: false,
+      createdAt: nowIso,
+    });
+  }
+
   persistMockDb();
 
   publishAuctionEvent({

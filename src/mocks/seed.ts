@@ -940,14 +940,14 @@ export function createSeedDatabase(baseMs = Date.now()): MockDatabase {
     },
   ];
 
-  // Thông báo đủ 5 loại
+  // Thông báo đủ 5 loại (đúng BR-v4 §7)
   const notifications: MockNotification[] = [
     {
       id: 1,
       userId: 3,
       type: NotificationType.OUTBID,
       title: "Bạn vừa bị vượt giá",
-      content: "Có người vừa đặt 2.900.000 ₫ cho phiên Máy ảnh film 35mm.",
+      content: "Có người vừa đặt 2.900.000 ₫ cho phiên Máy ảnh film 35mm kèm ống kính 50mm f/1.8.",
       refType: "AUCTION",
       refId: 2,
       isRead: false,
@@ -958,9 +958,10 @@ export function createSeedDatabase(baseMs = Date.now()): MockDatabase {
       userId: 3,
       type: NotificationType.AUCTION_RESULT,
       title: "Chúc mừng bạn đã thắng phiên đấu giá",
-      content: "Bạn đã thắng phiên Áo khoác dạ dáng dài thủ công cỡ M với giá 2.400.000 ₫.",
-      refType: "ORDER",
-      refId: 1,
+      content:
+        "Bạn đã thắng phiên Áo khoác dạ dáng dài thủ công cỡ M với giá 2.400.000 ₫. Vui lòng thanh toán đơn ORD-1 trong vòng 48 giờ.",
+      refType: "AUCTION",
+      refId: 6,
       isRead: false,
       createdAt: t(-6 * 60),
     },
@@ -969,7 +970,7 @@ export function createSeedDatabase(baseMs = Date.now()): MockDatabase {
       userId: 3,
       type: NotificationType.ORDER_UPDATE,
       title: "Thanh toán đơn hàng ORD-2 thành công",
-      content: "Đơn hàng ORD-2 đã được thanh toán. Người bán sẽ sớm gửi hàng.",
+      content: "Đơn hàng ORD-2 đã được thanh toán. Người bán sẽ sớm chuẩn bị và gửi hàng.",
       refType: "ORDER",
       refId: 2,
       isRead: true,
@@ -979,8 +980,9 @@ export function createSeedDatabase(baseMs = Date.now()): MockDatabase {
       id: 4,
       userId: 4,
       type: NotificationType.AUCTION_CANCELLED,
-      title: "Phiên đấu giá đã bị hủy",
-      content: "Phiên Túi xách da thật thủ công đã bị hủy bởi người bán.",
+      title: "Phiên đấu giá AUC-8 đã bị hủy",
+      content:
+        "Phiên Túi xách da thật thủ công màu nâu cognac đã bị hủy bởi người bán với lý do: Người bán cần cập nhật lại ảnh chi tiết sản phẩm trước khi mở bán.",
       refType: "AUCTION",
       refId: 8,
       isRead: false,
@@ -991,11 +993,60 @@ export function createSeedDatabase(baseMs = Date.now()): MockDatabase {
       userId: 3,
       type: NotificationType.REPORT_RESOLVED,
       title: "Báo cáo vi phạm REP-2 đã được xử lý",
-      content: "Quản trị viên đã xem xét và xử lý báo cáo của bạn.",
+      content:
+        "Quản trị viên đã xem xét và xác nhận báo cáo REP-2 của bạn. Ghi chú xử lý: Đã ẩn sản phẩm vi phạm và khóa tài khoản người đăng.",
       refType: "REPORT",
       refId: 2,
-      isRead: true,
+      isRead: false,
       createdAt: t(-48 * 60),
+    },
+    {
+      id: 6,
+      userId: 3,
+      type: NotificationType.AUCTION_CANCELLED,
+      title: "Phiên đấu giá AUC-8 đã bị hủy",
+      content:
+        "Phiên Túi xách da thật thủ công màu nâu cognac đã bị hủy trước khi kết thúc.",
+      refType: "AUCTION",
+      refId: 8,
+      isRead: true,
+      createdAt: t(-95 * 60),
+    },
+    {
+      id: 7,
+      userId: 2,
+      type: NotificationType.AUCTION_RESULT,
+      title: "Phiên đấu giá AUC-6 đã có người thắng",
+      content:
+        "Phiên Áo khoác dạ dáng dài thủ công cỡ M kết thúc ở mức 2.400.000 ₫ và đã tạo đơn hàng ORD-1.",
+      refType: "AUCTION",
+      refId: 6,
+      isRead: false,
+      createdAt: t(-6 * 60),
+    },
+    {
+      id: 8,
+      userId: 2,
+      type: NotificationType.ORDER_UPDATE,
+      title: "Đơn hàng ORD-2 đã được thanh toán",
+      content:
+        "Người mua đã thanh toán đơn hàng ORD-2. Vui lòng chuẩn bị và cập nhật thông tin gửi hàng.",
+      refType: "ORDER",
+      refId: 2,
+      isRead: false,
+      createdAt: t(-24 * 60),
+    },
+    {
+      id: 9,
+      userId: 2,
+      type: NotificationType.AUCTION_CANCELLED,
+      title: "Phiên đấu giá AUC-8 đã bị hủy",
+      content:
+        "Bạn đã hủy phiên Túi xách da thật thủ công màu nâu cognac. Sản phẩm đã trở về trạng thái Sẵn sàng.",
+      refType: "AUCTION",
+      refId: 8,
+      isRead: true,
+      createdAt: t(-95 * 60),
     },
   ];
 
@@ -1054,7 +1105,7 @@ export function createSeedDatabase(baseMs = Date.now()): MockDatabase {
       bid: 14,
       order: 7,
       payment: 5,
-      notification: 6,
+      notification: 10,
       report: 4,
     },
     users,

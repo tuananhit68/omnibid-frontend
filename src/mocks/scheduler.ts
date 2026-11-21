@@ -1,9 +1,10 @@
-import { dayjs, VIETNAM_TIMEZONE } from "@/lib/format";
+import { dayjs, formatDateTime, VIETNAM_TIMEZONE } from "@/lib/format";
 import {
   AuctionStatus,
   NotificationType,
   OrderStatus,
   ProductStatus,
+  UserStatus,
 } from "@/types/enums";
 import { getMockDb, maskBidderName, mockNowIso, mockNowMs, persistMockDb } from "./db";
 import { computeMinNextBid, computeReserveStatus } from "./seed";
@@ -67,9 +68,13 @@ export function tickMockScheduler(): boolean {
         auction.currentPrice,
         auction.bidCount
       );
+      const highestUserForClose = auction.highestBidderId
+        ? db.users.find((u) => u.id === auction.highestBidderId)
+        : null;
       const hasWinner =
         auction.bidCount > 0 &&
         auction.highestBidderId !== null &&
+        highestUserForClose?.status === UserStatus.ACTIVE &&
         reserveStatus !== "NOT_MET";
 
       auction.closedAt = nowIso;
@@ -85,7 +90,7 @@ export function tickMockScheduler(): boolean {
         }
 
         const orderId = db.nextIds.order++;
-        const paymentDeadline = dayjs(now + 24 * 3600_000)
+        const paymentDeadline = dayjs(now + 48 * 3600_000)
           .tz(VIETNAM_TIMEZONE)
           .format();
 
@@ -110,15 +115,15 @@ export function tickMockScheduler(): boolean {
           createdAt: nowIso,
         });
 
-        // Thông báo cho người thắng và người bán
+        // Thông báo AUCTION_RESULT cho người thắng (kèm hạn thanh toán) và người bán — BR §7
         db.notifications.push({
           id: db.nextIds.notification++,
           userId: auction.winnerId,
           type: NotificationType.AUCTION_RESULT,
           title: "Chúc mừng bạn đã thắng phiên đấu giá",
-          content: `Đơn hàng ORD-${orderId} đã được tạo cho sản phẩm ${product?.title ?? `#${auction.productId}`}.`,
-          refType: "ORDER",
-          refId: orderId,
+          content: `Bạn đã thắng phiên ${product?.title ?? `AUC-${auction.id}`} (đơn ORD-${orderId}). Vui lòng thanh toán trước ${formatDateTime(paymentDeadline)}.`,
+          refType: "AUCTION",
+          refId: auction.id,
           isRead: false,
           createdAt: nowIso,
         });
@@ -127,9 +132,9 @@ export function tickMockScheduler(): boolean {
           userId: auction.sellerId,
           type: NotificationType.AUCTION_RESULT,
           title: "Phiên đấu giá đã có người thắng",
-          content: `Phiên AUC-${auction.id} kết thúc thành công và tạo đơn ORD-${orderId}.`,
-          refType: "ORDER",
-          refId: orderId,
+          content: `Phiên AUC-${auction.id} kết thúc thành công và đã tạo đơn hàng ORD-${orderId}.`,
+          refType: "AUCTION",
+          refId: auction.id,
           isRead: false,
           createdAt: nowIso,
         });

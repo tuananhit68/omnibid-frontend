@@ -32,6 +32,10 @@ import {
 } from "./handlers/auctions";
 import { handleCreateReport } from "./handlers/reports";
 import {
+  handleGetNotifications,
+  handleMarkNotificationRead,
+} from "./handlers/notifications";
+import {
   handleConfirmReceipt,
   handleGetOrderDetail,
   handleGetOrders,
@@ -353,7 +357,20 @@ async function routeMockRequest(
     };
   }
 
-  // 2.5 Reports
+  // 2.5 Notifications & Reports
+  if (method === "GET" && path === "/notifications") {
+    return { status: 200, data: handleGetNotifications(authHeader, params) };
+  }
+  const notificationReadMatch = path.match(/^\/notifications\/(\d+)\/read$/);
+  if (method === "POST" && notificationReadMatch) {
+    return {
+      status: 200,
+      data: handleMarkNotificationRead(
+        Number(notificationReadMatch[1]),
+        authHeader
+      ),
+    };
+  }
   if (method === "POST" && path === "/reports") {
     return { status: 201, data: handleCreateReport(authHeader, parseJsonBody(config.data)) };
   }

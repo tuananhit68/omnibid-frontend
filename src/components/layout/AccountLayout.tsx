@@ -4,6 +4,7 @@ import { Suspense, useState, useEffect, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
+import { useUnreadNotificationCount } from "@/features/notification/hooks";
 import { SkipLink } from "./SkipLink";
 import { PublicFooter, PublicHeader } from "./PublicLayout";
 import { Breadcrumb } from "../ui/Breadcrumb";
@@ -40,10 +41,12 @@ function resolveCurrentSectionLabel(pathname: string): string {
 
 function AccountLayoutInner({
   children,
-  unreadNotifications = 0,
+  unreadNotifications,
 }: AccountLayoutProps) {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { unreadCount: fetchedUnread } = useUnreadNotificationCount();
+  const unreadCount = unreadNotifications ?? fetchedUnread;
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -63,7 +66,7 @@ function AccountLayoutInner({
           pathname.startsWith(item.href) ||
           (item.href === "/me/orders" && pathname.startsWith("/orders/"));
         const showBadge =
-          item.href === "/me/notifications" && unreadNotifications > 0;
+          item.href === "/me/notifications" && unreadCount > 0;
 
         return (
           <Link
@@ -83,7 +86,7 @@ function AccountLayoutInner({
             </span>
             {showBadge && (
               <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-danger px-1.5 py-0.5 text-caption font-semibold text-text-inverse tabular">
-                {unreadNotifications > 99 ? "99+" : unreadNotifications}
+                {unreadCount > 9 ? "9+" : unreadCount}
               </span>
             )}
           </Link>

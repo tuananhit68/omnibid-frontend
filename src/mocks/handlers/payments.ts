@@ -80,6 +80,28 @@ export function handleCreatePayment(
         product.status = ProductStatus.AVAILABLE;
         product.updatedAt = nowIso;
       }
+      db.notifications.push({
+        id: db.nextIds.notification++,
+        userId: order.buyerId,
+        type: NotificationType.ORDER_UPDATE,
+        title: `Đơn hàng ORD-${order.id} đã hết hạn thanh toán`,
+        content: `Đơn hàng ORD-${order.id} đã quá hạn thanh toán và chuyển sang trạng thái Hết hạn.`,
+        refType: "ORDER",
+        refId: order.id,
+        isRead: false,
+        createdAt: nowIso,
+      });
+      db.notifications.push({
+        id: db.nextIds.notification++,
+        userId: order.sellerId,
+        type: NotificationType.ORDER_UPDATE,
+        title: `Đơn hàng ORD-${order.id} đã hết hạn thanh toán`,
+        content: `Người mua không thanh toán đúng hạn cho đơn ORD-${order.id}. Sản phẩm đã trở về trạng thái Sẵn sàng.`,
+        refType: "ORDER",
+        refId: order.id,
+        isRead: false,
+        createdAt: nowIso,
+      });
       persistMockDb();
     }
     throw mockError("ORDER_EXPIRED");

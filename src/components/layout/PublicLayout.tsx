@@ -13,13 +13,16 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { useSession } from "@/lib/auth/session";
 import { useLogout } from "@/features/auth/hooks";
+import {
+  NotificationBell,
+  NotificationUnreadBadge,
+} from "@/features/notification/components";
 import { Logo } from "./Logo";
 import { SkipLink } from "./SkipLink";
 import { MockModeBanner } from "./MockModeBanner";
 import { Avatar } from "../ui/Avatar";
 import { getButtonClassName } from "../ui/Button";
 import {
-  BellIcon,
   ChevronDownIcon,
   CloseIcon,
   LogOutIcon,
@@ -206,13 +209,7 @@ export function PublicHeader() {
             </div>
           ) : (
             <div className="hidden sm:flex items-center gap-2">
-              <Link
-                href="/me/notifications"
-                aria-label="Thông báo"
-                className="inline-flex size-10 items-center justify-center rounded-md text-text-secondary hover:bg-surface-subtle hover:text-text"
-              >
-                <BellIcon className="size-5" />
-              </Link>
+              <NotificationBell />
               <div className="relative" ref={menuRef}>
                 <button
                   type="button"
@@ -297,6 +294,11 @@ export function PublicHeader() {
                 )}
               </div>
             </div>
+          )}
+
+          {/* Chuông thông báo di động (chỉ USER) */}
+          {ready && isAuthenticated && !isAdmin && (
+            <NotificationBell className="sm:hidden" />
           )}
 
           {/* Nút menu di động */}
@@ -412,9 +414,10 @@ export function PublicHeader() {
                 <Link
                   href="/me/notifications"
                   onClick={() => setMobileNavOpen(false)}
-                  className="rounded-md px-3 py-2.5 text-body text-text hover:bg-surface-subtle"
+                  className="flex items-center justify-between rounded-md px-3 py-2.5 text-body text-text hover:bg-surface-subtle"
                 >
-                  Thông báo
+                  <span>Thông báo</span>
+                  <NotificationUnreadBadge />
                 </Link>
                 <button
                   type="button"
