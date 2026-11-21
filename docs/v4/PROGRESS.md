@@ -10,7 +10,7 @@ Nhánh: `feature/fe-v4` · Kit: `.agents/skills/omnibid-fe-v4` · Agent cập nh
 - [x] 4. Bán hàng — my-products, product-form, auction-create, my-auctions, my-auction
 - [x] 5. Mua hàng — my-bids, my-orders, order-detail
 - [x] 6. Thông báo — notifications, notification-bell
-- [ ] 7. Quản trị — admin-dashboard, admin-users, admin-categories, admin-products, admin-auctions, admin-orders, admin-reports
+- [x] 7. Quản trị — admin-dashboard, admin-users, admin-categories, admin-products, admin-auctions, admin-orders, admin-reports
 - [ ] 8. Rà soát cuối
 
 ## Baseline
@@ -39,8 +39,8 @@ Người dùng xác nhận tiếp tục phát triển mặc định ở chế đ
 - Phase 4: dùng chung `AuctionScheduleForm` giữa `auction-create` (`/me/auctions/new`) và chỉnh sửa phiên `SCHEDULED` trong `my-auction` (`/me/auctions/[id]`); thêm đầy đủ mock handler cho `products` (multipart → data URL, kiểm tra magic bytes, 1–5 ảnh, BR-23, xóa khi chưa từng lên phiên) và `auctions` (`create`, `update`, `cancel`, `/auctions/mine`).
 - Phase 5: làm lại `my-bids` (`/me/bids`, `size=20`, lọc nhanh phía client trên trang hiện tại + lọc theo `auctionId`), thêm `my-orders` (`/me/orders`, tabs `BUYER`/`SELLER`, 6 trạng thái, tô nền `warning-subtle-bg` + nhãn "Cần bạn xử lý"), thêm `order-detail` (`/orders/[id]`, đủ nhánh `BUYER`/`SELLER` × trạng thái, thanh toán đồng bộ `Idempotency-Key` giữ khóa khi retry lỗi mạng, `ReportModal`, `ConfirmDialog`). Bổ sung mock handler `orders.ts`, `payments.ts` và thông báo `ORDER_UPDATE` trong `scheduler.ts`.
 - Phase 6: làm mới `features/notification` (`GET /notifications`, `POST /notifications/{id}/read` optimistic + rollback), màn `/me/notifications` (`Tabs` Tất cả/Chưa đọc, lọc 5 loại, `size=20`, điều hướng AUCTION/ORDER và mở rộng tại chỗ cho REPORT, không có "đánh dấu tất cả"), `NotificationBell` ở `PublicLayout` (chỉ USER, `totalElements` của `isRead=false&size=1`, refetch khi focus/điều hướng/60s, `"9+"` khi > 9, popover 5 mục + "Xem tất cả") và số chưa đọc đồng bộ ở sidebar `AccountLayout`. Bổ sung mock handler `notifications.ts`, cập nhật sinh thông báo `AUCTION_CANCELLED` trong `auctions.ts`, `AUCTION_RESULT` kèm hạn thanh toán + `refType: "AUCTION"` trong `scheduler.ts` và `ORDER_UPDATE` khi hết hạn trong `payments.ts` đúng `BUSINESS_RULES_v4.md` §7.
+- Phase 7: hoàn thiện 7 màn quản trị (`admin-dashboard`, `admin-users`, `admin-categories`, `admin-products`, `admin-auctions`, `admin-orders`, `admin-reports`) dưới `src/features/admin/{shared,statistics,users,categories,products,auctions,orders,reports}` và `src/app/admin/**`; dùng chung `AdminActionDialogs` cho trang danh sách/chi tiết và panel báo cáo vi phạm; `AdminLayoutShell` đồng bộ badge `pendingReports` trên sidebar; bổ sung đầy đủ 20 endpoint admin trong `src/mocks/handlers/admin.ts` kèm hệ quả khóa người dùng/ẩn sản phẩm (hủy phiên mở + WS event, hủy đơn `PENDING_PAYMENT`, giữ bid, `release()` trừ `HIDDEN`, sinh thông báo), xử lý báo cáo chỉ đổi trạng thái báo cáo + gửi `REPORT_RESOLVED`, thống kê tính trực tiếp từ kho mock.
 
 ## Cần backend (khối bị ẩn vì thiếu API)
 
 ## Việc tồn
-- Màn tạm `/admin` (`// TODO fe-v4 admin-dashboard`) sẽ được thay bằng bản đầy đủ ở Phase 7.
