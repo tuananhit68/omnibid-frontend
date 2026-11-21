@@ -10,5 +10,4 @@ export * from "./PricePanel";
 export * from "./BidHistoryTable";
 export * from "./SellerSummaryCard";
 export * from "./BidForm";
-export * from "./ReportViolationModal";
 export * from "./AuctionDetailClient";

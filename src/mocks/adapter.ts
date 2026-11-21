@@ -17,6 +17,7 @@ import {
   handleGetMyBids,
   handlePlaceBid,
 } from "./handlers/auctions";
+import { handleCreateReport } from "./handlers/reports";
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -147,6 +148,11 @@ async function routeMockRequest(
   }
   if (method === "GET" && path === "/bids/mine") {
     return { status: 200, data: handleGetMyBids(authHeader, params) };
+  }
+
+  // 2.5 Reports
+  if (method === "POST" && path === "/reports") {
+    return { status: 201, data: handleCreateReport(authHeader, parseJsonBody(config.data)) };
   }
 
   throw mockError(

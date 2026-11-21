@@ -40,10 +40,3 @@ export interface PlaceBidRequest {
   auctionId: number;
   amount: number;
 }
-
-export interface CreateReportRequest {
-  reportedProductId?: number;
-  reportedUserId?: number;
-  reportedOrderId?: number;
-  reason: string;
-}

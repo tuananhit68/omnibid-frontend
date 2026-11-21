@@ -10,18 +10,13 @@ import {
 import { useAuctionChannel, type AuctionEvent } from "@/lib/ws";
 import type { AuctionDetail, BidHistoryItem, Page } from "@/lib/api/contract";
 import {
-  createReport,
   getAuctionBids,
   getAuctionDetailWithMeta,
   getAuctions,
   getCategories,
   placeBid,
 } from "./api";
-import type {
-  AuctionListParams,
-  CreateReportRequest,
-  PlaceBidRequest,
-} from "./types";
+import type { AuctionListParams, PlaceBidRequest } from "./types";
 
 export const auctionKeys = {
   all: ["auctions"] as const,
@@ -94,12 +89,6 @@ export function usePlaceBid() {
         queryKey: ["auctions", "bids", variables.auctionId],
       });
     },
-  });
-}
-
-export function useCreateReport() {
-  return useMutation({
-    mutationFn: (body: CreateReportRequest) => createReport(body),
   });
 }
 

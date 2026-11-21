@@ -25,7 +25,7 @@ import { BidForm } from "./BidForm";
 import { BidHistoryTable } from "./BidHistoryTable";
 import { ImageGallery } from "./ImageGallery";
 import { PricePanel } from "./PricePanel";
-import { ReportViolationModal } from "./ReportViolationModal";
+import { ReportModal } from "@/features/report";
 
 export interface AuctionDetailClientProps {
   auctionId: number;
@@ -239,11 +239,15 @@ export function AuctionDetailClient({
         </div>
       </div>
 
-      <ReportViolationModal
+      <ReportModal
         open={reportOpen}
         onClose={() => setReportOpen(false)}
-        reportedProductId={auction.productId}
-        targetTitle={auction.title}
+        productTarget={{ id: auction.productId, title: auction.title }}
+        userTarget={{
+          id: auction.seller.id,
+          fullName: auction.seller.fullName,
+          roleLabel: "Người bán",
+        }}
       />
     </div>
   );

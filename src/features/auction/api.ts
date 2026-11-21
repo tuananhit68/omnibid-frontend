@@ -4,15 +4,10 @@ import type {
   AuctionSummary,
   BidHistoryItem,
   Category,
-  CreateReportResponse,
   Page,
   PlaceBidResponse,
 } from "@/lib/api/contract";
-import type {
-  AuctionListParams,
-  CreateReportRequest,
-  PlaceBidRequest,
-} from "./types";
+import type { AuctionListParams, PlaceBidRequest } from "./types";
 
 export async function getAuctions(
   params?: AuctionListParams
@@ -77,15 +72,5 @@ export async function placeBid(
     method: "POST",
     url: `/auctions/${body.auctionId}/bids`,
     data: { amount: body.amount },
-  });
-}
-
-export async function createReport(
-  body: CreateReportRequest
-): Promise<CreateReportResponse> {
-  return apiRequest<CreateReportResponse>({
-    method: "POST",
-    url: "/reports",
-    data: body,
   });
 }
