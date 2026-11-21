@@ -1,20 +1,16 @@
 import type { NextConfig } from "next";
 
+const isMockMode = process.env.NEXT_PUBLIC_API_MODE === "mock";
+
 const nextConfig: NextConfig = {
-  /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
   images: {
+    unoptimized: isMockMode,
     remotePatterns: [
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
-      },
-      {
-        protocol: "http",
-        hostname: "localhost",
-        port: "8080",
-        pathname: "/uploads/**",
       },
     ],
   },
