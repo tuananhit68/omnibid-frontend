@@ -3,7 +3,7 @@
 Nhánh: `feature/fe-v4` · Kit: `.agents/skills/omnibid-fe-v4` · Agent cập nhật sau mỗi phase/màn.
 
 ## Phase
-- [ ] 0. Chuẩn bị
+- [x] 0. Chuẩn bị
 - [ ] 1. Nền tảng (contract.ts, API v4, mock, enums, thời gian, phiên, proxy, WS, hệ thiết kế, layout, UI kit, gỡ code cũ)
 - [ ] 2. Tài khoản — login, register, profile, admin-profile
 - [ ] 3. Phiên công khai — home, auction-list, auction-detail, report-modal
@@ -14,9 +14,14 @@ Nhánh: `feature/fe-v4` · Kit: `.agents/skills/omnibid-fe-v4` · Agent cập nh
 - [ ] 8. Rà soát cuối
 
 ## Baseline
+- Ngày: 2026-11-21 · Nhánh gốc: `develop` (`e100f25`) · Nhánh làm việc: `feature/fe-v4`
+- `npm install`: PASS (up to date, 153 packages)
+- `npm run lint`: PASS (exit 0)
+- `npm run typecheck`: PASS (exit 0)
+- `npm run build`: PASS (exit 0; Next.js 16.4.5 webpack, cảnh báo `middleware` deprecated → sẽ đổi sang `proxy.ts` ở Phase 1)
 
 ## Backend thật
-(có/không; nếu có: kết quả chạy live)
+Chờ người dùng xác nhận (mặc định phát triển ở chế độ mock `NEXT_PUBLIC_API_MODE=mock`).
 
 ## Lệch hợp đồng (backend thật ↔ RESPONSE_DTO_v4)
 
