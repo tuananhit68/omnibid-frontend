@@ -1,4 +1,3 @@
-// TODO fe-v4 auction-detail
 "use client";
 
 import { useState, type FormEvent } from "react";
@@ -25,13 +24,21 @@ export function BidForm({
   const toast = useToast();
   const placeBidMutation = usePlaceBid();
   const [amount, setAmount] = useState<number>(minNextBid);
+  const [syncedMinNextBid, setSyncedMinNextBid] = useState<number>(minNextBid);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  if (minNextBid !== syncedMinNextBid) {
+    setSyncedMinNextBid(minNextBid);
+    if (amount < minNextBid) {
+      setAmount(minNextBid);
+    }
+  }
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
 
-    if (!amount || amount < minNextBid) {
+    if (!amount || !Number.isInteger(amount) || amount < minNextBid) {
       setErrorMsg(`Mức giá tối thiểu là ${formatMoney(minNextBid)}.`);
       return;
     }
@@ -42,14 +49,19 @@ export function BidForm({
         onSuccess: (res) => {
           toast.success(`Đặt giá ${formatMoney(res.amount)} thành công.`);
           setAmount(res.minNextBid);
+          setSyncedMinNextBid(res.minNextBid);
         },
         onError: (err) => {
           if (err instanceof ApiError) {
-            if (err.code === "BID_TOO_LOW" && typeof err.details?.minNextBid === "number") {
+            if (
+              err.code === "BID_TOO_LOW" &&
+              typeof err.details?.minNextBid === "number"
+            ) {
               const nextMin = err.details.minNextBid;
               setAmount(nextMin);
+              setSyncedMinNextBid(nextMin);
               setErrorMsg(
-                `Mức giá vừa thay đổi. Mức tối thiểu mới là ${formatMoney(nextMin)}.`
+                `Vừa có người đặt cao hơn, mức tối thiểu mới là ${formatMoney(nextMin)}.`
               );
               return;
             }
@@ -62,15 +74,23 @@ export function BidForm({
     );
   };
 
+  const isDisabled = disabled || placeBidMutation.isPending;
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 border-t border-border-subtle pt-4">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-3 border-t border-border-subtle pt-4"
+      noValidate
+    >
       <MoneyInput
-        label="Nhập mức giá đặt của bạn"
+        label={`Tối thiểu ${formatMoney(minNextBid)}`}
         value={amount}
-        onChange={setAmount}
-        disabled={disabled || placeBidMutation.isPending}
+        onChange={(val) => {
+          setAmount(val);
+          if (errorMsg) setErrorMsg(null);
+        }}
+        disabled={isDisabled}
         error={errorMsg ?? undefined}
-        hint={`Tối thiểu ${formatMoney(minNextBid)}`}
       />
 
       <div className="flex flex-wrap gap-2">
@@ -80,9 +100,12 @@ export function BidForm({
             <button
               key={mult}
               type="button"
-              disabled={disabled || placeBidMutation.isPending}
-              onClick={() => setAmount(suggested)}
-              className="rounded-md bg-surface-subtle px-3 py-1.5 text-caption font-medium text-text hover:bg-surface-muted tabular disabled:opacity-50"
+              disabled={isDisabled}
+              onClick={() => {
+                setAmount(suggested);
+                if (errorMsg) setErrorMsg(null);
+              }}
+              className="min-h-9 rounded-md border border-border-brand bg-surface-subtle px-3 py-1.5 text-caption font-medium text-text transition-colors hover:border-primary-600 hover:bg-primary-50 hover:text-primary-700 tabular disabled:opacity-50"
             >
               {formatMoney(suggested)}
             </button>
@@ -98,8 +121,12 @@ export function BidForm({
         disabled={disabled}
         className="w-full"
       >
-        Đặt giá ngay
+        Đặt giá
       </Button>
+
+      <p className="text-caption text-text-tertiary text-center">
+        Lượt đặt giá đã ghi nhận không thể rút.
+      </p>
     </form>
   );
 }

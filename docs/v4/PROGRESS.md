@@ -6,7 +6,7 @@ Nhánh: `feature/fe-v4` · Kit: `.agents/skills/omnibid-fe-v4` · Agent cập nh
 - [x] 0. Chuẩn bị
 - [x] 1. Nền tảng (contract.ts, API v4, mock, enums, thời gian, phiên, proxy, WS, hệ thiết kế, layout, UI kit, gỡ code cũ)
 - [x] 2. Tài khoản — login, register, profile, admin-profile
-- [ ] 3. Phiên công khai — home, auction-list, auction-detail, report-modal
+- [x] 3. Phiên công khai — home, auction-list, auction-detail, report-modal
 - [ ] 4. Bán hàng — my-products, product-form, auction-create, my-auctions, my-auction
 - [ ] 5. Mua hàng — my-bids, my-orders, order-detail
 - [ ] 6. Thông báo — notifications, notification-bell
@@ -32,8 +32,11 @@ Người dùng xác nhận tiếp tục phát triển mặc định ở chế đ
 - Phase 1: đổi `src/middleware.ts` sang `src/proxy.ts` theo quy chuẩn Next.js 16.
 - Phase 2: tạo `src/app/admin/layout.tsx` và trang tạm `src/app/admin/page.tsx` (`// TODO fe-v4 admin-dashboard`) để ADMIN đăng nhập chuyển tới `/admin` không bị 404 trước Phase 7.
 - Phase 2: đổi mật khẩu xác nhận qua `ConfirmDialog` trước khi gọi `PATCH /users/me/password` (đúng quy tắc hành động không đảo ngược trong `ux-states.md`).
+- Phase 3: tách hẳn `src/features/report/` (`ReportModal`) khỏi `src/features/auction/`; thêm mock handler `POST /reports` trong `src/mocks/handlers/reports.ts`.
+- Phase 3: `CountdownTimer` xuất thêm `useSharedNowMs()` dùng chung một `setInterval` cho cả `CountdownTimer` và `AuctionCard`.
+- Phase 3: thanh đáy cố định "Đặt giá" trên mobile ở chi tiết phiên dùng nút `primary` (cuộn tới `#bid-card`) để giữ đúng quy tắc tối đa một nút `primary-700` (`money`) mỗi màn.
 
 ## Cần backend (khối bị ẩn vì thiếu API)
 
 ## Việc tồn
-- Các màn cũ (`/`, `/auctions`, `/auctions/[id]`, `/me/bids`, `/admin`) đang ở bản tạm (`// TODO fe-v4 <id>`) để biên dịch và chạy mock; sẽ được thiết kế lại đầy đủ ở Phase 3, 5, 7.
+- Các màn cũ (`/me/bids`, `/admin`) đang ở bản tạm (`// TODO fe-v4 <id>`) để biên dịch và chạy mock; sẽ được thiết kế lại đầy đủ ở Phase 5 và 7.

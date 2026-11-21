@@ -1,4 +1,3 @@
-// TODO fe-v4 auction-detail
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
@@ -42,7 +41,7 @@ export default async function AuctionDetailPage({
 
   const [detailRes, bidsRes] = await Promise.all([
     fetchAuctionDetailServer(auctionId),
-    fetchAuctionBidsServer(auctionId, 10),
+    fetchAuctionBidsServer(auctionId, 20),
   ]);
 
   if (detailRes.notFound) {

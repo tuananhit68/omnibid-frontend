@@ -3,9 +3,11 @@
 import { useCallback, useEffect, useRef } from "react";
 import {
   keepPreviousData,
+  useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
+  type InfiniteData,
 } from "@tanstack/react-query";
 import { useAuctionChannel, type AuctionEvent } from "@/lib/ws";
 import type {
@@ -28,8 +30,7 @@ export const auctionKeys = {
   all: ["auctions"] as const,
   list: (params?: AuctionListParams) => ["auctions", "list", params] as const,
   detail: (id: number) => ["auctions", "detail", id] as const,
-  bids: (id: number, page = 0, size = 10) =>
-    ["auctions", "bids", id, page, size] as const,
+  bids: (id: number, size = 20) => ["auctions", "bids", id, size] as const,
   categories: ["categories"] as const,
 };
 
@@ -61,18 +62,22 @@ export function useAuctionDetail(
   });
 }
 
-export function useAuctionBids(
+export function useAuctionBidsInfinite(
   id: number,
-  page = 0,
-  size = 10,
+  size = 20,
   initialData?: Page<BidHistoryItem> | null
 ) {
-  return useQuery({
-    queryKey: auctionKeys.bids(id, page, size),
-    queryFn: () => getAuctionBids(id, page, size),
-    initialData: initialData ?? undefined,
-    placeholderData: keepPreviousData,
+  return useInfiniteQuery({
+    queryKey: auctionKeys.bids(id, size),
+    queryFn: ({ pageParam }) => getAuctionBids(id, pageParam, size),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) =>
+      lastPage.page + 1 < lastPage.totalPages ? lastPage.page + 1 : undefined,
+    initialData: initialData
+      ? { pages: [initialData], pageParams: [0] }
+      : undefined,
     enabled: Boolean(id),
+    staleTime: 30_000,
   });
 }
 
@@ -93,7 +98,25 @@ export function usePlaceBid() {
 
   return useMutation({
     mutationFn: (body: PlaceBidRequest) => placeBid(body),
-    onSuccess: (_res, variables) => {
+    onSuccess: (res, variables) => {
+      queryClient.setQueryData<{ data: AuctionDetail; serverOffsetMs: number }>(
+        auctionKeys.detail(variables.auctionId),
+        (prev) => {
+          if (!prev) return prev;
+          if (res.bidCount < prev.data.bidCount) return prev;
+          return {
+            ...prev,
+            data: {
+              ...prev.data,
+              currentPrice: res.currentPrice,
+              bidCount: res.bidCount,
+              minNextBid: res.minNextBid,
+              viewerIsLeading: true,
+            },
+          };
+        }
+      );
+
       queryClient.invalidateQueries({
         queryKey: auctionKeys.detail(variables.auctionId),
       });
@@ -104,27 +127,43 @@ export function usePlaceBid() {
   });
 }
 
+export interface UseAuctionRealtimeCallbacks {
+  onBidFlash?: () => void;
+  onOutbid?: (event: AuctionEvent) => void;
+}
+
 /**
  * Subscribe kênh realtime /topic/auctions/{id} và cập nhật cache TanStack Query.
  */
 export function useAuctionRealtime(
   auctionId: number,
-  onBidFlash?: () => void
+  callbacks: UseAuctionRealtimeCallbacks = {}
 ) {
   const queryClient = useQueryClient();
-  const flashRef = useRef(onBidFlash);
+  const callbacksRef = useRef(callbacks);
   useEffect(() => {
-    flashRef.current = onBidFlash;
-  }, [onBidFlash]);
+    callbacksRef.current = callbacks;
+  }, [callbacks]);
 
   const handleEvent = useCallback(
     (event: AuctionEvent) => {
       if (event.type === "BID_PLACED") {
+        let wasOutbid = false;
+        let accepted = false;
+
         queryClient.setQueryData<{ data: AuctionDetail; serverOffsetMs: number }>(
           auctionKeys.detail(auctionId),
           (prev) => {
             if (!prev) return prev;
-            if (event.bidCount <= prev.data.bidCount) return prev;
+            if (event.bidCount < prev.data.bidCount) return prev;
+
+            const isNewerBid = event.bidCount > prev.data.bidCount;
+            accepted = true;
+
+            if (isNewerBid && prev.data.viewerIsLeading) {
+              wasOutbid = true;
+            }
+
             return {
               ...prev,
               data: {
@@ -135,7 +174,7 @@ export function useAuctionRealtime(
                 bidCount: event.bidCount,
                 highestBidderName: event.highestBidderName,
                 reserveStatus: event.reserveStatus,
-                viewerIsLeading: false,
+                viewerIsLeading: isNewerBid ? false : prev.data.viewerIsLeading,
               },
             };
           }
@@ -143,21 +182,33 @@ export function useAuctionRealtime(
 
         if (event.bid) {
           const newBid = event.bid;
-          queryClient.setQueriesData<Page<BidHistoryItem>>(
+          queryClient.setQueriesData<InfiniteData<Page<BidHistoryItem>>>(
             { queryKey: ["auctions", "bids", auctionId] },
             (prev) => {
-              if (!prev || prev.page !== 0) return prev;
-              if (prev.content.some((b) => b.id === newBid.id)) return prev;
+              if (!prev || prev.pages.length === 0) return prev;
+              const firstPage = prev.pages[0];
+              if (firstPage.content.some((b) => b.id === newBid.id)) {
+                return prev;
+              }
+              const updatedFirst: Page<BidHistoryItem> = {
+                ...firstPage,
+                content: [newBid, ...firstPage.content],
+                totalElements: firstPage.totalElements + 1,
+              };
               return {
                 ...prev,
-                content: [newBid, ...prev.content].slice(0, prev.size),
-                totalElements: prev.totalElements + 1,
+                pages: [updatedFirst, ...prev.pages.slice(1)],
               };
             }
           );
         }
 
-        flashRef.current?.();
+        if (accepted) {
+          callbacksRef.current.onBidFlash?.();
+        }
+        if (wasOutbid) {
+          callbacksRef.current.onOutbid?.(event);
+        }
         return;
       }
 
