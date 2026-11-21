@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
-import { AdminLayout } from "@/components/layout";
+import { AdminLayoutShell } from "@/features/admin/statistics";
 
 export default function AdminRouteLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  return <AdminLayout>{children}</AdminLayout>;
+  return <AdminLayoutShell>{children}</AdminLayoutShell>;
 }

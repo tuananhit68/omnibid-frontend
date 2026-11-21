@@ -46,6 +46,28 @@ import {
   handleCreatePayment,
   handleGetOrderPayments,
 } from "./handlers/payments";
+import {
+  handleAdminBanUser,
+  handleAdminCancelAuction,
+  handleAdminCancelOrder,
+  handleAdminCreateCategory,
+  handleAdminDeleteCategory,
+  handleAdminGetAuctionDetail,
+  handleAdminGetAuctions,
+  handleAdminGetCategories,
+  handleAdminGetOrderDetail,
+  handleAdminGetOrders,
+  handleAdminGetProductDetail,
+  handleAdminGetProducts,
+  handleAdminGetReportDetail,
+  handleAdminGetReports,
+  handleAdminGetStatistics,
+  handleAdminGetUsers,
+  handleAdminHideProduct,
+  handleAdminResolveReport,
+  handleAdminUnbanUser,
+  handleAdminUpdateCategory,
+} from "./handlers/admin";
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -373,6 +395,150 @@ async function routeMockRequest(
   }
   if (method === "POST" && path === "/reports") {
     return { status: 201, data: handleCreateReport(authHeader, parseJsonBody(config.data)) };
+  }
+
+  // 2.6–2.7 Admin (20 endpoints)
+  if (method === "GET" && path === "/admin/statistics") {
+    return { status: 200, data: handleAdminGetStatistics(authHeader) };
+  }
+  if (method === "GET" && path === "/admin/users") {
+    return { status: 200, data: handleAdminGetUsers(authHeader, params) };
+  }
+  const adminUserBanMatch = path.match(/^\/admin\/users\/(\d+)\/ban$/);
+  if (method === "POST" && adminUserBanMatch) {
+    return {
+      status: 200,
+      data: handleAdminBanUser(
+        Number(adminUserBanMatch[1]),
+        authHeader,
+        parseJsonBody(config.data)
+      ),
+    };
+  }
+  const adminUserUnbanMatch = path.match(/^\/admin\/users\/(\d+)\/unban$/);
+  if (method === "POST" && adminUserUnbanMatch) {
+    return {
+      status: 200,
+      data: handleAdminUnbanUser(Number(adminUserUnbanMatch[1]), authHeader),
+    };
+  }
+
+  if (method === "GET" && path === "/admin/products") {
+    return { status: 200, data: handleAdminGetProducts(authHeader, params) };
+  }
+  const adminProductHideMatch = path.match(/^\/admin\/products\/(\d+)\/hide$/);
+  if (method === "POST" && adminProductHideMatch) {
+    return {
+      status: 200,
+      data: handleAdminHideProduct(
+        Number(adminProductHideMatch[1]),
+        authHeader,
+        parseJsonBody(config.data)
+      ),
+    };
+  }
+  const adminProductDetailMatch = path.match(/^\/admin\/products\/(\d+)$/);
+  if (method === "GET" && adminProductDetailMatch) {
+    return {
+      status: 200,
+      data: handleAdminGetProductDetail(Number(adminProductDetailMatch[1]), authHeader),
+    };
+  }
+
+  if (method === "GET" && path === "/admin/auctions") {
+    return { status: 200, data: handleAdminGetAuctions(authHeader, params) };
+  }
+  const adminAuctionCancelMatch = path.match(/^\/admin\/auctions\/(\d+)\/cancel$/);
+  if (method === "POST" && adminAuctionCancelMatch) {
+    return {
+      status: 200,
+      data: handleAdminCancelAuction(
+        Number(adminAuctionCancelMatch[1]),
+        authHeader,
+        parseJsonBody(config.data)
+      ),
+    };
+  }
+  const adminAuctionDetailMatch = path.match(/^\/admin\/auctions\/(\d+)$/);
+  if (method === "GET" && adminAuctionDetailMatch) {
+    return {
+      status: 200,
+      data: handleAdminGetAuctionDetail(Number(adminAuctionDetailMatch[1]), authHeader),
+    };
+  }
+
+  if (method === "GET" && path === "/admin/orders") {
+    return { status: 200, data: handleAdminGetOrders(authHeader, params) };
+  }
+  const adminOrderCancelMatch = path.match(/^\/admin\/orders\/(\d+)\/cancel$/);
+  if (method === "POST" && adminOrderCancelMatch) {
+    return {
+      status: 200,
+      data: handleAdminCancelOrder(
+        Number(adminOrderCancelMatch[1]),
+        authHeader,
+        parseJsonBody(config.data)
+      ),
+    };
+  }
+  const adminOrderDetailMatch = path.match(/^\/admin\/orders\/(\d+)$/);
+  if (method === "GET" && adminOrderDetailMatch) {
+    return {
+      status: 200,
+      data: handleAdminGetOrderDetail(Number(adminOrderDetailMatch[1]), authHeader),
+    };
+  }
+
+  if (method === "GET" && path === "/admin/reports") {
+    return { status: 200, data: handleAdminGetReports(authHeader, params) };
+  }
+  const adminReportResolveMatch = path.match(/^\/admin\/reports\/(\d+)\/resolve$/);
+  if (method === "POST" && adminReportResolveMatch) {
+    return {
+      status: 200,
+      data: handleAdminResolveReport(
+        Number(adminReportResolveMatch[1]),
+        authHeader,
+        parseJsonBody(config.data)
+      ),
+    };
+  }
+  const adminReportDetailMatch = path.match(/^\/admin\/reports\/(\d+)$/);
+  if (method === "GET" && adminReportDetailMatch) {
+    return {
+      status: 200,
+      data: handleAdminGetReportDetail(Number(adminReportDetailMatch[1]), authHeader),
+    };
+  }
+
+  if (method === "GET" && path === "/admin/categories") {
+    return { status: 200, data: handleAdminGetCategories(authHeader, params) };
+  }
+  if (method === "POST" && path === "/admin/categories") {
+    return {
+      status: 201,
+      data: handleAdminCreateCategory(authHeader, parseJsonBody(config.data)),
+    };
+  }
+  const adminCategoryIdMatch = path.match(/^\/admin\/categories\/(\d+)$/);
+  if (adminCategoryIdMatch) {
+    const categoryId = Number(adminCategoryIdMatch[1]);
+    if (method === "PUT") {
+      return {
+        status: 200,
+        data: handleAdminUpdateCategory(
+          categoryId,
+          authHeader,
+          parseJsonBody(config.data)
+        ),
+      };
+    }
+    if (method === "DELETE") {
+      return {
+        status: 200,
+        data: handleAdminDeleteCategory(categoryId, authHeader),
+      };
+    }
   }
 
   throw mockError(
