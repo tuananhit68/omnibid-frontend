@@ -7,7 +7,7 @@ Nhánh: `feature/fe-v4` · Kit: `.agents/skills/omnibid-fe-v4` · Agent cập nh
 - [x] 1. Nền tảng (contract.ts, API v4, mock, enums, thời gian, phiên, proxy, WS, hệ thiết kế, layout, UI kit, gỡ code cũ)
 - [x] 2. Tài khoản — login, register, profile, admin-profile
 - [x] 3. Phiên công khai — home, auction-list, auction-detail, report-modal
-- [ ] 4. Bán hàng — my-products, product-form, auction-create, my-auctions, my-auction
+- [x] 4. Bán hàng — my-products, product-form, auction-create, my-auctions, my-auction
 - [ ] 5. Mua hàng — my-bids, my-orders, order-detail
 - [ ] 6. Thông báo — notifications, notification-bell
 - [ ] 7. Quản trị — admin-dashboard, admin-users, admin-categories, admin-products, admin-auctions, admin-orders, admin-reports
@@ -35,6 +35,8 @@ Người dùng xác nhận tiếp tục phát triển mặc định ở chế đ
 - Phase 3: tách hẳn `src/features/report/` (`ReportModal`) khỏi `src/features/auction/`; thêm mock handler `POST /reports` trong `src/mocks/handlers/reports.ts`.
 - Phase 3: `CountdownTimer` xuất thêm `useSharedNowMs()` dùng chung một `setInterval` cho cả `CountdownTimer` và `AuctionCard`.
 - Phase 3: thanh đáy cố định "Đặt giá" trên mobile ở chi tiết phiên dùng nút `primary` (cuộn tới `#bid-card`) để giữ đúng quy tắc tối đa một nút `primary-700` (`money`) mỗi màn.
+- Phase 4: bổ sung `"use client"` cho `MoneyInput.tsx` và `PasswordInput.tsx` để import barrel `@/components/ui` hoạt động ổn định trong Server Components (`loading.tsx`, `page.tsx`).
+- Phase 4: dùng chung `AuctionScheduleForm` giữa `auction-create` (`/me/auctions/new`) và chỉnh sửa phiên `SCHEDULED` trong `my-auction` (`/me/auctions/[id]`); thêm đầy đủ mock handler cho `products` (multipart → data URL, kiểm tra magic bytes, 1–5 ảnh, BR-23, xóa khi chưa từng lên phiên) và `auctions` (`create`, `update`, `cancel`, `/auctions/mine`).
 
 ## Cần backend (khối bị ẩn vì thiếu API)
 
