@@ -8,7 +8,7 @@ Nhánh: `feature/fe-v4` · Kit: `.agents/skills/omnibid-fe-v4` · Agent cập nh
 - [x] 2. Tài khoản — login, register, profile, admin-profile
 - [x] 3. Phiên công khai — home, auction-list, auction-detail, report-modal
 - [x] 4. Bán hàng — my-products, product-form, auction-create, my-auctions, my-auction
-- [ ] 5. Mua hàng — my-bids, my-orders, order-detail
+- [x] 5. Mua hàng — my-bids, my-orders, order-detail
 - [ ] 6. Thông báo — notifications, notification-bell
 - [ ] 7. Quản trị — admin-dashboard, admin-users, admin-categories, admin-products, admin-auctions, admin-orders, admin-reports
 - [ ] 8. Rà soát cuối
@@ -37,8 +37,9 @@ Người dùng xác nhận tiếp tục phát triển mặc định ở chế đ
 - Phase 3: thanh đáy cố định "Đặt giá" trên mobile ở chi tiết phiên dùng nút `primary` (cuộn tới `#bid-card`) để giữ đúng quy tắc tối đa một nút `primary-700` (`money`) mỗi màn.
 - Phase 4: bổ sung `"use client"` cho `MoneyInput.tsx` và `PasswordInput.tsx` để import barrel `@/components/ui` hoạt động ổn định trong Server Components (`loading.tsx`, `page.tsx`).
 - Phase 4: dùng chung `AuctionScheduleForm` giữa `auction-create` (`/me/auctions/new`) và chỉnh sửa phiên `SCHEDULED` trong `my-auction` (`/me/auctions/[id]`); thêm đầy đủ mock handler cho `products` (multipart → data URL, kiểm tra magic bytes, 1–5 ảnh, BR-23, xóa khi chưa từng lên phiên) và `auctions` (`create`, `update`, `cancel`, `/auctions/mine`).
+- Phase 5: làm lại `my-bids` (`/me/bids`, `size=20`, lọc nhanh phía client trên trang hiện tại + lọc theo `auctionId`), thêm `my-orders` (`/me/orders`, tabs `BUYER`/`SELLER`, 6 trạng thái, tô nền `warning-subtle-bg` + nhãn "Cần bạn xử lý"), thêm `order-detail` (`/orders/[id]`, đủ nhánh `BUYER`/`SELLER` × trạng thái, thanh toán đồng bộ `Idempotency-Key` giữ khóa khi retry lỗi mạng, `ReportModal`, `ConfirmDialog`). Bổ sung mock handler `orders.ts`, `payments.ts` và thông báo `ORDER_UPDATE` trong `scheduler.ts`.
 
 ## Cần backend (khối bị ẩn vì thiếu API)
 
 ## Việc tồn
-- Các màn cũ (`/me/bids`, `/admin`) đang ở bản tạm (`// TODO fe-v4 <id>`) để biên dịch và chạy mock; sẽ được thiết kế lại đầy đủ ở Phase 5 và 7.
+- Màn tạm `/admin` (`// TODO fe-v4 admin-dashboard`) sẽ được thay bằng bản đầy đủ ở Phase 7.
