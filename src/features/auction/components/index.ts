@@ -12,3 +12,4 @@ export * from "./BidForm";
 export * from "./AuctionDetailClient";
 export * from "./AuctionScheduleForm";
 export * from "./AuctionCreateClient";
+export * from "./MyAuctionsClient";
