@@ -1,134 +1,82 @@
 /**
- * OmniBid - Bản đồ mã lỗi backend sang câu tiếng Việt
- * Nguồn: design/backend-contract.md và các spec
+ * OmniBid v4 — ErrorCode (24 mã từ API_SPEC_v4 §5 + NETWORK_ERROR nội bộ)
  */
 
-export const ERROR_MESSAGES: Record<string, string> = {
-  // Lỗi chung & xác thực
+export const ERROR_CODES = [
+  "VALIDATION_ERROR",
+  "INVALID_IMAGE",
+  "UNAUTHORIZED",
+  "FORBIDDEN",
+  "ACCOUNT_BANNED",
+  "NOT_FOUND",
+  "AUCTION_NOT_ACTIVE",
+  "BID_TOO_LOW",
+  "ALREADY_LEADING",
+  "SELF_BID_NOT_ALLOWED",
+  "AUCTION_NOT_EDITABLE",
+  "CANNOT_CANCEL",
+  "PRODUCT_NOT_AVAILABLE",
+  "PRODUCT_NOT_EDITABLE",
+  "INVALID_STATUS_TRANSITION",
+  "CANNOT_BAN_ADMIN",
+  "CATEGORY_IN_USE",
+  "ORDER_EXPIRED",
+  "ORDER_CANCELLED",
+  "CONFLICT",
+  "PAYLOAD_TOO_LARGE",
+  "TOO_MANY_REQUESTS",
+  "INTERNAL_ERROR",
+  "IMAGE_UPLOAD_FAILED",
+  "NETWORK_ERROR",
+] as const;
+
+export type ErrorCode = (typeof ERROR_CODES)[number];
+
+export const ERROR_MESSAGES: Record<ErrorCode, string> = {
+  VALIDATION_ERROR: "Dữ liệu đầu vào không hợp lệ. Vui lòng kiểm tra lại.",
+  INVALID_IMAGE: "Ảnh không hợp lệ. Chỉ hỗ trợ JPG, PNG, WEBP tối đa 5 MB và 1–5 ảnh.",
   UNAUTHORIZED: "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
-  INVALID_CREDENTIALS: "Email hoặc mật khẩu không chính xác.",
-  FORBIDDEN: "Bạn không có quyền thực hiện thao tác này.",
-  ACCOUNT_BANNED: "Tài khoản của bạn đã bị khoá. Vui lòng liên hệ quản trị viên.",
+  FORBIDDEN: "Bạn không có quyền truy cập hoặc thực hiện thao tác này.",
+  ACCOUNT_BANNED: "Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên.",
   NOT_FOUND: "Không tìm thấy dữ liệu yêu cầu.",
-  USER_NOT_FOUND: "Không tìm thấy thông tin người dùng.",
-  INTERNAL_ERROR: "Lỗi hệ thống. Vui lòng thử lại sau ít phút.",
-  VALIDATION_ERROR: "Dữ liệu nhập vào chưa hợp lệ. Vui lòng kiểm tra lại các trường.",
-  NETWORK_ERROR: "Không thể kết nối đến máy chủ. Vui lòng kiểm tra đường truyền mạng.",
-
-  // Đăng ký & tài khoản
-  EMAIL_ALREADY_EXISTS: "Email này đã được sử dụng bởi một tài khoản khác.",
-  WRONG_PASSWORD: "Mật khẩu hiện tại không chính xác.",
-
-  // Đấu giá & Đặt giá & Theo dõi
-  BID_TOO_LOW: "Mức giá đặt phải bằng hoặc cao hơn mức giá tối thiểu yêu cầu.",
-  ALREADY_LEADING: "Bạn đang là người dẫn đầu mức giá của phiên này.",
-  SELF_BID_NOT_ALLOWED: "Bạn không thể tự đặt giá cho sản phẩm của chính mình.",
-  SELF_WATCH_NOT_ALLOWED: "Bạn không thể theo dõi phiên đấu giá của chính mình.",
   AUCTION_NOT_ACTIVE: "Phiên đấu giá chưa bắt đầu hoặc đã kết thúc.",
-  CANNOT_CANCEL: "Không thể huỷ phiên đấu giá khi đã có người đặt giá.",
-  PRODUCT_NOT_AVAILABLE: "Sản phẩm hiện không khả dụng để đưa vào đấu giá.",
-  PRODUCT_NOT_EDITABLE: "Không thể chỉnh sửa sản phẩm ở trạng thái hiện tại.",
-  PRODUCT_IMAGE_LIMIT: "Mỗi sản phẩm chỉ được tải lên tối đa 5 ảnh.",
-  PRODUCT_IMAGE_REQUIRED: "Sản phẩm cần có ít nhất 1 ảnh trước khi đưa vào đấu giá.",
-  INVALID_IMAGE: "Định dạng ảnh không hợp lệ (chỉ hỗ trợ PNG, JPG, WEBP).",
-  IMAGE_TOO_LARGE: "Dung lượng ảnh vượt quá giới hạn cho phép (tối đa 10MB).",
-  AUCTION_NOT_EDITABLE: "Không thể chỉnh sửa phiên đấu giá ở trạng thái hiện tại.",
-  CATEGORY_NOT_FOUND: "Không tìm thấy danh mục yêu cầu.",
-
-  // Đơn hàng & Thanh toán & Vận chuyển
-  PAYMENT_IN_PROGRESS: "Giao dịch thanh toán đang được xử lý, vui lòng chờ trong giây lát.",
-  PAYMENT_RATE_LIMITED: "Bạn thao tác thanh toán quá nhanh. Vui lòng chờ ít giây rồi thử lại.",
-  ORDER_EXPIRED: "Đơn hàng đã hết hạn thanh toán và tự động bị huỷ.",
-  ORDER_CANCELLED: "Đơn hàng đã bị huỷ trước đó.",
+  BID_TOO_LOW: "Mức giá đặt thấp hơn mức tối thiểu yêu cầu.",
+  ALREADY_LEADING: "Bạn đang là người dẫn đầu phiên đấu giá này.",
+  SELF_BID_NOT_ALLOWED: "Bạn không thể tự đặt giá cho phiên đấu giá của chính mình.",
+  AUCTION_NOT_EDITABLE: "Chỉ có thể chỉnh sửa phiên khi đang ở trạng thái Sắp diễn ra.",
+  CANNOT_CANCEL: "Không thể hủy phiên đấu giá khi đã có lượt đặt giá.",
+  PRODUCT_NOT_AVAILABLE: "Sản phẩm hiện không sẵn sàng để tạo phiên đấu giá.",
+  PRODUCT_NOT_EDITABLE: "Chỉ có thể chỉnh sửa sản phẩm khi ở trạng thái Sẵn sàng.",
   INVALID_STATUS_TRANSITION: "Trạng thái hiện tại không cho phép thực hiện thao tác này.",
-  COMPLAINT_PENDING: "Đơn hàng đang có khiếu nại chờ xử lý, không thể thực hiện thao tác khác.",
-  COMPLAINT_WINDOW_CLOSED: "Đã quá thời hạn cho phép gửi khiếu nại đối với đơn hàng này.",
-  DUPLICATE_PENDING_REPORT: "Bạn đã có một báo cáo hoặc khiếu nại đang chờ xử lý.",
-
-  // Quản trị viên
-  CANNOT_BAN_ADMIN: "Hệ thống không cho phép khoá tài khoản của quản trị viên.",
-  CATEGORY_IN_USE: "Danh mục này đang có sản phẩm liên kết, không thể xoá.",
+  CANNOT_BAN_ADMIN: "Không thể khóa tài khoản quản trị viên.",
+  CATEGORY_IN_USE: "Danh mục đang có sản phẩm sử dụng, không thể xóa.",
+  ORDER_EXPIRED: "Đơn hàng đã quá hạn thanh toán.",
+  ORDER_CANCELLED: "Đơn hàng đã bị hủy.",
+  CONFLICT: "Dữ liệu vừa thay đổi, vui lòng thử lại.",
+  PAYLOAD_TOO_LARGE: "Dung lượng tải lên vượt quá giới hạn cho phép (tối đa 25 MB).",
+  TOO_MANY_REQUESTS: "Bạn đã đăng nhập sai quá nhiều lần, vui lòng thử lại sau 15 phút.",
+  INTERNAL_ERROR: "Lỗi hệ thống. Vui lòng thử lại sau ít phút.",
+  IMAGE_UPLOAD_FAILED: "Tải ảnh lên thất bại. Vui lòng thử lại.",
+  NETWORK_ERROR: "Không kết nối được máy chủ. Kiểm tra mạng và thử lại.",
 };
 
-/**
- * Trả về câu thông báo lỗi tiếng Việt dựa theo errorCode.
- * Nếu không có mã hoặc mã chưa biết, sử dụng fallbackMessage hoặc câu mặc định.
- */
-export function getErrorMessage(
-  errorCode?: string | null,
-  fallbackMessage?: string
-): string {
-  if (errorCode && ERROR_MESSAGES[errorCode]) {
-    return ERROR_MESSAGES[errorCode];
-  }
-  if (fallbackMessage && fallbackMessage.trim().length > 0) {
-    return fallbackMessage;
-  }
-  return "Đã xảy ra lỗi không xác định. Vui lòng thử lại.";
+export function isErrorCode(value: unknown): value is ErrorCode {
+  return typeof value === "string" && (ERROR_CODES as readonly string[]).includes(value);
 }
 
-/**
- * Cấu trúc lỗi API chuẩn từ backend
- */
-export interface ApiErrorPayload {
-  success?: boolean;
-  errorCode?: string;
-  message?: string;
-  data?: Record<string, unknown> | null;
-  timestamp?: string;
-}
-
-/**
- * Trích xuất mã lỗi, thông báo tiếng Việt và lỗi theo trường (nếu có) từ axios error hoặc error object
- */
-export function extractApiError(error: unknown): {
-  errorCode: string;
-  message: string;
-  fieldErrors?: Record<string, string>;
-  data?: unknown;
-} {
-  if (typeof error === "object" && error !== null) {
-    const errObj = error as {
-      response?: {
-        data?: ApiErrorPayload;
-        status?: number;
-      };
-      message?: string;
-    };
-
-    if (errObj.response?.data) {
-      const responseData = errObj.response.data;
-      const errorCode = responseData.errorCode || "INTERNAL_ERROR";
-      const message = getErrorMessage(errorCode, responseData.message);
-
-      let fieldErrors: Record<string, string> | undefined;
-      if (
-        errorCode === "VALIDATION_ERROR" &&
-        responseData.data &&
-        typeof responseData.data === "object"
-      ) {
-        fieldErrors = responseData.data as Record<string, string>;
-      }
-
-      return {
-        errorCode,
-        message,
-        fieldErrors,
-        data: responseData.data,
-      };
+export function getErrorMessage(code?: string | null, backendMessage?: string): string {
+  if (code && isErrorCode(code)) {
+    if (
+      (code === "VALIDATION_ERROR" || code === "INVALID_STATUS_TRANSITION") &&
+      backendMessage &&
+      backendMessage.trim().length > 0
+    ) {
+      return backendMessage;
     }
-
-    if (errObj.message === "Network Error") {
-      return {
-        errorCode: "NETWORK_ERROR",
-        message: ERROR_MESSAGES.NETWORK_ERROR,
-      };
-    }
+    return ERROR_MESSAGES[code];
   }
-
-  return {
-    errorCode: "INTERNAL_ERROR",
-    message: getErrorMessage("INTERNAL_ERROR"),
-  };
+  if (backendMessage && backendMessage.trim().length > 0) {
+    return backendMessage;
+  }
+  return ERROR_MESSAGES.INTERNAL_ERROR;
 }
-

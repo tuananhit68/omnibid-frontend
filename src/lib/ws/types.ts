@@ -1,28 +1,24 @@
-export interface BidWsData {
-  id: number;
-  auctionId: number;
-  bidderId: number;
-  bidderName: string;
-  amount: number;
-  status: string;
-  createdAt: string;
-}
+import type { AuctionEvent } from "@/lib/api/contract";
 
-export interface AuctionWsMessage<T = unknown> {
-  type: "BID_PLACED" | "AUCTION_UPDATED";
-  auctionId: number;
-  data: T;
-}
+export type { AuctionEvent };
 
-export interface NotificationWsData {
-  id: number;
-  type: string;
-  title: string;
-  content: string;
-  refType?: string;
-  refId?: number;
-  isRead: boolean;
-  createdAt: string;
-  unreadCount?: number;
-}
+export type WsConnectionStatus =
+  | "idle"
+  | "connecting"
+  | "connected"
+  | "reconnecting"
+  | "disconnected";
 
+export type AuctionEventHandler = (event: AuctionEvent) => void;
+export type WsStatusListener = (status: WsConnectionStatus) => void;
+
+export interface AuctionChannel {
+  subscribe(
+    auctionId: number,
+    onEvent: AuctionEventHandler,
+    onReconnect?: () => void
+  ): () => void;
+  onStatusChange(listener: WsStatusListener): () => void;
+  getStatus(): WsConnectionStatus;
+  reset(): void;
+}
