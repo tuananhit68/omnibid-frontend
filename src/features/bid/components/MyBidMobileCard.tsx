@@ -1,6 +1,6 @@
-// TODO fe-v4 my-bids
 "use client";
 
+import { StatusBadge } from "@/components/ui/StatusBadge";
 import { formatDateTime, formatMoney } from "@/lib/format";
 import type { MyBidItem } from "../types";
 import {
@@ -30,10 +30,13 @@ export function MyBidMobileCard({ row }: { row: MyBidItem }) {
           </span>
         </div>
       </div>
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-caption text-text-tertiary tabular">
-          {formatDateTime(row.createdAt)}
-        </span>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <StatusBadge statusType="auction" value={row.auctionStatus} />
+          <span className="text-caption text-text-tertiary tabular">
+            {formatDateTime(row.createdAt)}
+          </span>
+        </div>
         <MyBidActionLink row={row} touchSize="md" />
       </div>
     </div>

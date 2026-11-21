@@ -1,4 +1,3 @@
-// TODO fe-v4 my-bids
 "use client";
 
 import Link from "next/link";
@@ -57,22 +56,35 @@ export function MyBidActionLink({
   touchSize?: "sm" | "md";
 }) {
   const position = deriveBidPosition(row);
+
   if (position === BidPosition.WON && row.orderId) {
     return (
       <Link
         href={`/orders/${row.orderId}`}
         className={getButtonClassName({ variant: "primary", size: touchSize })}
       >
-        Xem đơn hàng
+        Thanh toán
       </Link>
     );
   }
+
+  if (position === BidPosition.OUTBID) {
+    return (
+      <Link
+        href={`/auctions/${row.auctionId}`}
+        className={getButtonClassName({ variant: "primary", size: touchSize })}
+      >
+        Đặt lại giá
+      </Link>
+    );
+  }
+
   return (
     <Link
       href={`/auctions/${row.auctionId}`}
       className={getButtonClassName({ variant: "outline", size: touchSize })}
     >
-      {position === BidPosition.OUTBID ? "Đặt giá lại" : "Xem phiên"}
+      Xem phiên
     </Link>
   );
 }
