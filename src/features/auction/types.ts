@@ -1,94 +1,39 @@
 import type {
-  AuctionStatus,
-  BidStatus,
-  ProductCondition,
-  ReservePriceStatus,
-} from "@/types/enums";
+  AuctionDetail,
+  AuctionSummary,
+  BidHistoryItem,
+  Category,
+  Page,
+  PlaceBidResponse,
+  ProductImage,
+} from "@/lib/api/contract";
+
+export type {
+  AuctionDetail,
+  AuctionSummary,
+  BidHistoryItem,
+  Category,
+  Page,
+  PlaceBidResponse,
+  ProductImage,
+};
 
 export type AuctionSortOption =
   | "endTime,asc"
-  | "startTime,asc"
+  | "createdAt,desc"
   | "currentPrice,asc"
-  | "currentPrice,desc"
-  | "bidCount,desc"
-  | "createdAt,desc";
-
-export interface AuctionImage {
-  id: number;
-  url: string;
-  isPrimary: boolean;
-}
-
-export interface AuctionItem {
-  id: number;
-  productId: number;
-  productTitle: string;
-  sellerId: number;
-  sellerName: string;
-  startPrice: number;
-  bidIncrement: number;
-  currentPrice: number;
-  highestBidderId?: number | null;
-  highestBidderName?: string | null;
-  bidCount: number;
-  startTime: string; // LocalDateTime Việt Nam (YYYY-MM-DDTHH:mm:ss)
-  endTime: string;   // LocalDateTime Việt Nam (YYYY-MM-DDTHH:mm:ss)
-  status: AuctionStatus;
-  winnerId?: number | null;
-  finalPrice?: number | null;
-  closedAt?: string | null;
-  cancelReason?: string | null;
-  createdAt?: string;
-  categoryId?: number;
-  categoryName?: string;
-  productCondition?: ProductCondition | string;
-  primaryImageUrl?: string | null;
-  minNextBid?: number | null;
-  reserveStatus?: ReservePriceStatus;
-  isWatched?: boolean | null;
-}
-
-export interface AuctionDetail extends AuctionItem {
-  productDescription?: string;
-  images?: AuctionImage[];
-  serverTime?: string;
-}
-
-export interface BidItem {
-  id: number;
-  auctionId: number;
-  bidderId: number;
-  bidderName: string; // đã che ở backend
-  amount: number;
-  status: BidStatus;
-  createdAt: string;
-}
-
-export interface BidPlacedWsPayload extends BidItem {
-  auctionCurrentPrice?: number;
-  auctionBidCount?: number;
-  minNextBid?: number | null;
-  reserveStatus?: ReservePriceStatus;
-}
+  | "currentPrice,desc";
 
 export interface AuctionListParams {
-  status?: string;
-  q?: string;
-  categoryIds?: string;
+  keyword?: string;
+  categoryId?: number;
   minPrice?: number;
   maxPrice?: number;
-  sellerId?: number;
+  status?: string;
+  endBefore?: string;
   sort?: AuctionSortOption | string;
   page?: number;
   size?: number;
-}
-
-export interface CategoryItem {
-  id: number;
-  name: string;
-  slug: string;
-  iconUrl?: string | null;
-  auctionCount?: number;
 }
 
 export interface PlaceBidRequest {
@@ -97,9 +42,8 @@ export interface PlaceBidRequest {
 }
 
 export interface CreateReportRequest {
-  reportType: "VIOLATION" | "COMPLAINT";
-  reportedUserId?: number;
   reportedProductId?: number;
-  orderId?: number;
+  reportedUserId?: number;
+  reportedOrderId?: number;
   reason: string;
 }

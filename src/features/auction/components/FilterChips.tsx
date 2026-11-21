@@ -1,76 +1,64 @@
-import { formatMoney } from "@/lib/format";
+// TODO fe-v4 auction-list
+"use client";
+
 import { CloseIcon } from "@/components/icons";
-import { AuctionStatus } from "@/types/enums";
-import type { CategoryItem } from "../types";
-import type { AuctionFilterState } from "./FilterPanel";
+import { formatMoney } from "@/lib/format";
+import { AUCTION_STATUS_META, type AuctionStatus } from "@/types/enums";
+import type { Category } from "../types";
 
 export interface FilterChipsProps {
   keyword?: string;
-  filters: AuctionFilterState;
-  categories: CategoryItem[];
+  categoryId?: number;
+  status?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  categories: Category[];
   onRemoveKeyword: () => void;
-  onRemoveCategory: (categoryId: number) => void;
-  onRemovePrice: () => void;
+  onRemoveCategory: () => void;
   onRemoveStatus: () => void;
+  onRemovePrice: () => void;
+  onClearAll: () => void;
 }
 
 export function FilterChips({
   keyword,
-  filters,
+  categoryId,
+  status,
+  minPrice,
+  maxPrice,
   categories,
   onRemoveKeyword,
   onRemoveCategory,
-  onRemovePrice,
   onRemoveStatus,
+  onRemovePrice,
+  onClearAll,
 }: FilterChipsProps) {
-  const chips: { key: string; label: string; onRemove: () => void }[] = [];
+  const chips: Array<{ key: string; label: string; onRemove: () => void }> = [];
 
-  if (keyword?.trim()) {
+  if (keyword) {
+    chips.push({ key: "keyword", label: `Từ khóa: ${keyword}`, onRemove: onRemoveKeyword });
+  }
+  if (categoryId !== undefined) {
+    const cat = categories.find((c) => c.id === categoryId);
     chips.push({
-      key: "keyword",
-      label: `Từ khoá: "${keyword.trim()}"`,
-      onRemove: onRemoveKeyword,
+      key: "category",
+      label: `Danh mục: ${cat?.name ?? `#${categoryId}`}`,
+      onRemove: onRemoveCategory,
     });
   }
-
-  filters.categoryIds.forEach((catId) => {
-    const cat = categories.find((c) => c.id === catId);
-    if (cat) {
-      chips.push({
-        key: `cat-${catId}`,
-        label: cat.name,
-        onRemove: () => onRemoveCategory(catId),
-      });
-    }
-  });
-
-  if (filters.minPrice || filters.maxPrice) {
-    let priceLabel = "";
-    if (filters.minPrice && filters.maxPrice) {
-      priceLabel = `${formatMoney(filters.minPrice)} - ${formatMoney(filters.maxPrice)}`;
-    } else if (filters.minPrice) {
-      priceLabel = `Từ ${formatMoney(filters.minPrice)}`;
-    } else if (filters.maxPrice) {
-      priceLabel = `Đến ${formatMoney(filters.maxPrice)}`;
-    }
-    chips.push({
-      key: "price",
-      label: priceLabel,
-      onRemove: onRemovePrice,
-    });
-  }
-
-  if (filters.status) {
-    const statusLabel =
-      filters.status === AuctionStatus.ACTIVE
-        ? "Đang diễn ra"
-        : filters.status === AuctionStatus.SCHEDULED
-        ? "Sắp diễn ra"
-        : filters.status;
+  if (status) {
+    const meta = AUCTION_STATUS_META[status as AuctionStatus];
     chips.push({
       key: "status",
-      label: statusLabel,
+      label: `Trạng thái: ${meta?.label ?? status}`,
       onRemove: onRemoveStatus,
+    });
+  }
+  if (minPrice !== undefined || maxPrice !== undefined) {
+    chips.push({
+      key: "price",
+      label: `Giá: ${minPrice ? formatMoney(minPrice) : "0 ₫"} – ${maxPrice ? formatMoney(maxPrice) : "Không giới hạn"}`,
+      onRemove: onRemovePrice,
     });
   }
 
@@ -81,20 +69,26 @@ export function FilterChips({
       {chips.map((chip) => (
         <span
           key={chip.key}
-          className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-info-bg border border-info-border text-primary-600 text-caption font-medium whitespace-nowrap"
+          className="inline-flex items-center gap-1.5 rounded-sm bg-surface-muted px-2.5 py-1 text-caption font-medium text-text"
         >
           <span>{chip.label}</span>
           <button
             type="button"
             onClick={chip.onRemove}
             aria-label={`Bỏ lọc ${chip.label}`}
-            className="p-0.5 rounded hover:bg-primary-100 transition-colors focus-visible:outline-2 focus-visible:outline-focus"
+            className="text-text-tertiary hover:text-text"
           >
             <CloseIcon className="size-3.5" />
           </button>
         </span>
       ))}
+      <button
+        type="button"
+        onClick={onClearAll}
+        className="text-caption font-medium text-primary-600 hover:underline"
+      >
+        Xóa tất cả
+      </button>
     </div>
   );
 }
-

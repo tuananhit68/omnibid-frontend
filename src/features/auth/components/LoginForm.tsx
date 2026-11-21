@@ -22,6 +22,7 @@ import { UserRole } from "@/types/enums";
 import { loginSchema, type LoginFormValues } from "../schemas";
 import { useLogin } from "../hooks";
 
+// TODO fe-v4 login
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -77,19 +78,19 @@ export function LoginForm() {
         },
         onError: (err) => {
           if (err instanceof ApiError) {
-            if (err.errorCode === "INVALID_CREDENTIALS") {
-              setServerError("Email hoặc mật khẩu không chính xác.");
+            if (err.code === "UNAUTHORIZED") {
+              setServerError("Email hoặc mật khẩu không đúng");
               return;
             }
 
-            if (err.errorCode === "ACCOUNT_BANNED") {
+            if (err.code === "ACCOUNT_BANNED") {
               setServerError(
-                "Tài khoản đã bị khoá. Vui lòng liên hệ quản trị viên để được hỗ trợ."
+                "Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên để được hỗ trợ."
               );
               return;
             }
 
-            if (err.errorCode === "VALIDATION_ERROR" && err.fieldErrors) {
+            if (err.code === "VALIDATION_ERROR" && err.fieldErrors) {
               let firstFocused = false;
               const unmapped: string[] = [];
 

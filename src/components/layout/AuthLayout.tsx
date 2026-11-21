@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
-import { cn } from "@/lib/cn";
-import { SkipLink } from "./SkipLink";
+import Link from "next/link";
 import { Logo } from "./Logo";
+import { SkipLink } from "./SkipLink";
+import { MockModeBanner } from "./MockModeBanner";
+import { ChevronLeftIcon } from "../icons";
 
 export interface AuthLayoutProps {
   children: ReactNode;
@@ -10,53 +12,51 @@ export interface AuthLayoutProps {
   maxWidth?: "sm" | "md" | "lg";
 }
 
-const maxWidthStyles = {
-  sm: "max-w-[440px]",
-  md: "max-w-[520px]", // Chuẩn S04 Đăng nhập
-  lg: "max-w-[620px]", // Chuẩn S03 Đăng ký
-};
-
 export function AuthLayout({
   children,
   title,
   subtitle,
   maxWidth = "md",
 }: AuthLayoutProps) {
+  const widthClass =
+    maxWidth === "sm"
+      ? "max-w-md"
+      : maxWidth === "lg"
+        ? "max-w-xl"
+        : "max-w-lg";
   return (
-    <div className="min-h-full flex flex-col justify-center items-center bg-bg text-text p-4 py-8 md:py-16">
+    <div className="flex min-h-screen flex-col bg-bg">
       <SkipLink />
-
-      {/* Logo quay về trang chủ */}
-      <div className="mb-6 flex justify-center">
+      <MockModeBanner />
+      <header className="mx-auto flex h-16 w-full max-w-page items-center justify-between px-4 md:px-6 lg:px-8">
         <Logo />
-      </div>
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-small font-medium text-text-secondary hover:text-primary-600"
+        >
+          <ChevronLeftIcon className="size-4" />
+          <span>Về trang chủ</span>
+        </Link>
+      </header>
 
-      {/* Auth Card */}
-      <div
+      <main
         id="main-content"
-        className={cn(
-          "w-full bg-surface border border-border-brand rounded-xl shadow-xs p-6 sm:p-8 md:p-10",
-          maxWidthStyles[maxWidth]
-        )}
+        className="flex flex-1 items-center justify-center px-4 py-8"
       >
-        {(title || subtitle) && (
-          <div className="text-center mb-6">
-            {title && (
-              <h1 className="text-h1 font-semibold text-text">{title}</h1>
-            )}
-            {subtitle && (
-              <p className="mt-2 text-small text-text-secondary">{subtitle}</p>
-            )}
-          </div>
-        )}
-
-        {children}
-      </div>
-
-      <footer className="mt-8 text-center text-caption text-text-tertiary">
-        © 2026 OmniBid. Nền tảng đấu giá trực tuyến.
-      </footer>
+        <div
+          className={`w-full ${widthClass} rounded-xl border border-border-brand bg-surface p-6 md:p-8`}
+        >
+          {(title || subtitle) && (
+            <div className="mb-6 space-y-1">
+              {title && <h1 className="text-h1 text-text">{title}</h1>}
+              {subtitle && (
+                <p className="text-small text-text-secondary">{subtitle}</p>
+              )}
+            </div>
+          )}
+          {children}
+        </div>
+      </main>
     </div>
   );
 }
-

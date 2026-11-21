@@ -1,75 +1,59 @@
+// TODO fe-v4 auction-detail
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { AuctionDetailClient } from "@/features/auction/components";
 import {
+  AuctionDetailClient,
   fetchAuctionBidsServer,
   fetchAuctionDetailServer,
-} from "@/features/auction/server-api";
-import AuctionDetailLoading from "./loading";
+} from "@/features/auction";
 
-interface PageProps {
+interface AuctionDetailPageProps {
   params: Promise<{ id: string }>;
 }
 
 export async function generateMetadata({
   params,
-}: PageProps): Promise<Metadata> {
+}: AuctionDetailPageProps): Promise<Metadata> {
   const { id } = await params;
   const auctionId = Number(id);
-  if (Number.isNaN(auctionId) || auctionId <= 0) {
-    return { title: "Không tìm thấy phiên đấu giá | OmniBid" };
+  if (!Number.isInteger(auctionId) || auctionId <= 0) {
+    return { title: "Không tìm thấy phiên đấu giá" };
   }
 
-  const { data: auction } = await fetchAuctionDetailServer(auctionId);
-  if (!auction) {
-    return { title: "Chi tiết phiên đấu giá | OmniBid" };
+  const result = await fetchAuctionDetailServer(auctionId);
+  if (!result.data) {
+    return { title: `Phiên đấu giá #${auctionId}` };
   }
 
   return {
-    title: `${auction.productTitle} | OmniBid`,
-    description:
-      auction.productDescription?.slice(0, 160) ||
-      `Tham gia đấu giá ${auction.productTitle} trực tuyến minh bạch tại OmniBid.`,
-    openGraph: auction.primaryImageUrl
-      ? {
-          images: [{ url: auction.primaryImageUrl, alt: auction.productTitle }],
-        }
-      : undefined,
+    title: result.data.title,
+    description: result.data.description.slice(0, 160),
   };
 }
 
-async function AuctionDetailLoader({ auctionId }: { auctionId: number }) {
-  const [detailResult, initialBids] = await Promise.all([
+export default async function AuctionDetailPage({
+  params,
+}: AuctionDetailPageProps) {
+  const { id } = await params;
+  const auctionId = Number(id);
+  if (!Number.isInteger(auctionId) || auctionId <= 0) {
+    notFound();
+  }
+
+  const [detailRes, bidsRes] = await Promise.all([
     fetchAuctionDetailServer(auctionId),
-    fetchAuctionBidsServer(auctionId, 5),
+    fetchAuctionBidsServer(auctionId, 10),
   ]);
 
-  if (detailResult.notFound) {
+  if (detailRes.notFound) {
     notFound();
   }
 
   return (
     <AuctionDetailClient
       auctionId={auctionId}
-      initialAuction={detailResult.data}
-      initialBids={initialBids}
+      initialAuction={detailRes.data}
+      initialBids={bidsRes}
     />
   );
 }
-
-export default async function AuctionDetailPage({ params }: PageProps) {
-  const { id } = await params;
-  const auctionId = Number(id);
-
-  if (Number.isNaN(auctionId) || auctionId <= 0) {
-    notFound();
-  }
-
-  return (
-    <Suspense fallback={<AuctionDetailLoading />}>
-      <AuctionDetailLoader auctionId={auctionId} />
-    </Suspense>
-  );
-}
-

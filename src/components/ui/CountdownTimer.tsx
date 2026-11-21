@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore, useRef, useEffect, useCallback } from "react";
+import { useSyncExternalStore, useRef, useEffect } from "react";
 import { cn } from "@/lib/cn";
 import {
   calculateCountdown,
@@ -15,7 +15,38 @@ export interface CountdownTimerProps {
   className?: string;
 }
 
+// Một bộ đếm 1 giây dùng chung cho toàn bộ các CountdownTimer trên trang
+const tickListeners = new Set<() => void>();
+let sharedInterval: ReturnType<typeof setInterval> | null = null;
+let sharedNowMs = 0;
+
+function subscribeSharedTicker(listener: () => void): () => void {
+  tickListeners.add(listener);
+  if (sharedInterval === null && typeof window !== "undefined") {
+    sharedNowMs = Date.now();
+    sharedInterval = setInterval(() => {
+      sharedNowMs = Date.now();
+      tickListeners.forEach((fn) => fn());
+    }, 1000);
+  }
+  return () => {
+    tickListeners.delete(listener);
+    if (tickListeners.size === 0 && sharedInterval !== null) {
+      clearInterval(sharedInterval);
+      sharedInterval = null;
+    }
+  };
+}
+
+function getSharedNowMs(): number {
+  if (sharedNowMs === 0 && typeof window !== "undefined") {
+    sharedNowMs = Date.now();
+  }
+  return sharedNowMs;
+}
+
 const defaultCountdown: CountdownInfo = {
+  days: 0,
   hours: "00",
   minutes: "00",
   seconds: "00",
@@ -36,32 +67,28 @@ export function CountdownTimer({
     onExpireRef.current = onExpire;
   }, [onExpire]);
 
-  const subscribe = useCallback((callback: () => void) => {
-    const interval = setInterval(callback, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const getSnapshot = useCallback(() => {
-    return calculateCountdown(endTime, serverOffsetMs);
-  }, [endTime, serverOffsetMs]);
-
-  const getServerSnapshot = useCallback(() => {
-    return defaultCountdown;
-  }, []);
-
-  const countdown = useSyncExternalStore(
-    subscribe,
-    getSnapshot,
-    getServerSnapshot
+  const nowMs = useSyncExternalStore(
+    subscribeSharedTicker,
+    getSharedNowMs,
+    () => 0
   );
+
+  const countdown =
+    nowMs === 0
+      ? defaultCountdown
+      : calculateCountdown(endTime, serverOffsetMs, nowMs);
 
   const hasTriggeredRef = useRef(false);
   useEffect(() => {
-    if (countdown.isZero && !hasTriggeredRef.current) {
+    hasTriggeredRef.current = false;
+  }, [endTime]);
+
+  useEffect(() => {
+    if (nowMs > 0 && countdown.isZero && !hasTriggeredRef.current) {
       hasTriggeredRef.current = true;
       onExpireRef.current?.();
     }
-  }, [countdown.isZero]);
+  }, [countdown.isZero, nowMs]);
 
   const formattedEnd = formatDateTime(endTime, "DD/MM/YYYY HH:mm");
   const isUrgent = countdown.isLessThanFiveMinutes;
@@ -76,7 +103,6 @@ export function CountdownTimer({
         className
       )}
     >
-      {/* Cột trái: Nhãn và thời gian kết thúc */}
       <div className="space-y-0.5">
         <span
           className={cn(
@@ -91,7 +117,6 @@ export function CountdownTimer({
         </p>
       </div>
 
-      {/* Cột phải: Con số đếm ngược */}
       {countdown.isZero ? (
         <div
           className={cn(
@@ -101,24 +126,32 @@ export function CountdownTimer({
         >
           Đang chốt phiên…
         </div>
+      ) : countdown.days >= 1 ? (
+        <div
+          className={cn(
+            "text-timer tabular",
+            isUrgent ? "text-danger-strong" : "text-warning-strong"
+          )}
+        >
+          {countdown.formatted}
+        </div>
       ) : (
         <div>
-          {/* Desktop: 3 nhóm số có chữ giờ / phút / giây */}
           <div className="hidden sm:flex items-center gap-3 tabular">
             <div className="flex flex-col items-center">
               <span
                 className={cn(
-                  "text-[28px] leading-[36px] font-bold",
+                  "text-timer",
                   isUrgent ? "text-danger-strong" : "text-warning-strong"
                 )}
               >
                 {countdown.hours}
               </span>
-              <span className="text-[12px] text-text-tertiary">giờ</span>
+              <span className="text-caption text-text-tertiary">giờ</span>
             </div>
             <span
               className={cn(
-                "text-[24px] font-bold pb-4",
+                "text-h2 font-bold pb-4",
                 isUrgent ? "text-danger-strong" : "text-warning-strong"
               )}
             >
@@ -127,17 +160,17 @@ export function CountdownTimer({
             <div className="flex flex-col items-center">
               <span
                 className={cn(
-                  "text-[28px] leading-[36px] font-bold",
+                  "text-timer",
                   isUrgent ? "text-danger-strong" : "text-warning-strong"
                 )}
               >
                 {countdown.minutes}
               </span>
-              <span className="text-[12px] text-text-tertiary">phút</span>
+              <span className="text-caption text-text-tertiary">phút</span>
             </div>
             <span
               className={cn(
-                "text-[24px] font-bold pb-4",
+                "text-h2 font-bold pb-4",
                 isUrgent ? "text-danger-strong" : "text-warning-strong"
               )}
             >
@@ -146,17 +179,16 @@ export function CountdownTimer({
             <div className="flex flex-col items-center">
               <span
                 className={cn(
-                  "text-[28px] leading-[36px] font-bold",
+                  "text-timer",
                   isUrgent ? "text-danger-strong" : "text-warning-strong"
                 )}
               >
                 {countdown.seconds}
               </span>
-              <span className="text-[12px] text-text-tertiary">giây</span>
+              <span className="text-caption text-text-tertiary">giây</span>
             </div>
           </div>
 
-          {/* Mobile: Gộp chuỗi 01:12:40 */}
           <div
             className={cn(
               "sm:hidden text-timer tabular",

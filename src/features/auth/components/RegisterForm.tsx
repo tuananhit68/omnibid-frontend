@@ -32,6 +32,7 @@ const FORM_FIELDS = [
   "agreeTerms",
 ] as const;
 
+// TODO fe-v4 register
 export function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -40,12 +41,6 @@ export function RegisterForm() {
   const [serverError, setServerError] = useState<string | null>(null);
 
   const redirectParam = searchParams.get("redirect");
-  const safeRedirect =
-    redirectParam &&
-    redirectParam.startsWith("/") &&
-    !redirectParam.startsWith("//")
-      ? redirectParam
-      : "/";
 
   const {
     register,
@@ -76,26 +71,19 @@ export function RegisterForm() {
         fullName: values.fullName.trim(),
         email: values.email.trim(),
         password: values.password,
-        phoneNumber: values.phoneNumber.trim() || undefined,
+        phoneNumber: values.phoneNumber.trim(),
       },
       {
-        onSuccess: () => {
-          toast.success("Đăng ký tài khoản thành công!");
-          router.push(safeRedirect);
+        onSuccess: (profile) => {
+          toast.success("Đăng ký tài khoản thành công! Vui lòng đăng nhập.");
+          router.push(
+            `/login?registered=1&email=${encodeURIComponent(profile.email)}`
+          );
           router.refresh();
         },
         onError: (err) => {
           if (err instanceof ApiError) {
-            if (err.errorCode === "EMAIL_ALREADY_EXISTS") {
-              setError(
-                "email",
-                { type: "server", message: err.message },
-                { shouldFocus: true }
-              );
-              return;
-            }
-
-            if (err.errorCode === "VALIDATION_ERROR" && err.fieldErrors) {
+            if (err.code === "VALIDATION_ERROR" && err.fieldErrors) {
               let firstFocused = false;
               const unmappedMessages: string[] = [];
 

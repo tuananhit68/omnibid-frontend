@@ -2,37 +2,34 @@ import { cn } from "@/lib/cn";
 import {
   type StatusTone,
   AUCTION_STATUS_META,
-  BID_STATUS_META,
+  BID_POSITION_META,
   ORDER_STATUS_META,
   PAYMENT_STATUS_META,
-  SHIPMENT_STATUS_META,
   PRODUCT_STATUS_META,
   REPORT_STATUS_META,
   USER_STATUS_META,
-  RESERVE_PRICE_STATUS_META,
+  RESERVE_STATUS_META,
   NOTIFICATION_TYPE_META,
   type AuctionStatus,
-  type BidStatus,
+  type BidPosition,
   type OrderStatus,
   type PaymentStatus,
-  type ShipmentStatus,
   type ProductStatus,
   type ReportStatus,
   type UserStatus,
-  type ReservePriceStatus,
+  type ReserveStatus,
   type NotificationType,
 } from "@/types/enums";
 
 export type StatusType =
   | "auction"
-  | "bid"
+  | "bidPosition"
   | "order"
   | "payment"
-  | "shipment"
   | "product"
   | "report"
   | "user"
-  | "reservePrice"
+  | "reserve"
   | "notification";
 
 export interface StatusBadgeProps {
@@ -101,17 +98,14 @@ function resolveStatusMeta(
       meta = AUCTION_STATUS_META[value as AuctionStatus];
       isAuction = true;
       break;
-    case "bid":
-      meta = BID_STATUS_META[value as BidStatus];
+    case "bidPosition":
+      meta = BID_POSITION_META[value as BidPosition];
       break;
     case "order":
       meta = ORDER_STATUS_META[value as OrderStatus];
       break;
     case "payment":
       meta = PAYMENT_STATUS_META[value as PaymentStatus];
-      break;
-    case "shipment":
-      meta = SHIPMENT_STATUS_META[value as ShipmentStatus];
       break;
     case "product":
       meta = PRODUCT_STATUS_META[value as ProductStatus];
@@ -122,8 +116,8 @@ function resolveStatusMeta(
     case "user":
       meta = USER_STATUS_META[value as UserStatus];
       break;
-    case "reservePrice":
-      meta = RESERVE_PRICE_STATUS_META[value as ReservePriceStatus];
+    case "reserve":
+      meta = RESERVE_STATUS_META[value as ReserveStatus];
       break;
     case "notification":
       meta = NOTIFICATION_TYPE_META[value as NotificationType];
@@ -157,7 +151,7 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 h-[26px] px-2.5 text-label font-medium rounded-full border whitespace-nowrap select-none",
+        "inline-flex items-center gap-1.5 h-6.5 px-2.5 text-label font-medium rounded-full border whitespace-nowrap select-none",
         styles.badge,
         className
       )}
@@ -172,4 +166,3 @@ export function StatusBadge({
     </span>
   );
 }
-

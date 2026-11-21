@@ -1,109 +1,36 @@
+// TODO fe-v4 auction-detail
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { cn } from "@/lib/cn";
-import {
-  formatDateTime,
-  formatDisplayCode,
-  formatMoney,
-  maskName,
-  parseBackendDateTime,
-} from "@/lib/format";
-import { ApiError, type AuthResponse } from "@/lib/api";
-import { getErrorMessage } from "@/lib/errors";
-import { useWsConnectionStatus } from "@/lib/ws";
+import { useSession } from "@/lib/auth/session";
+import { isApiError } from "@/lib/api/types";
+import { formatDisplayCode, formatMoney } from "@/lib/format";
+import { AuctionStatus, PRODUCT_CONDITION_LABEL } from "@/types/enums";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
-import { Button } from "@/components/ui/Button";
+import { Button, getButtonClassName } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { CountdownTimer } from "@/components/ui/CountdownTimer";
+import { ErrorState } from "@/components/ui/ErrorState";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { StatusBadge } from "@/components/ui/StatusBadge";
-import { Tabs, TabList, TabTrigger, TabContent } from "@/components/ui/Tabs";
-import { useToast } from "@/components/ui/Toast";
-import {
-  AlertCircleIcon,
-  ArrowRightIcon,
-  CheckCircleIcon,
-  FileTextIcon,
-  FlagIcon,
-  HeartIcon,
-  HistoryIcon,
-} from "@/components/icons";
-import {
-  AuctionStatus,
-  PRODUCT_CONDITION_LABEL,
-  type ProductCondition,
-} from "@/types/enums";
+import { FlagIcon } from "@/components/icons";
 import {
   useAuctionBids,
   useAuctionDetail,
   useAuctionRealtime,
-  useToggleWatchlist,
 } from "../hooks";
-import type { AuctionDetail, BidItem } from "../types";
+import type { AuctionDetail, BidHistoryItem, Page } from "../types";
+import { BidForm } from "./BidForm";
+import { BidHistoryTable } from "./BidHistoryTable";
 import { ImageGallery } from "./ImageGallery";
 import { PricePanel } from "./PricePanel";
-import { BidHistoryTable } from "./BidHistoryTable";
-import { SellerSummaryCard } from "./SellerSummaryCard";
-import { BidForm } from "./BidForm";
 import { ReportViolationModal } from "./ReportViolationModal";
 
 export interface AuctionDetailClientProps {
   auctionId: number;
   initialAuction?: AuctionDetail | null;
-  initialBids?: BidItem[];
-}
-
-interface ParsedDescription {
-  specs: { label: string; value: string }[];
-  notes: string[];
-}
-
-function subscribeStorage(callback: () => void) {
-  window.addEventListener("storage", callback);
-  return () => window.removeEventListener("storage", callback);
-}
-
-function getClientRawUser(): string | null {
-  return (
-    localStorage.getItem("omnibid_user") ||
-    sessionStorage.getItem("omnibid_user")
-  );
-}
-
-function getServerRawUser(): string | null {
-  return null;
-}
-
-function parseProductDescription(raw?: string): ParsedDescription {
-  if (!raw || !raw.trim()) {
-    return { specs: [], notes: [] };
-  }
-  const lines = raw
-    .split(/\r?\n/)
-    .map((l) => l.trim())
-    .filter(Boolean);
-
-  const specs: { label: string; value: string }[] = [];
-  const notes: string[] = [];
-
-  for (const line of lines) {
-    const match = line.match(/^([^:]{2,50}):\s+(.+)$/);
-    if (match) {
-      specs.push({ label: match[1].trim(), value: match[2].trim() });
-    } else {
-      notes.push(line);
-    }
-  }
-
-  // Chỉ tách bảng khi có từ 2 dòng "Nhãn: Giá trị" trở lên (theo gaps.md G4)
-  if (specs.length < 2) {
-    return { specs: [], notes: [raw.trim()] };
-  }
-
-  return { specs, notes };
+  initialBids?: Page<BidHistoryItem> | null;
 }
 
 export function AuctionDetailClient({
@@ -111,610 +38,212 @@ export function AuctionDetailClient({
   initialAuction,
   initialBids,
 }: AuctionDetailClientProps) {
-  const router = useRouter();
-  const toast = useToast();
+  const { isAuthenticated, isAdmin } = useSession();
+  const [flash, setFlash] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
 
-  const rawUser = useSyncExternalStore(
-    subscribeStorage,
-    getClientRawUser,
-    getServerRawUser
-  );
-  const currentUser = useMemo<AuthResponse | null>(() => {
-    if (!rawUser) return null;
-    try {
-      return JSON.parse(rawUser) as AuthResponse;
-    } catch {
-      return null;
-    }
-  }, [rawUser]);
-
-  const [priceFlash, setPriceFlash] = useState(false);
-  const [serverOffsetMs, setServerOffsetMs] = useState(0);
-  const [countdownExpired, setCountdownExpired] = useState(false);
-  const [showAllBids, setShowAllBids] = useState(false);
-  const [userSelectedTab, setUserSelectedTab] = useState<string | null>(null);
-  const [reportModalOpen, setReportModalOpen] = useState(false);
-
-  const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const expireRefetchRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const { reconnecting } = useWsConnectionStatus();
-
-  const {
-    data: auction,
-    isLoading: detailLoading,
-    isError: detailError,
-    error: detailErrObj,
-    refetch: refetchDetail,
-  } = useAuctionDetail(auctionId, initialAuction);
-
-  const {
-    data: bids = [],
-    isLoading: bidsLoading,
-    isError: bidsError,
-    error: bidsErrObj,
-    refetch: refetchBids,
-  } = useAuctionBids(
+  const { data: detailWrap, isLoading, isError, error, refetch } =
+    useAuctionDetail(auctionId, initialAuction);
+  const { data: bidsPage, isLoading: bidsLoading } = useAuctionBids(
     auctionId,
-    showAllBids ? undefined : 5,
-    showAllBids ? undefined : initialBids
+    0,
+    10,
+    initialBids
   );
 
-  const triggerPriceFlash = () => {
-    setPriceFlash(false);
-    setTimeout(() => setPriceFlash(true), 10);
-    if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
-    flashTimerRef.current = setTimeout(() => setPriceFlash(false), 650);
-  };
-
-  useAuctionRealtime(auctionId, triggerPriceFlash);
-
-  useEffect(() => {
-    if (!auction?.serverTime) return;
-    const serverTimeStr = auction.serverTime;
-    const timer = setTimeout(() => {
-      const serverMs = parseBackendDateTime(serverTimeStr)?.valueOf();
-      if (serverMs) {
-        setServerOffsetMs(serverMs - Date.now());
-      }
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [auction?.serverTime]);
-
-  useEffect(() => {
-    return () => {
-      if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
-      if (expireRefetchRef.current) clearTimeout(expireRefetchRef.current);
-    };
+  const triggerFlash = useCallback(() => {
+    setFlash(true);
+    window.setTimeout(() => setFlash(false), 650);
   }, []);
 
-  const toggleWatchMutation = useToggleWatchlist();
+  const { showReconnectingBanner } = useAuctionRealtime(auctionId, triggerFlash);
 
-  const handleCountdownExpire = () => {
-    setCountdownExpired(true);
-    if (expireRefetchRef.current) clearTimeout(expireRefetchRef.current);
-    expireRefetchRef.current = setTimeout(() => {
-      refetchDetail();
-      refetchBids();
-    }, 10000);
-  };
-
-  const handleGuestActionRedirect = () => {
-    router.push(
-      `/login?redirect=${encodeURIComponent(`/auctions/${auctionId}`)}`
-    );
-  };
-
-  const handleReportClick = () => {
-    if (!currentUser) {
-      handleGuestActionRedirect();
-      return;
-    }
-    setReportModalOpen(true);
-  };
-
-  const handleToggleWatch = () => {
-    if (!auction) return;
-    if (!currentUser) {
-      handleGuestActionRedirect();
-      return;
-    }
-    toggleWatchMutation.mutate(
-      { auctionId: auction.id, currentlyWatched: Boolean(auction.isWatched) },
-      {
-        onSuccess: (res) => {
-          toast.success(
-            res.watched
-              ? "Đã thêm phiên vào danh sách theo dõi."
-              : "Đã bỏ theo dõi phiên đấu giá."
-          );
-        },
-        onError: (err) => {
-          const msg =
-            err instanceof ApiError
-              ? err.message
-              : getErrorMessage("INTERNAL_ERROR");
-          toast.error(msg);
-        },
-      }
-    );
-  };
-
-  const parsedDesc = useMemo(
-    () => parseProductDescription(auction?.productDescription),
-    [auction?.productDescription]
-  );
-
-  if (detailLoading && !auction) {
+  if (isLoading && !detailWrap) {
     return (
-      <div className="space-y-6 animate-pulse">
-        <Skeleton className="h-6 w-2/3" />
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-7 space-y-4">
-            <Skeleton className="aspect-4/3 w-full rounded-xl" />
-            <Skeleton className="h-20 w-full rounded-xl" />
-          </div>
-          <div className="lg:col-span-5">
-            <Skeleton className="h-128 w-full rounded-xl" />
-          </div>
-        </div>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <Skeleton className="h-96 rounded-xl lg:col-span-7" />
+        <Skeleton className="h-96 rounded-xl lg:col-span-5" />
       </div>
     );
   }
 
-  if (detailError || !auction) {
-    const errMsg =
-      detailErrObj instanceof ApiError
-        ? detailErrObj.message
-        : getErrorMessage("INTERNAL_ERROR");
+  if (isError || !detailWrap) {
     return (
-      <Card className="p-10 text-center space-y-4">
-        <div className="size-12 rounded-full bg-danger-bg text-danger flex items-center justify-center mx-auto">
-          <AlertCircleIcon className="size-6" />
-        </div>
-        <h1 className="text-h2 font-semibold text-text">
-          Không thể tải thông tin phiên đấu giá
-        </h1>
-        <p className="text-body text-text-secondary">{errMsg}</p>
-        <div className="flex justify-center gap-3 pt-2">
-          <Button variant="primary" size="lg" onClick={() => refetchDetail()}>
-            Thử lại
-          </Button>
-          <Link href="/auctions">
-            <Button variant="outline" size="lg">
-              Quay lại danh sách
-            </Button>
-          </Link>
-        </div>
-      </Card>
+      <ErrorState
+        message={isApiError(error) ? error.message : "Không tìm thấy phiên đấu giá."}
+        onRetry={() => refetch()}
+      />
     );
   }
 
-  const conditionLabel = auction.productCondition
-    ? PRODUCT_CONDITION_LABEL[auction.productCondition as ProductCondition] ||
-      auction.productCondition
-    : null;
-
-  const isWatched = Boolean(auction.isWatched);
-  const isOwner = Boolean(currentUser && currentUser.userId === auction.sellerId);
-  const isAlreadyLeading = Boolean(
-    currentUser &&
-      auction.status === AuctionStatus.ACTIVE &&
-      currentUser.userId === auction.highestBidderId
-  );
-  const isEligibleBidder = Boolean(
-    currentUser &&
-      !isOwner &&
-      !isAlreadyLeading &&
-      auction.status === AuctionStatus.ACTIVE &&
-      !countdownExpired
-  );
-  const canGuestBidPhase =
-    auction.status === AuctionStatus.ACTIVE ||
-    auction.status === AuctionStatus.SCHEDULED;
-
-  const activeTab = userSelectedTab ?? (currentUser ? "history" : "description");
-
-  const breadcrumbItems = [
-    { label: "Trang chủ", href: "/" },
-    { label: "Phiên đấu giá", href: "/auctions" },
-    ...(auction.categoryName
-      ? [
-          {
-            label: auction.categoryName,
-            href: auction.categoryId
-              ? `/auctions?categoryIds=${auction.categoryId}`
-              : "/auctions",
-          },
-        ]
-      : []),
-    { label: auction.productTitle },
-  ];
-
-  const bidsErrMsg =
-    bidsErrObj instanceof ApiError
-      ? bidsErrObj.message
-      : bidsError
-      ? getErrorMessage("INTERNAL_ERROR")
-      : undefined;
+  const auction = detailWrap.data;
+  const serverOffsetMs = detailWrap.serverOffsetMs;
+  const canPlaceBid =
+    auction.status === AuctionStatus.ACTIVE &&
+    isAuthenticated &&
+    !isAdmin &&
+    !auction.viewerIsSeller;
 
   return (
-    <div className={cn("space-y-6", isEligibleBidder && "pb-24 lg:pb-0")}>
-      {/* Banner mất kết nối WebSocket quá 3s */}
-      {reconnecting && (
+    <div className="space-y-6">
+      <Breadcrumb
+        items={[
+          { label: "Trang chủ", href: "/" },
+          { label: "Phiên đấu giá", href: "/auctions" },
+          { label: formatDisplayCode("AUC", auction.id) },
+        ]}
+      />
+
+      {showReconnectingBanner && (
         <div
           role="status"
-          className="bg-warning-subtle-bg border border-warning-border text-warning-strong rounded-xl px-4 py-2.5 text-small font-medium"
+          className="rounded-xl border border-warning-border bg-warning-bg px-4 py-2.5 text-small text-warning-strong"
         >
-          Đang kết nối lại máy chủ thời gian thực…
+          Đang kết nối lại kênh cập nhật giá trực tiếp…
         </div>
       )}
 
-      {/* 1. Thanh Breadcrumb & Báo cáo */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border-brand">
-        <div className="min-w-0 flex-1 overflow-hidden">
-          <Breadcrumb
-            items={breadcrumbItems}
-            className="[&_ol]:flex-nowrap [&_li:last-child]:min-w-0 [&_li:last-child>span]:truncate [&_li:last-child>span]:block"
-          />
-        </div>
-        {!isOwner && (
-          <Button
-            variant="tertiary"
-            size="md"
-            leftIcon={<FlagIcon className="size-4" />}
-            onClick={handleReportClick}
-            className="self-start sm:self-auto shrink-0"
-          >
-            Báo cáo phiên này
-          </Button>
-        )}
-      </div>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <div className="space-y-6 lg:col-span-7">
+          <ImageGallery images={auction.images} title={auction.title} />
 
-      {/* 2. Lưới 2 cột 8/4 (trái Gallery + Seller, phải Giá + CTA/BidForm) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Cột trái */}
-        <div className="lg:col-span-7 space-y-4">
-          <ImageGallery
-            images={auction.images}
-            primaryImageUrl={auction.primaryImageUrl}
-            productTitle={auction.productTitle}
-            auctionId={auction.id}
-            status={auction.status}
-          />
+          <Card className="space-y-3">
+            <h2 className="text-h3 text-text">Mô tả sản phẩm</h2>
+            <p className="text-small text-text-secondary">
+              Tình trạng:{" "}
+              <strong className="text-text">
+                {PRODUCT_CONDITION_LABEL[auction.condition]}
+              </strong>{" "}
+              · Danh mục: <strong className="text-text">{auction.categoryName}</strong>
+            </p>
+            <p className="text-body text-text whitespace-pre-line">
+              {auction.description}
+            </p>
+            <p className="text-small text-text-secondary pt-2 border-t border-border-subtle">
+              Người bán: <strong className="text-text">{auction.seller.fullName}</strong>
+            </p>
+          </Card>
 
-          {/* Dòng meta mã phiên dưới ảnh (theo G3: bỏ chip kiểm duyệt) */}
-          <div className="flex items-center justify-between px-1 text-small text-text-tertiary">
-            <span>
-              Mã phiên:{" "}
-              <strong className="text-text font-semibold tabular">
-                {formatDisplayCode("AUC", auction.id)}
-              </strong>
-            </span>
-          </div>
-
-          <SellerSummaryCard sellerName={auction.sellerName} />
-        </div>
-
-        {/* Cột phải */}
-        <div className="lg:col-span-5">
-          <Card className="space-y-5">
-            {/* Chips danh mục & tình trạng (G3) + Tên sản phẩm */}
-            <div className="space-y-3">
-              {(auction.categoryName || conditionLabel) && (
-                <div className="flex flex-wrap items-center gap-2">
-                  {auction.categoryName && (
-                    <StatusBadge
-                      label={auction.categoryName}
-                      tone="info"
-                      withDot={false}
-                    />
-                  )}
-                  {conditionLabel && (
-                    <StatusBadge
-                      label={`Tình trạng: ${conditionLabel}`}
-                      tone="success"
-                      withDot={false}
-                    />
-                  )}
-                </div>
-              )}
-
-              <h1 className="text-h2 font-semibold text-text">
-                {auction.productTitle}
-              </h1>
-            </div>
-
-            {/* Khối thời gian / trạng thái phiên */}
-            {auction.status === AuctionStatus.ACTIVE ? (
-              <CountdownTimer
-                endTime={auction.endTime}
-                serverOffsetMs={serverOffsetMs}
-                onExpire={handleCountdownExpire}
-              />
-            ) : auction.status === AuctionStatus.SCHEDULED ? (
-              <div className="bg-info-bg border border-info-border rounded-xl p-4 space-y-1">
-                <span className="label text-info block">Phiên sắp diễn ra</span>
-                <p className="text-body font-semibold text-text tabular">
-                  Bắt đầu vào {formatDateTime(auction.startTime)} (GMT+7)
-                </p>
-              </div>
-            ) : auction.status === AuctionStatus.CANCELLED ? (
-              <div className="bg-danger-bg border border-danger-border rounded-xl p-4 space-y-1">
-                <span className="label text-danger-strong block">
-                  Phiên đã bị huỷ
-                </span>
-                <p className="text-small text-text">
-                  {auction.cancelReason ||
-                    "Phiên đấu giá đã bị huỷ và không tiếp nhận đặt giá."}
-                </p>
-              </div>
-            ) : (
-              <div className="bg-surface-subtle border border-border-brand rounded-xl p-4 space-y-1">
-                <span className="label block">Phiên đã kết thúc</span>
-                {auction.status === AuctionStatus.ENDED &&
-                auction.highestBidderName ? (
-                  <p className="text-small text-text">
-                    Người thắng:{" "}
-                    <strong className="font-semibold tabular">
-                      {maskName(auction.highestBidderName)}
-                    </strong>{" "}
-                    · Giá cuối:{" "}
-                    <strong className="font-bold text-primary-700 tabular">
-                      {formatMoney(auction.finalPrice ?? auction.currentPrice)}
-                    </strong>
-                  </p>
-                ) : (
-                  <p className="text-small text-text-secondary">
-                    Phiên kết thúc không có người thắng cuộc.
-                  </p>
-                )}
-              </div>
-            )}
-
-            {/* Khối giá */}
-            <PricePanel auction={auction} priceFlash={priceFlash} />
-
-            {/* Khối tương tác theo vai trò & trạng thái */}
-            {!currentUser ? (
-              /* Khách (S02) */
-              <div className="space-y-2.5 pt-1">
-                {canGuestBidPhase && (
-                  <Link
-                    href={`/login?redirect=${encodeURIComponent(
-                      `/auctions/${auction.id}`
-                    )}`}
-                    className="block w-full"
-                  >
-                    <Button variant="primary" size="xl" className="w-full">
-                      Đăng nhập để đặt giá
-                    </Button>
-                  </Link>
-                )}
-
-                <Button
-                  variant="outline"
-                  size="lg"
-                  aria-pressed={isWatched}
-                  loading={toggleWatchMutation.isPending}
-                  onClick={handleToggleWatch}
-                  leftIcon={
-                    <HeartIcon
-                      filled={isWatched}
-                      className={cn(
-                        "size-4",
-                        isWatched ? "text-danger" : "text-text-tertiary"
-                      )}
-                    />
-                  }
-                  className={cn(
-                    "w-full",
-                    isWatched &&
-                      "border-danger-border bg-danger-bg/40 text-danger"
-                  )}
-                >
-                  {isWatched ? "Đang theo dõi phiên này" : "Theo dõi phiên này"}
-                </Button>
-              </div>
-            ) : isOwner ? (
-              /* Chủ phiên (SELF_BID_NOT_ALLOWED) */
-              <div className="bg-surface-subtle border border-border-brand rounded-xl p-4 space-y-3">
-                <p className="text-small font-semibold text-text">
-                  Đây là phiên đấu giá của bạn
-                </p>
-                <p className="text-caption text-text-secondary">
-                  Bạn không thể tự đặt giá cho sản phẩm của chính mình.
-                </p>
-                <Link href={`/seller/auctions/${auction.id}`} className="block">
-                  <Button variant="outline" size="lg" className="w-full">
-                    Quản lý phiên đấu giá
-                  </Button>
-                </Link>
-              </div>
-            ) : (
-              /* Người mua đã đăng nhập (S05) */
-              <div className="space-y-3">
-                {isAlreadyLeading && (
-                  <div
-                    role="status"
-                    className="bg-success-bg border border-success-border rounded-xl p-4 flex items-start gap-3"
-                  >
-                    <CheckCircleIcon className="size-5 text-success-strong shrink-0 mt-0.5" />
-                    <div className="space-y-1">
-                      <p className="text-small font-semibold text-success">
-                        Bạn đang dẫn đầu với{" "}
-                        <span className="tabular font-bold">
-                          {formatMoney(auction.currentPrice)}
-                        </span>
-                      </p>
-                      <p className="text-caption text-text-secondary">
-                        Hệ thống sẽ thông báo ngay nếu có người đặt giá cao hơn.
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {isEligibleBidder && (
-                  <BidForm
-                    auction={auction}
-                    onRefetchAuction={() => refetchDetail()}
-                  />
-                )}
-
-                {auction.status === AuctionStatus.ACTIVE &&
-                  countdownExpired &&
-                  !isAlreadyLeading && (
-                    <div className="bg-warning-subtle-bg border border-warning-border rounded-xl p-4 text-small text-warning-strong font-medium">
-                      Phiên đang chốt kết quả, tạm khoá chức năng đặt giá.
-                    </div>
-                  )}
-
-                {canGuestBidPhase && (
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    aria-pressed={isWatched}
-                    loading={toggleWatchMutation.isPending}
-                    onClick={handleToggleWatch}
-                    leftIcon={
-                      <HeartIcon
-                        filled={isWatched}
-                        className={cn(
-                          "size-4",
-                          isWatched ? "text-danger" : "text-text-tertiary"
-                        )}
-                      />
-                    }
-                    className={cn(
-                      "w-full",
-                      isWatched &&
-                        "border-danger-border bg-danger-bg/40 text-danger"
-                    )}
-                  >
-                    {isWatched
-                      ? "Đang theo dõi phiên này"
-                      : "Theo dõi phiên này"}
-                  </Button>
-                )}
-              </div>
-            )}
+          <Card className="space-y-3">
+            <h2 className="text-h3 text-text">Lịch sử đặt giá</h2>
+            <BidHistoryTable
+              bids={bidsPage?.content ?? []}
+              loading={bidsLoading}
+            />
           </Card>
         </div>
-      </div>
 
-      {/* 3. Card Tabs dưới cùng: Mô tả sản phẩm & Lịch sử đặt giá */}
-      <Card>
-        <Tabs value={activeTab} onValueChange={setUserSelectedTab}>
-          <TabList variant="underline">
-            <TabTrigger value="description">
-              <span className="inline-flex items-center gap-2">
-                <FileTextIcon className="size-4" />
-                <span>Mô tả sản phẩm</span>
+        <div className="space-y-4 lg:col-span-5">
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <StatusBadge statusType="auction" value={auction.status} />
+              <span className="text-caption text-text-tertiary tabular">
+                {formatDisplayCode("AUC", auction.id)}
               </span>
-            </TabTrigger>
-            <TabTrigger value="history" badge={auction.bidCount}>
-              <span className="inline-flex items-center gap-2">
-                <HistoryIcon className="size-4" />
-                <span>Lịch sử đặt giá</span>
-              </span>
-            </TabTrigger>
-          </TabList>
-
-          <TabContent value="description" className="pt-6 space-y-6">
-            {parsedDesc.specs.length === 0 && parsedDesc.notes.length === 0 ? (
-              <p className="text-body text-text-tertiary">
-                Người bán chưa cung cấp mô tả chi tiết cho sản phẩm này.
-              </p>
-            ) : (
-              <>
-                {parsedDesc.specs.length > 0 && (
-                  <div className="space-y-3">
-                    <h2 className="text-h3 font-semibold text-text">
-                      Thông số kỹ thuật chi tiết
-                    </h2>
-                    <div className="border border-border-brand rounded-lg overflow-hidden divide-y divide-border-subtle">
-                      {parsedDesc.specs.map((item, idx) => (
-                        <div
-                          key={`${item.label}-${idx}`}
-                          className={cn(
-                            "grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 px-4 py-3 text-small",
-                            idx % 2 === 0
-                              ? "bg-surface-subtle/60"
-                              : "bg-surface"
-                          )}
-                        >
-                          <div className="font-medium text-text-secondary">
-                            {item.label}
-                          </div>
-                          <div className="sm:col-span-2 text-text font-medium">
-                            {item.value}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {parsedDesc.notes.length > 0 && (
-                  <div className="space-y-2">
-                    <h2 className="text-h3 font-semibold text-text">
-                      Mô tả chi tiết
-                    </h2>
-                    <div className="text-body text-text-secondary whitespace-pre-line">
-                      {parsedDesc.notes.join("\n")}
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </TabContent>
-
-          <TabContent value="history" className="pt-6 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <h2 className="text-h3 font-semibold text-text">
-                  Nhật ký đặt giá thời gian thực
-                </h2>
-                <p className="text-small text-text-tertiary tabular">
-                  {showAllBids || auction.bidCount <= 5
-                    ? `Hiển thị ${bids.length} lượt đặt giá`
-                    : `Hiển thị ${bids.length} lượt gần nhất (Tổng ${auction.bidCount} lượt)`}
-                </p>
-              </div>
             </div>
+            <h1 className="text-h1 text-text">{auction.title}</h1>
+          </div>
 
-            <BidHistoryTable
-              bids={bids}
-              currentUserId={currentUser?.userId}
-              loading={bidsLoading && bids.length === 0}
-              error={bidsErrMsg}
-              onRetry={() => refetchBids()}
+          {auction.status === AuctionStatus.ACTIVE && (
+            <CountdownTimer
+              endTime={auction.endTime}
+              serverOffsetMs={serverOffsetMs}
+              onExpire={() => {
+                window.setTimeout(() => refetch(), 15_000);
+              }}
+            />
+          )}
+
+          <Card className="space-y-4">
+            <PricePanel
+              currentPrice={auction.currentPrice}
+              startPrice={auction.startPrice}
+              minNextBid={auction.minNextBid}
+              bidIncrement={auction.bidIncrement}
+              bidCount={auction.bidCount}
+              highestBidderName={auction.highestBidderName}
+              reserveStatus={auction.reserveStatus}
+              reservePrice={auction.reservePrice}
+              flash={flash}
             />
 
-            {!showAllBids && auction.bidCount > 5 && (
-              <div className="pt-1">
-                <Button
-                  variant="ghost"
-                  size="md"
-                  rightIcon={<ArrowRightIcon className="size-4" />}
-                  onClick={() => setShowAllBids(true)}
-                  className="px-2"
-                >
-                  Xem toàn bộ {auction.bidCount} lượt đặt giá
-                </Button>
+            {auction.status === AuctionStatus.ACTIVE && (
+              <>
+                {canPlaceBid ? (
+                  <BidForm
+                    auctionId={auction.id}
+                    minNextBid={auction.minNextBid}
+                    bidIncrement={auction.bidIncrement}
+                  />
+                ) : !isAuthenticated ? (
+                  <div className="border-t border-border-subtle pt-4">
+                    <Link
+                      href={`/login?redirect=${encodeURIComponent(`/auctions/${auction.id}`)}`}
+                      className={getButtonClassName({
+                        variant: "primary",
+                        size: "lg",
+                        className: "w-full",
+                      })}
+                    >
+                      Đăng nhập để đặt giá
+                    </Link>
+                  </div>
+                ) : auction.viewerIsSeller ? (
+                  <p className="border-t border-border-subtle pt-3 text-small text-text-secondary">
+                    Bạn là chủ phiên đấu giá này.
+                  </p>
+                ) : null}
+              </>
+            )}
+
+            {auction.status === AuctionStatus.ENDED && (
+              <div className="border-t border-border-subtle pt-3 space-y-2 text-small">
+                <p className="text-text">
+                  Người thắng: <strong>{auction.winnerName ?? "—"}</strong> · Giá cuối:{" "}
+                  <strong className="text-primary-700 tabular">
+                    {formatMoney(auction.finalPrice ?? auction.currentPrice)}
+                  </strong>
+                </p>
+                {auction.orderId && (
+                  <Link
+                    href={`/orders/${auction.orderId}`}
+                    className={getButtonClassName({
+                      variant: "primary",
+                      size: "md",
+                      className: "w-full",
+                    })}
+                  >
+                    Xem đơn hàng {formatDisplayCode("ORD", auction.orderId)}
+                  </Link>
+                )}
               </div>
             )}
-          </TabContent>
-        </Tabs>
-      </Card>
 
-      {/* Modal báo cáo vi phạm */}
+            {auction.status === AuctionStatus.CANCELLED && auction.cancelReason && (
+              <p className="border-t border-border-subtle pt-3 text-small text-danger">
+                Lý do hủy: {auction.cancelReason}
+              </p>
+            )}
+          </Card>
+
+          {isAuthenticated && !isAdmin && !auction.viewerIsSeller && (
+            <Button
+              variant="ghost"
+              size="sm"
+              leftIcon={<FlagIcon className="size-4" />}
+              onClick={() => setReportOpen(true)}
+            >
+              Báo cáo vi phạm
+            </Button>
+          )}
+        </div>
+      </div>
+
       <ReportViolationModal
-        open={reportModalOpen}
-        onClose={() => setReportModalOpen(false)}
-        auctionId={auction.id}
-        productId={auction.productId}
-        productTitle={auction.productTitle}
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        reportedProductId={auction.productId}
+        targetTitle={auction.title}
       />
     </div>
   );

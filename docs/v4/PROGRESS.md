@@ -4,7 +4,7 @@ Nhánh: `feature/fe-v4` · Kit: `.agents/skills/omnibid-fe-v4` · Agent cập nh
 
 ## Phase
 - [x] 0. Chuẩn bị
-- [ ] 1. Nền tảng (contract.ts, API v4, mock, enums, thời gian, phiên, proxy, WS, hệ thiết kế, layout, UI kit, gỡ code cũ)
+- [x] 1. Nền tảng (contract.ts, API v4, mock, enums, thời gian, phiên, proxy, WS, hệ thiết kế, layout, UI kit, gỡ code cũ)
 - [ ] 2. Tài khoản — login, register, profile, admin-profile
 - [ ] 3. Phiên công khai — home, auction-list, auction-detail, report-modal
 - [ ] 4. Bán hàng — my-products, product-form, auction-create, my-auctions, my-auction
@@ -18,15 +18,20 @@ Nhánh: `feature/fe-v4` · Kit: `.agents/skills/omnibid-fe-v4` · Agent cập nh
 - `npm install`: PASS (up to date, 153 packages)
 - `npm run lint`: PASS (exit 0)
 - `npm run typecheck`: PASS (exit 0)
-- `npm run build`: PASS (exit 0; Next.js 16.4.5 webpack, cảnh báo `middleware` deprecated → sẽ đổi sang `proxy.ts` ở Phase 1)
+- `npm run build`: PASS (exit 0; Next.js 16.4.5 webpack, cảnh báo `middleware` deprecated → đã đổi sang `src/proxy.ts` ở Phase 1)
 
 ## Backend thật
-Chờ người dùng xác nhận (mặc định phát triển ở chế độ mock `NEXT_PUBLIC_API_MODE=mock`).
+Người dùng xác nhận tiếp tục phát triển mặc định ở chế độ mock (`NEXT_PUBLIC_API_MODE=mock` trong `.env.local`).
 
 ## Lệch hợp đồng (backend thật ↔ RESPONSE_DTO_v4)
 
 ## Giả định / quyết định của agent
+- Phase 1: giữ nguyên toàn bộ biến màu khóa trong `src/styles/tokens.css`.
+- Phase 1: `OrderDetail.viewerRole` giữ đúng hợp đồng `RESPONSE_DTO_v4.md` §5 (`'BUYER' | 'SELLER'`), dù script `verify-fe-v4.ps1` hiện lọc chuỗi `viewerRole` theo `DELETE_LIST_FE.md` (áp dụng cho enum cũ trong `types/enums.ts`).
+- Phase 1: đã thêm sẵn mock handler cho `auctions` và `bids` (ngoài `auth`, `users`, `categories`) để các màn công khai hiện có và `/dev/mock` hoạt động ngay ở chế độ mock.
+- Phase 1: đổi `src/middleware.ts` sang `src/proxy.ts` theo quy chuẩn Next.js 16.
 
 ## Cần backend (khối bị ẩn vì thiếu API)
 
 ## Việc tồn
+- Các màn cũ (`/`, `/auctions`, `/auctions/[id]`, `/login`, `/register`, `/me/bids`) đã được sửa tạm (`// TODO fe-v4 <id>`) để biên dịch và chạy mock ở Phase 1; sẽ được thiết kế lại đầy đủ ở Phase 2, 3, 5.

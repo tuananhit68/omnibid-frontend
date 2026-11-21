@@ -1,8 +1,9 @@
 import type { ApiResponse } from "@/lib/api/types";
-import type { AuctionDetail, BidItem } from "./types";
+import type { AuctionDetail, BidHistoryItem, Page } from "@/lib/api/contract";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+const IS_MOCK_MODE = process.env.NEXT_PUBLIC_API_MODE === "mock";
 
 export interface ServerFetchResult<T> {
   data: T | null;
@@ -10,12 +11,14 @@ export interface ServerFetchResult<T> {
   error: boolean;
 }
 
-/**
- * Tải chi tiết phiên ở Server Component (không dùng localStorage/axios client interceptor)
- */
 export async function fetchAuctionDetailServer(
   id: number
 ): Promise<ServerFetchResult<AuctionDetail>> {
+  // Ở chế độ mock, kho dữ liệu nằm trên trình duyệt -> bỏ tải phía server
+  if (IS_MOCK_MODE) {
+    return { data: null, notFound: false, error: false };
+  }
+
   try {
     const res = await fetch(`${API_BASE}/auctions/${id}`, {
       cache: "no-store",
@@ -25,14 +28,13 @@ export async function fetchAuctionDetailServer(
     if (res.status === 404) {
       return { data: null, notFound: true, error: false };
     }
-
     if (!res.ok) {
       return { data: null, notFound: false, error: true };
     }
 
     const json = (await res.json()) as ApiResponse<AuctionDetail>;
-    if (!json.success || !json.data) {
-      if (json.errorCode === "NOT_FOUND") {
+    if (!json.success) {
+      if (json.error.code === "NOT_FOUND") {
         return { data: null, notFound: true, error: false };
       }
       return { data: null, notFound: false, error: true };
@@ -44,23 +46,26 @@ export async function fetchAuctionDetailServer(
   }
 }
 
-/**
- * Tải lịch sử đặt giá ban đầu ở Server Component
- */
 export async function fetchAuctionBidsServer(
   id: number,
-  limit = 5
-): Promise<BidItem[]> {
+  size = 10
+): Promise<Page<BidHistoryItem> | null> {
+  if (IS_MOCK_MODE) {
+    return null;
+  }
+
   try {
-    const res = await fetch(`${API_BASE}/auctions/${id}/bids?limit=${limit}`, {
-      cache: "no-store",
-      headers: { Accept: "application/json" },
-    });
-    if (!res.ok) return [];
-    const json = (await res.json()) as ApiResponse<BidItem[]>;
-    return json.success && Array.isArray(json.data) ? json.data : [];
+    const res = await fetch(
+      `${API_BASE}/auctions/${id}/bids?page=0&size=${size}&sort=createdAt,desc`,
+      {
+        cache: "no-store",
+        headers: { Accept: "application/json" },
+      }
+    );
+    if (!res.ok) return null;
+    const json = (await res.json()) as ApiResponse<Page<BidHistoryItem>>;
+    return json.success ? json.data : null;
   } catch {
-    return [];
+    return null;
   }
 }
-

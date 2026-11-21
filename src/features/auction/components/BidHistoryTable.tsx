@@ -1,111 +1,67 @@
+// TODO fe-v4 auction-detail
 "use client";
 
-import { cn } from "@/lib/cn";
-import { formatDateTime, formatMoney, maskName } from "@/lib/format";
-import { DataTable, type Column } from "@/components/ui/DataTable";
-import { StatusBadge } from "@/components/ui/StatusBadge";
-import { BidStatus } from "@/types/enums";
-import type { BidItem } from "../types";
+import { formatBidTimestamp, formatMoney } from "@/lib/format";
+import type { BidHistoryItem } from "../types";
 
 export interface BidHistoryTableProps {
-  bids: BidItem[];
-  currentUserId?: number | null;
+  bids: BidHistoryItem[];
   loading?: boolean;
-  error?: string;
-  onRetry?: () => void;
-  className?: string;
 }
 
-export function BidHistoryTable({
-  bids,
-  currentUserId,
-  loading = false,
-  error,
-  onRetry,
-  className,
-}: BidHistoryTableProps) {
-  const columns: Column<BidItem>[] = [
-    {
-      key: "bidderName",
-      header: "Người đặt",
-      render: (row) => {
-        const isLeading = row.status === BidStatus.LEADING;
-        const isMe = currentUserId != null && row.bidderId === currentUserId;
-        const display = maskName(row.bidderName);
-        return (
-          <div className="flex items-center gap-2.5">
-            <span
-              aria-hidden="true"
-              className={cn(
-                "size-8 rounded-full flex items-center justify-center text-caption font-bold shrink-0",
-                isLeading || isMe
-                  ? "bg-primary-50 text-primary-700"
-                  : "bg-neutral-bg text-neutral"
-              )}
-            >
-              {display.charAt(0).toUpperCase()}
-            </span>
-            <span
-              className={cn(
-                "font-medium tabular",
-                isLeading ? "text-text font-semibold" : "text-text-secondary"
-              )}
-            >
-              {display}
-            </span>
-            {isMe && (
-              <span className="px-1.5 py-0.5 rounded-sm bg-primary-50 border border-primary-200 text-primary-700 text-caption font-semibold whitespace-nowrap">
-                Bạn
-              </span>
-            )}
-          </div>
-        );
-      },
-    },
-    {
-      key: "amount",
-      header: "Mức giá",
-      align: "right",
-      render: (row) => (
-        <span
-          className={cn(
-            "tabular font-bold",
-            row.status === BidStatus.LEADING ? "text-primary-700" : "text-text"
-          )}
-        >
-          {formatMoney(row.amount)}
-        </span>
-      ),
-    },
-    {
-      key: "createdAt",
-      header: "Thời gian",
-      render: (row) => (
-        <span className="text-small text-text-tertiary tabular">
-          {formatDateTime(row.createdAt, "DD/MM/YYYY HH:mm:ss")}
-        </span>
-      ),
-    },
-    {
-      key: "status",
-      header: "Trạng thái",
-      align: "center",
-      render: (row) => <StatusBadge statusType="bid" value={row.status} />,
-    },
-  ];
+export function BidHistoryTable({ bids, loading = false }: BidHistoryTableProps) {
+  if (loading) {
+    return (
+      <div className="space-y-2 py-4">
+        <div className="h-10 rounded-md bg-surface-subtle animate-pulse" />
+        <div className="h-10 rounded-md bg-surface-subtle animate-pulse" />
+        <div className="h-10 rounded-md bg-surface-subtle animate-pulse" />
+      </div>
+    );
+  }
+
+  if (bids.length === 0) {
+    return (
+      <p className="py-6 text-center text-small text-text-tertiary">
+        Chưa có lượt đặt giá nào.
+      </p>
+    );
+  }
 
   return (
-    <DataTable
-      columns={columns}
-      data={bids}
-      keyExtractor={(row) => row.id}
-      loading={loading}
-      error={error}
-      onRetry={onRetry}
-      emptyText="Chưa có lượt đặt giá nào cho phiên đấu giá này."
-      highlightRow={(row) => row.status === BidStatus.LEADING}
-      className={className}
-    />
+    <div className="overflow-x-auto">
+      <table className="w-full text-left border-collapse">
+        <thead>
+          <tr className="border-b border-border-subtle bg-surface-subtle">
+            <th className="label px-3 py-2.5">Thời điểm</th>
+            <th className="label px-3 py-2.5">Người đặt</th>
+            <th className="label px-3 py-2.5 text-right">Mức giá</th>
+          </tr>
+        </thead>
+        <tbody>
+          {bids.map((bid, index) => (
+            <tr
+              key={bid.id}
+              className="border-b border-border-subtle last:border-b-0"
+            >
+              <td className="px-3 py-3 text-small text-text-secondary tabular">
+                {formatBidTimestamp(bid.createdAt)}
+              </td>
+              <td className="px-3 py-3 text-small font-medium text-text">
+                {bid.bidderName}
+                {index === 0 && (
+                  <span className="ml-2 rounded-sm bg-success-bg px-1.5 py-0.5 text-caption text-success-strong">
+                    Cao nhất
+                  </span>
+                )}
+              </td>
+              <td className="px-3 py-3 text-right text-small font-bold text-primary-700 tabular">
+                {formatMoney(bid.amount)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
-
