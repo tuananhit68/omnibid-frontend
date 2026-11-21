@@ -2,6 +2,7 @@ import type {
   AuctionDetail,
   AuctionSummary,
   BidHistoryItem,
+  MyAuctionItem,
   MyBidItem,
   Page,
   PlaceBidResponse,
@@ -397,4 +398,302 @@ export function handleGetMyBids(
     });
 
   return paginate(myBids, page, size);
+}
+
+const MIN_AUCTION_DURATION_MS = 60 * 60 * 1000;
+const MAX_AUCTION_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
+
+function validateAuctionParams(body: Record<string, unknown>): {
+  startPrice: number;
+  bidIncrement: number;
+  reservePrice: number | null;
+  startTime: string;
+  endTime: string;
+} {
+  const fields: Record<string, string> = {};
+  const startPrice = Number(body.startPrice);
+  const bidIncrement = Number(body.bidIncrement);
+  const rawReserve = body.reservePrice;
+  const reservePrice =
+    rawReserve === undefined || rawReserve === null || rawReserve === ""
+      ? null
+      : Number(rawReserve);
+  const startTime = typeof body.startTime === "string" ? body.startTime.trim() : "";
+  const endTime = typeof body.endTime === "string" ? body.endTime.trim() : "";
+
+  if (!Number.isInteger(startPrice) || startPrice <= 0) {
+    fields.startPrice = "Giá khởi điểm phải là số nguyên lớn hơn 0";
+  }
+  if (!Number.isInteger(bidIncrement) || bidIncrement <= 0) {
+    fields.bidIncrement = "Bước giá phải là số nguyên lớn hơn 0";
+  }
+  if (reservePrice !== null) {
+    if (!Number.isInteger(reservePrice) || reservePrice <= 0) {
+      fields.reservePrice = "Giá sàn phải là số nguyên dương";
+    } else if (Number.isInteger(startPrice) && reservePrice < startPrice) {
+      fields.reservePrice = "Giá sàn phải lớn hơn hoặc bằng giá khởi điểm";
+    }
+  }
+
+  const now = mockNowMs();
+  const startMs = Date.parse(startTime);
+  const endMs = Date.parse(endTime);
+
+  if (!startTime || Number.isNaN(startMs)) {
+    fields.startTime = "Thời gian bắt đầu không hợp lệ";
+  } else if (startMs <= now) {
+    fields.startTime = "Thời gian bắt đầu phải ở tương lai";
+  }
+
+  if (!endTime || Number.isNaN(endMs)) {
+    fields.endTime = "Thời gian kết thúc không hợp lệ";
+  } else if (!Number.isNaN(startMs)) {
+    if (endMs <= startMs) {
+      fields.endTime = "Thời gian kết thúc phải sau thời gian bắt đầu";
+    } else {
+      const duration = endMs - startMs;
+      if (duration < MIN_AUCTION_DURATION_MS) {
+        fields.endTime = "Thời lượng phiên tối thiểu là 1 giờ";
+      } else if (duration > MAX_AUCTION_DURATION_MS) {
+        fields.endTime = "Thời lượng phiên tối đa là 30 ngày";
+      }
+    }
+  }
+
+  if (Object.keys(fields).length > 0) {
+    throw mockError("VALIDATION_ERROR", "Dữ liệu đầu vào không hợp lệ", { fields });
+  }
+
+  return { startPrice, bidIncrement, reservePrice, startTime, endTime };
+}
+
+export function handleGetMyAuctions(
+  authHeader: string | undefined,
+  params: URLSearchParams
+): Page<MyAuctionItem> {
+  const user = requireMockAuth(authHeader, [UserRole.USER]);
+  const db = getMockDb();
+
+  const statusParam = params.get("status");
+  const keyword = (params.get("keyword") ?? "").trim().toLowerCase();
+  const sort = params.get("sort") || "createdAt,desc";
+  const page = Number(params.get("page") ?? "0");
+  const size = Number(params.get("size") ?? "10");
+
+  let list = db.auctions.filter((a) => {
+    if (a.sellerId !== user.id) return false;
+    if (statusParam && a.status !== statusParam) return false;
+    if (keyword) {
+      const product = db.products.find((p) => p.id === a.productId);
+      if (!product || !product.title.toLowerCase().includes(keyword)) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  list = [...list].sort((a, b) => {
+    switch (sort) {
+      case "endTime,asc":
+        return Date.parse(a.endTime) - Date.parse(b.endTime);
+      case "currentPrice,desc":
+        return b.currentPrice - a.currentPrice;
+      case "currentPrice,asc":
+        return a.currentPrice - b.currentPrice;
+      case "createdAt,desc":
+      default:
+        return Date.parse(b.createdAt) - Date.parse(a.createdAt);
+    }
+  });
+
+  const mapped: MyAuctionItem[] = list.map((auction) => {
+    const summary = toAuctionSummary(auction);
+    const order =
+      auction.status === AuctionStatus.ENDED
+        ? db.orders.find((o) => o.auctionId === auction.id)
+        : null;
+    return {
+      ...summary,
+      reservePrice: auction.reservePrice,
+      orderId: order?.id ?? null,
+    };
+  });
+
+  return paginate(mapped, page, size);
+}
+
+export function handleCreateAuction(
+  authHeader: string | undefined,
+  body: Record<string, unknown>
+): AuctionDetail {
+  const user = requireMockAuth(authHeader, [UserRole.USER]);
+  const db = getMockDb();
+
+  const productId = Number(body.productId);
+  if (!Number.isInteger(productId) || productId <= 0) {
+    throw mockError("VALIDATION_ERROR", "Dữ liệu đầu vào không hợp lệ", {
+      fields: { productId: "Sản phẩm không hợp lệ" },
+    });
+  }
+
+  const product = db.products.find((p) => p.id === productId);
+  if (!product) throw mockError("NOT_FOUND");
+  if (product.sellerId !== user.id) throw mockError("FORBIDDEN");
+
+  const hasActiveAuction = db.auctions.some(
+    (a) =>
+      a.productId === productId &&
+      (a.status === AuctionStatus.SCHEDULED || a.status === AuctionStatus.ACTIVE)
+  );
+  if (hasActiveAuction) {
+    throw mockError("CONFLICT", "Sản phẩm đang có phiên đấu giá hoạt động");
+  }
+  if (product.status !== ProductStatus.AVAILABLE) {
+    throw mockError("PRODUCT_NOT_AVAILABLE");
+  }
+
+  const validated = validateAuctionParams(body);
+  const nowIso = mockNowIso();
+  const auctionId = db.nextIds.auction++;
+
+  const created: MockAuction = {
+    id: auctionId,
+    productId: product.id,
+    sellerId: user.id,
+    status: AuctionStatus.SCHEDULED,
+    startPrice: validated.startPrice,
+    bidIncrement: validated.bidIncrement,
+    reservePrice: validated.reservePrice,
+    currentPrice: validated.startPrice,
+    bidCount: 0,
+    highestBidderId: null,
+    winnerId: null,
+    finalPrice: null,
+    startTime: validated.startTime,
+    endTime: validated.endTime,
+    closedAt: null,
+    cancelReason: null,
+    createdAt: nowIso,
+  };
+
+  db.auctions.unshift(created);
+  product.status = ProductStatus.IN_AUCTION;
+  product.everAuctioned = true;
+  product.updatedAt = nowIso;
+
+  persistMockDb();
+  return handleGetAuctionDetail(auctionId, authHeader);
+}
+
+export function handleUpdateAuction(
+  auctionId: number,
+  authHeader: string | undefined,
+  body: Record<string, unknown>
+): AuctionDetail {
+  const user = requireMockAuth(authHeader, [UserRole.USER]);
+  const db = getMockDb();
+
+  const auction = db.auctions.find((a) => a.id === auctionId);
+  if (!auction) throw mockError("NOT_FOUND");
+  if (auction.sellerId !== user.id) throw mockError("FORBIDDEN");
+  if (auction.status !== AuctionStatus.SCHEDULED) {
+    throw mockError("AUCTION_NOT_EDITABLE");
+  }
+
+  const validated = validateAuctionParams(body);
+  auction.startPrice = validated.startPrice;
+  auction.currentPrice = validated.startPrice;
+  auction.bidIncrement = validated.bidIncrement;
+  auction.reservePrice = validated.reservePrice;
+  auction.startTime = validated.startTime;
+  auction.endTime = validated.endTime;
+
+  persistMockDb();
+
+  publishAuctionEvent({
+    type: "AUCTION_UPDATED",
+    auctionId: auction.id,
+    status: auction.status,
+    currentPrice: auction.currentPrice,
+    minNextBid: computeMinNextBid(auction),
+    bidCount: auction.bidCount,
+    highestBidderName: null,
+    reserveStatus: computeReserveStatus(
+      auction.reservePrice,
+      auction.currentPrice,
+      auction.bidCount
+    ),
+    startTime: auction.startTime,
+    endTime: auction.endTime,
+    createdAt: mockNowIso(),
+  });
+
+  return handleGetAuctionDetail(auction.id, authHeader);
+}
+
+export function handleCancelAuction(
+  auctionId: number,
+  authHeader: string | undefined,
+  body: Record<string, unknown>
+): AuctionDetail {
+  const user = requireMockAuth(authHeader, [UserRole.USER]);
+  const db = getMockDb();
+
+  const auction = db.auctions.find((a) => a.id === auctionId);
+  if (!auction) throw mockError("NOT_FOUND");
+  if (auction.sellerId !== user.id) throw mockError("FORBIDDEN");
+
+  const reason = typeof body.reason === "string" ? body.reason.trim() : "";
+  if (reason.length < 3) {
+    throw mockError("VALIDATION_ERROR", "Vui lòng nhập lý do hủy phiên", {
+      fields: { reason: "Lý do hủy phiên tối thiểu 3 ký tự" },
+    });
+  }
+
+  if (auction.status === AuctionStatus.ACTIVE && auction.bidCount > 0) {
+    throw mockError("CANNOT_CANCEL");
+  }
+
+  if (
+    auction.status !== AuctionStatus.SCHEDULED &&
+    auction.status !== AuctionStatus.ACTIVE
+  ) {
+    throw mockError(
+      "INVALID_STATUS_TRANSITION",
+      "Chỉ có thể hủy phiên ở trạng thái Sắp diễn ra hoặc Đang diễn ra chưa có lượt đặt giá"
+    );
+  }
+
+  const nowIso = mockNowIso();
+  auction.status = AuctionStatus.CANCELLED;
+  auction.cancelReason = reason;
+  auction.closedAt = nowIso;
+
+  const product = db.products.find((p) => p.id === auction.productId);
+  if (product && product.status === ProductStatus.IN_AUCTION) {
+    product.status = ProductStatus.AVAILABLE;
+    product.updatedAt = nowIso;
+  }
+
+  persistMockDb();
+
+  publishAuctionEvent({
+    type: "AUCTION_CANCELLED",
+    auctionId: auction.id,
+    status: auction.status,
+    currentPrice: auction.currentPrice,
+    minNextBid: computeMinNextBid(auction),
+    bidCount: auction.bidCount,
+    highestBidderName: null,
+    reserveStatus: computeReserveStatus(
+      auction.reservePrice,
+      auction.currentPrice,
+      auction.bidCount
+    ),
+    startTime: auction.startTime,
+    endTime: auction.endTime,
+    createdAt: nowIso,
+  });
+
+  return handleGetAuctionDetail(auction.id, authHeader);
 }

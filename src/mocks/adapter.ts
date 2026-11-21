@@ -11,11 +11,24 @@ import {
 } from "./handlers/users";
 import { handleGetCategories } from "./handlers/categories";
 import {
+  handleAddProductImages,
+  handleCreateProduct,
+  handleDeleteProduct,
+  handleDeleteProductImage,
+  handleGetMyProducts,
+  handleGetProductDetail,
+  handleUpdateProduct,
+} from "./handlers/products";
+import {
+  handleCancelAuction,
+  handleCreateAuction,
   handleGetAuctionBids,
   handleGetAuctionDetail,
   handleGetAuctions,
+  handleGetMyAuctions,
   handleGetMyBids,
   handlePlaceBid,
+  handleUpdateAuction,
 } from "./handlers/auctions";
 import { handleCreateReport } from "./handlers/reports";
 
@@ -114,21 +127,127 @@ async function routeMockRequest(
     return { status: 200, data: await handleUploadAvatar(authHeader, config.data) };
   }
 
-  // 2.2 Categories
+  // 2.2 Categories & Products
   if (method === "GET" && path === "/categories") {
     return { status: 200, data: handleGetCategories(params) };
   }
+  if (method === "GET" && path === "/products/mine") {
+    return { status: 200, data: handleGetMyProducts(authHeader, params) };
+  }
+  if (method === "POST" && path === "/products") {
+    if (!(config.data instanceof FormData)) {
+      throw mockError("VALIDATION_ERROR", "Yêu cầu tạo sản phẩm phải là multipart/form-data");
+    }
+    config.onUploadProgress?.({
+      loaded: 40,
+      total: 100,
+      progress: 0.4,
+      bytes: 40,
+      lengthComputable: true,
+    });
+    const created = await handleCreateProduct(authHeader, config.data);
+    config.onUploadProgress?.({
+      loaded: 100,
+      total: 100,
+      progress: 1,
+      bytes: 100,
+      lengthComputable: true,
+    });
+    return { status: 201, data: created };
+  }
+  const productImageDeleteMatch = path.match(/^\/products\/(\d+)\/images\/(\d+)$/);
+  if (method === "DELETE" && productImageDeleteMatch) {
+    return {
+      status: 200,
+      data: handleDeleteProductImage(
+        Number(productImageDeleteMatch[1]),
+        Number(productImageDeleteMatch[2]),
+        authHeader
+      ),
+    };
+  }
+  const productImagesMatch = path.match(/^\/products\/(\d+)\/images$/);
+  if (method === "POST" && productImagesMatch) {
+    if (!(config.data instanceof FormData)) {
+      throw mockError("INVALID_IMAGE", "Yêu cầu tải ảnh phải là multipart/form-data");
+    }
+    config.onUploadProgress?.({
+      loaded: 50,
+      total: 100,
+      progress: 0.5,
+      bytes: 50,
+      lengthComputable: true,
+    });
+    const updated = await handleAddProductImages(
+      Number(productImagesMatch[1]),
+      authHeader,
+      config.data
+    );
+    config.onUploadProgress?.({
+      loaded: 100,
+      total: 100,
+      progress: 1,
+      bytes: 100,
+      lengthComputable: true,
+    });
+    return { status: 201, data: updated };
+  }
+  const productDetailMatch = path.match(/^\/products\/(\d+)$/);
+  if (productDetailMatch) {
+    const productId = Number(productDetailMatch[1]);
+    if (method === "GET") {
+      return { status: 200, data: handleGetProductDetail(productId, authHeader) };
+    }
+    if (method === "PATCH") {
+      return {
+        status: 200,
+        data: handleUpdateProduct(productId, authHeader, parseJsonBody(config.data)),
+      };
+    }
+    if (method === "DELETE") {
+      return { status: 200, data: handleDeleteProduct(productId, authHeader) };
+    }
+  }
 
-  // 2.3 Auctions & Bids (phần đọc/đặt giá cho Phase 1 & /dev/mock)
+  // 2.3 Auctions & Bids
   if (method === "GET" && path === "/auctions") {
     return { status: 200, data: handleGetAuctions(params) };
   }
-  const auctionDetailMatch = path.match(/^\/auctions\/(\d+)$/);
-  if (method === "GET" && auctionDetailMatch) {
+  if (method === "GET" && path === "/auctions/mine") {
+    return { status: 200, data: handleGetMyAuctions(authHeader, params) };
+  }
+  if (method === "POST" && path === "/auctions") {
+    return {
+      status: 201,
+      data: handleCreateAuction(authHeader, parseJsonBody(config.data)),
+    };
+  }
+  const auctionCancelMatch = path.match(/^\/auctions\/(\d+)\/cancel$/);
+  if (method === "POST" && auctionCancelMatch) {
     return {
       status: 200,
-      data: handleGetAuctionDetail(Number(auctionDetailMatch[1]), authHeader),
+      data: handleCancelAuction(
+        Number(auctionCancelMatch[1]),
+        authHeader,
+        parseJsonBody(config.data)
+      ),
     };
+  }
+  const auctionDetailMatch = path.match(/^\/auctions\/(\d+)$/);
+  if (auctionDetailMatch) {
+    const auctionId = Number(auctionDetailMatch[1]);
+    if (method === "GET") {
+      return {
+        status: 200,
+        data: handleGetAuctionDetail(auctionId, authHeader),
+      };
+    }
+    if (method === "PATCH") {
+      return {
+        status: 200,
+        data: handleUpdateAuction(auctionId, authHeader, parseJsonBody(config.data)),
+      };
+    }
   }
   const auctionBidsMatch = path.match(/^\/auctions\/(\d+)\/bids$/);
   if (auctionBidsMatch) {
