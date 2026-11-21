@@ -1,13 +1,11 @@
 "use client";
 
-import { Suspense, useState, useRef, useEffect, useContext, type ReactNode } from "react";
+import { Suspense, useState, useRef, useEffect, type ReactNode } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { QueryClientContext } from "@tanstack/react-query";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
-import { apiRequest } from "@/lib/api/client";
-import { clearSession, useSession } from "@/lib/auth/session";
-import { resetWsClient } from "@/lib/ws";
+import { useSession } from "@/lib/auth/session";
+import { useLogout } from "@/features/auth/hooks";
 import { Logo } from "./Logo";
 import { SkipLink } from "./SkipLink";
 import { MockModeBanner } from "./MockModeBanner";
@@ -43,9 +41,8 @@ const ADMIN_NAV = [
 
 function AdminLayoutInner({ children, pendingReports = 0 }: AdminLayoutProps) {
   const pathname = usePathname();
-  const router = useRouter();
-  const queryClient = useContext(QueryClientContext);
   const { user } = useSession();
+  const { logout } = useLogout();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -73,16 +70,7 @@ function AdminLayoutInner({ children, pendingReports = 0 }: AdminLayoutProps) {
 
   const handleLogout = async () => {
     setMenuOpen(false);
-    try {
-      await apiRequest({ method: "POST", url: "/auth/logout" });
-    } catch {
-      // Luôn đăng xuất ở client
-    } finally {
-      clearSession();
-      queryClient?.clear();
-      resetWsClient();
-      router.push("/login");
-    }
+    await logout();
   };
 
   const renderNavLinks = (onNavigate?: () => void) => (

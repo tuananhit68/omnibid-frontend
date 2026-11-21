@@ -5,17 +5,14 @@ import {
   useState,
   useRef,
   useEffect,
-  useContext,
   type FormEvent,
   type ReactNode,
 } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { QueryClientContext } from "@tanstack/react-query";
 import { cn } from "@/lib/cn";
-import { apiRequest } from "@/lib/api/client";
-import { clearSession, useSession } from "@/lib/auth/session";
-import { resetWsClient } from "@/lib/ws";
+import { useSession } from "@/lib/auth/session";
+import { useLogout } from "@/features/auth/hooks";
 import { Logo } from "./Logo";
 import { SkipLink } from "./SkipLink";
 import { MockModeBanner } from "./MockModeBanner";
@@ -43,8 +40,8 @@ const PUBLIC_NAV = [
 export function PublicHeader() {
   const pathname = usePathname();
   const router = useRouter();
-  const queryClient = useContext(QueryClientContext);
   const { user, isAuthenticated, isAdmin, ready } = useSession();
+  const { logout } = useLogout();
 
   const [keyword, setKeyword] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -84,16 +81,7 @@ export function PublicHeader() {
   const handleLogout = async () => {
     setMenuOpen(false);
     setMobileNavOpen(false);
-    try {
-      await apiRequest({ method: "POST", url: "/auth/logout" });
-    } catch {
-      // Luôn đăng xuất ở client kể cả lỗi mạng
-    } finally {
-      clearSession();
-      queryClient?.clear();
-      resetWsClient();
-      router.push("/login");
-    }
+    await logout();
   };
 
   return (

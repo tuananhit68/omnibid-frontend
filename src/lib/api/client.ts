@@ -28,6 +28,12 @@ function isLoginEndpoint(url?: string): boolean {
   return path === "/auth/login" || path.endsWith("/auth/login");
 }
 
+function isLogoutEndpoint(url?: string): boolean {
+  if (!url) return false;
+  const path = url.split("?")[0];
+  return path === "/auth/logout" || path.endsWith("/auth/logout");
+}
+
 function redirectToLogin(query: string) {
   if (!isBrowser()) return;
   const pathname = window.location.pathname;
@@ -160,8 +166,8 @@ apiClient.interceptors.response.use(
       }
     }
 
-    // 401 UNAUTHORIZED → xóa phiên & về /login?redirect= (ngoại lệ: POST /auth/login)
-    if (status === 401 && !isLoginEndpoint(url)) {
+    // 401 UNAUTHORIZED → xóa phiên & về /login?redirect= (ngoại lệ: POST /auth/login, POST /auth/logout)
+    if (status === 401 && !isLoginEndpoint(url) && !isLogoutEndpoint(url)) {
       clearSession();
       if (isBrowser()) {
         const currentPath = window.location.pathname + window.location.search;
