@@ -1,66 +1,18 @@
 ---
 trigger: model_decision
-description: Áp dụng khi gọi API backend, viết api.ts/hooks.ts/types.ts trong src/features, sửa src/lib/api, xử lý JWT, phân trang, lọc, upload ảnh.
+description: "Áp dụng khi gọi API backend v4, viết api.ts/hooks.ts/types.ts trong src/features, sửa src/lib/api, xử lý JWT, lỗi, phân trang, lọc, upload ảnh, thời gian, tiền."
 ---
-
-# Gọi API và quản lý dữ liệu
-
-## Client (`src/lib/api/client.ts`)
-
-Hợp đồng API thật nằm ở `design/backend-contract.md` (đối chiếu từ code backend). **File đó thắng mục API trong spec.**
-
-- axios instance với `baseURL = process.env.NEXT_PUBLIC_API_URL` (vd `http://localhost:8080/api/v1`).
-- Interceptor request gắn `Authorization: Bearer <token>`.
-- Envelope backend: `{ success, errorCode?, message?, data?, timestamp }` – lỗi nằm ở cấp trên cùng, **không có object `error`**.
-- Interceptor response: trả `body.data` khi `success: true`; khi lỗi ném `ApiError { status, code: body.errorCode, message: body.message, data: body.data }`. 401 → `onUnauthorized()` (xoá token, chuyển `/login?redirect=`).
-- Không hiển thị `message` của backend trực tiếp (lẫn Anh/Việt): map `code` qua `lib/errors.ts`. `VALIDATION_ERROR` → `data` là map `{ field: message }`, gắn vào ô form.
-- `PageResponse` = `{ content, page (từ 0), size, totalElements, totalPages }`; viết type chung `Page<T>`.
-- Không gọi `fetch`/`axios` trực tiếp trong component.
-
-## Tổ chức theo feature
-
-```text
-src/features/auction/
-  types.ts     # type khớp JSON backend (camelCase)
-  schemas.ts   # zod cho form (createAuctionSchema…)
-  api.ts       # hàm thuần: getAuctions(params), getAuction(id), createAuction(body)…
-  hooks.ts     # useAuctions, useAuction, useCreateAuction (TanStack Query)
-  components/  # AuctionCard, BidPanel… (được dùng hooks)
-```
-
-- Query key dạng mảng có cấu trúc, khai báo tập trung: `auctionKeys.list(params)`, `auctionKeys.detail(id)`, `auctionKeys.bids(id)`.
-- Mutation xong thì `invalidateQueries` đúng key liên quan (đặt giá → `detail`, `bids`).
-- `staleTime` mặc định 30 giây; dữ liệu realtime (chi tiết phiên đang ACTIVE) cập nhật qua WebSocket bằng `setQueryData`.
-
-## Type và enum
-
-- Viết type theo DTO trong `backend-contract.md` (hoặc đọc thẳng `src/main/java/com/omnibid/dto` của repo backend). Không đoán tên trường.
-- Enum trong `src/types/enums.ts` giống hệt backend: `AuctionStatus`, `BidStatus`, `ProductStatus`, `ProductCondition`, `OrderStatus`, `PaymentStatus`, `PaymentMethod`, `ShipmentStatus`, `ReportType`, `ReportStatus`, `ReportAction`, `UserStatus`, `UserRole`, `NotificationType`, `SimulatedOutcome`. Kèm map `label` + `tone` theo `design/components.md` mục 3.
-- Tiền: backend trả `BigDecimal` → đọc bằng `Number()`, hiển thị không thập phân.
-- **Thời gian không có múi giờ** (`"2026-10-28T21:30:00"`, giờ Việt Nam). Parse bằng `dayjs.tz(v, 'Asia/Ho_Chi_Minh')` (plugin `utc` + `timezone`), không dùng `new Date(v)`. Gửi lên dạng `YYYY-MM-DDTHH:mm:ss` giờ VN, không có `Z`.
-
-## Danh sách, lọc, phân trang
-
-- Bộ lọc, trang, sắp xếp đồng bộ lên URL (`useSearchParams`) để chia sẻ link và nút Back hoạt động.
-- Ô tìm kiếm debounce 300ms. Đổi bộ lọc thì về trang 1.
-- Dùng `placeholderData: keepPreviousData` để chuyển trang không chớp.
-
-## Server vs Client Component
-
-- Trang công khai (`/`, `/auctions`, `/auctions/[id]`): Server Component tải dữ liệu lần đầu (SEO, `generateMetadata`), truyền xuống Client Component làm `initialData`.
-- Phần cần đăng nhập, form, realtime, đồng hồ: Client Component (`'use client'` ở file thấp nhất có thể).
-
-## Upload ảnh
-
-- `POST /products/{id}/images` (part `file`, **một ảnh mỗi request**) và `POST /users/me/avatar`; backend lưu Cloudinary hoặc thư mục `/uploads`. Không gọi Cloudinary trực tiếp từ trình duyệt.
-- Khai báo cả domain Cloudinary và `localhost:8080/uploads` trong `images.remotePatterns`.
-- Kiểm tra trước khi gửi: PNG/JPG/WEBP, ≤ 10MB, tối đa 5 ảnh/sản phẩm. Tải tuần tự, có tiến trình và nút thử lại từng ảnh.
-
-## Mock cũ
-
-Backend đã có đủ API trong `backend-contract.md`. Không tạo dữ liệu mock mới; mock cũ trong `src/mocks` thay bằng API thật và xoá đi.
-
-## Bảo mật
-
-- Token: ưu tiên cookie httpOnly qua route handler của Next.js; nếu nhóm chọn lưu ở client thì chỉ trong memory + `localStorage`, và ghi rõ hạn chế này trong báo cáo.
-- Không đặt secret trong biến `NEXT_PUBLIC_*`. Không log token hay dữ liệu cá nhân ra console.
+# API và dữ liệu (v4)
+Chi tiết: `.agents/skills/omnibid-fe-v4/references/API_CLIENT_FE.md` và `backend/API_SPEC_v4.md`.
+- Mọi lời gọi qua `src/lib/api` (axios, `baseURL = NEXT_PUBLIC_API_URL`). Không gọi `fetch`/`axios` trong component.
+- Envelope `{success, data}` / `{success:false, error:{code,message,details}}`. `ApiError { status, code, message, details, fieldErrors }`.
+- Câu lỗi tiếng Việt từ `lib/errors.ts` theo `code` (24 mã v4). `VALIDATION_ERROR` → `details.fields` gắn vào ô form.
+- 401 → xóa phiên, `/login?redirect=` (trừ chính request đăng nhập). 403 `ACCOUNT_BANNED` → xóa phiên, `/login?reason=banned`.
+- Type và zod schema ở `src/lib/api/contract.ts`, sao đúng `backend/RESPONSE_DTO_v4.md`. Không đoán, không định nghĩa DTO trùng trong feature.
+- Enum v4 trong `src/types/enums.ts` kèm `label` + `tone`; không có BidStatus, ShipmentStatus, ReportType, ReportAction, PaymentStatus.PENDING.
+- Thời gian: chuỗi ISO **có offset**; `dayjs(v).tz('Asia/Ho_Chi_Minh')` để hiển thị; gửi lên kèm `+07:00`. Tiền: `number` nguyên VND.
+- Feature: `types.ts`, `schemas.ts` (zod), `api.ts` (hàm thuần), `hooks.ts` (TanStack Query), `components/`. Query key tập trung; mutation invalidate đúng key; `staleTime` 30s; `placeholderData: keepPreviousData` cho phân trang.
+- Lọc/trang/sắp xếp đồng bộ URL (`useSearchParams`); tìm kiếm debounce 300ms; đổi lọc về trang 0 (backend đếm trang từ 0, UI hiển thị từ 1). `sort` chỉ giá trị trong whitelist của endpoint.
+- Upload: multipart qua `FormData`, không tự đặt `Content-Type`; `POST /products` gồm phần `product` (Blob JSON) + `files`; kiểm tra sớm JPG/PNG/WEBP ≤ 5 MB, 1–5 ảnh (backend vẫn kiểm tra magic bytes).
+- Thanh toán: `Idempotency-Key = crypto.randomUUID()` mỗi lần bấm; retry do lỗi mạng dùng lại key.
+- Dữ liệu giả chỉ nằm trong `src/mocks/` qua chế độ `NEXT_PUBLIC_API_MODE=mock` (`MOCK_MODE.md`); không dữ liệu cứng trong component. Không đặt secret trong `NEXT_PUBLIC_*`. Không log token hay dữ liệu cá nhân.

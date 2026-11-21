@@ -1,29 +1,16 @@
 ---
 name: build-screen
-description: Dựng một màn hình theo spec Figma. Cách gọi: /build-screen S05
+description: Thiết kế lại hoặc dựng mới một màn hình Omnibid theo API backend v4. Cách gọi /build-screen auction-detail (id trong SCREENS_v4.md). Không cần backend đang chạy.
 ---
+# /build-screen <id>
 
-# /build-screen <ID màn hình>
-
-0. **Nhánh**: chạy `git status`. Có thay đổi chưa commit → dừng, báo người dùng. Sạch → `git switch develop && git pull --ff-only && git switch -c feature/<ID>-<slug>` (slug = tên file spec, vd `feature/S05-auction-detail-bid`). Nhánh đã tồn tại → `git switch` sang, không tạo lại.
-1. Đọc theo thứ tự: `design/backend-contract.md` (API, DTO, mã lỗi), `design/README.md`, `design/style-overrides.md`, `design/gaps.md`, `design/layouts.md`, `design/components.md`, rồi `design/specs/<ID>-*.md`. Mở ảnh `design/screens/<ID>-*.png`.
-2. Tóm tắt lại cho người dùng trong 5–10 dòng:
-   - route, layout, vai trò được vào;
-   - các khối chính từ trên xuống;
-   - API sẽ gọi và mã lỗi cần xử lý;
-   - các mục trong `gaps.md` áp dụng cho màn hình này.
-3. Liệt kê kế hoạch:
-   - component **tái dùng** (đường dẫn thật trong `src/`);
-   - component **cần tạo mới** (và vì sao không tái dùng được);
-   - file sẽ tạo/sửa;
-   - câu hỏi còn mở (nếu có).
-4. **Dừng, chờ người dùng đồng ý.**
-5. Code theo thứ tự: `types.ts` → `api.ts` → `hooks.ts` → component của feature → `page.tsx` + `loading.tsx` + `error.tsx`.
-   - Màu: đúng token theo bảng "Màu và chữ" của spec. Kích thước, gap, padding: lấy bảng "Số đo từ Figma" làm điểm xuất phát, làm tròn về thang 4px, được chỉnh cho gọn và đều.
-   - Bỏ font Inter, nhãn chữ hoa nhỏ, viền màu một bên có trong ảnh (theo `style-overrides.md`).
-   - Làm đủ trạng thái loading/empty/error, mã lỗi, ẩn/hiện theo vai trò.
-   - Responsive theo `design/layouts.md` mục 5.
-6. Chạy `npm run lint` và `npm run typecheck`, sửa hết lỗi. Commit từng phần đã pass (vd `feat(<feature>): add types and api for <ID>`, rồi `feat(<feature>): build <ID> page`).
-7. Nếu có công cụ trình duyệt: mở trang ở 1280px, 768px, 375px, chụp màn hình và so với ảnh Figma.
-8. Tự chạy `/review-screen <ID>` và sửa các mục chưa đạt. Có thể chạy thêm `impeccable audit`/`polish` theo `.agents/rules/design-skills.md`.
-9. Commit phần sửa sau review. Báo lại: `git log --oneline develop..HEAD`, `git diff --stat develop...HEAD`, giả định đã dùng, phần dùng mock/ẩn, đề xuất tiêu đề + mô tả PR. **Không push** – người dùng tự push và mở PR.
+1. **Nhánh:** `feature/fe-v4`; `git status` có thay đổi lạ → dừng, hỏi.
+2. **Đọc:** dòng `<id>` trong `.agents/skills/omnibid-fe-v4/references/SCREENS_v4.md` → mục `<id>` trong `references/screens/<nhóm>.md` → các endpoint `#n` trong `backend/API_SPEC_v4.md` và DTO trong `backend/RESPONSE_DTO_v4.md` → `API_CLIENT_FE.md` (phần liên quan) → `design/DESIGN_SYSTEM.md`.
+3. **Thiết kế từ dữ liệu** (trình bày ngắn cho người dùng): danh sách trường DTO sẽ hiển thị và trường bỏ qua · nhóm khối theo việc người dùng cần làm (thứ tự ưu tiên) · bố cục desktop/mobile bằng component của DESIGN_SYSTEM · hành động theo vai trò/trạng thái · mã lỗi và câu hiển thị · trạng thái loading/empty/error. Màn SỬA: nêu phần code cũ bỏ/giữ.
+4. **Kế hoạch tệp:** sửa/tạo/xóa; component tái dùng (đường dẫn thật); handler + seed mock cần thêm.
+5. **Dừng, chờ đồng ý** (trừ khi người dùng bảo chạy liên tục — ghi thiết kế vào PROGRESS.md rồi làm tiếp).
+6. **Code:** type từ `contract.ts` → `api.ts` → `hooks.ts` → handler mock (`src/mocks/handlers/*`) + seed → component → `page.tsx` + `loading.tsx` + `error.tsx`. Chỉ token màu; đủ trạng thái, mã lỗi, vai trò, responsive, a11y.
+7. `npm run lint`, `npm run typecheck`; commit từng phần (`feat(order): add order api, hooks and mock handlers`, `feat(order): build order-detail page`).
+8. Chạy thử ở mock (và live nếu có backend) tại 1280/768/375; dùng `/dev/mock` để tạo tình huống (người khác đặt giá, tua giờ, đổi tài khoản).
+9. `/review-screen <id>`, sửa mục chưa đạt, commit.
+10. Cập nhật PROGRESS.md; báo `git log --oneline develop..HEAD`, giả định. **Không push.**
