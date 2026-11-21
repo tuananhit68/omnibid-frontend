@@ -3,6 +3,7 @@ import type {
   AuctionSummary,
   BidHistoryItem,
   Category,
+  MyAuctionItem,
   Page,
   PlaceBidResponse,
   ProductImage,
@@ -13,6 +14,7 @@ export type {
   AuctionSummary,
   BidHistoryItem,
   Category,
+  MyAuctionItem,
   Page,
   PlaceBidResponse,
   ProductImage,
@@ -39,4 +41,33 @@ export interface AuctionListParams {
 export interface PlaceBidRequest {
   auctionId: number;
   amount: number;
+}
+
+export interface MyAuctionsParams {
+  status?: string;
+  keyword?: string;
+  page?: number;
+  size?: number;
+  sort?: string;
+}
+
+export interface CreateAuctionPayload {
+  productId: number;
+  startPrice: number;
+  bidIncrement: number;
+  reservePrice: number | null;
+  startTime: string;
+  endTime: string;
+}
+
+export interface UpdateAuctionPayload {
+  startPrice: number;
+  bidIncrement: number;
+  reservePrice: number | null;
+  startTime: string;
+  endTime: string;
+}
+
+export interface CancelAuctionPayload {
+  reason: string;
 }

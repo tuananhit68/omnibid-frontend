@@ -18,17 +18,29 @@ import type {
   Page,
 } from "@/lib/api/contract";
 import {
+  cancelAuction,
+  createAuction,
   getAuctionBids,
   getAuctionDetailWithMeta,
   getAuctions,
   getCategories,
+  getMyAuctions,
   placeBid,
+  updateAuction,
 } from "./api";
-import type { AuctionListParams, PlaceBidRequest } from "./types";
+import type {
+  AuctionListParams,
+  CancelAuctionPayload,
+  CreateAuctionPayload,
+  MyAuctionsParams,
+  PlaceBidRequest,
+  UpdateAuctionPayload,
+} from "./types";
 
 export const auctionKeys = {
   all: ["auctions"] as const,
   list: (params?: AuctionListParams) => ["auctions", "list", params] as const,
+  mine: (params?: MyAuctionsParams) => ["auctions", "mine", params] as const,
   detail: (id: number) => ["auctions", "detail", id] as const,
   bids: (id: number, size = 20) => ["auctions", "bids", id, size] as const,
   categories: ["categories"] as const,
@@ -90,6 +102,69 @@ export function useCategories(initialData?: Category[] | null) {
     },
     initialData: initialData ?? undefined,
     staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useMyAuctions(params?: MyAuctionsParams) {
+  return useQuery({
+    queryKey: auctionKeys.mine(params),
+    queryFn: () => getMyAuctions(params),
+    placeholderData: keepPreviousData,
+    staleTime: 30_000,
+  });
+}
+
+export function useCreateAuction() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: CreateAuctionPayload) => createAuction(payload),
+    onSuccess: (created) => {
+      queryClient.invalidateQueries({ queryKey: auctionKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.setQueryData(auctionKeys.detail(created.id), {
+        data: created,
+        serverOffsetMs: 0,
+      });
+    },
+  });
+}
+
+export function useUpdateAuction() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: UpdateAuctionPayload }) =>
+      updateAuction(id, payload),
+    onSuccess: (updated) => {
+      queryClient.setQueryData<{ data: AuctionDetail; serverOffsetMs: number }>(
+        auctionKeys.detail(updated.id),
+        (prev) => ({
+          data: updated,
+          serverOffsetMs: prev?.serverOffsetMs ?? 0,
+        })
+      );
+      queryClient.invalidateQueries({ queryKey: ["auctions", "mine"] });
+      queryClient.invalidateQueries({ queryKey: ["auctions", "list"] });
+    },
+  });
+}
+
+export function useCancelAuction() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: CancelAuctionPayload }) =>
+      cancelAuction(id, payload),
+    onSuccess: (updated) => {
+      queryClient.setQueryData<{ data: AuctionDetail; serverOffsetMs: number }>(
+        auctionKeys.detail(updated.id),
+        (prev) => ({
+          data: updated,
+          serverOffsetMs: prev?.serverOffsetMs ?? 0,
+        })
+      );
+      queryClient.invalidateQueries({ queryKey: ["auctions", "mine"] });
+      queryClient.invalidateQueries({ queryKey: ["auctions", "list"] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
   });
 }
 

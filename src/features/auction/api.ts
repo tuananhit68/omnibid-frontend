@@ -4,10 +4,18 @@ import type {
   AuctionSummary,
   BidHistoryItem,
   Category,
+  MyAuctionItem,
   Page,
   PlaceBidResponse,
 } from "@/lib/api/contract";
-import type { AuctionListParams, PlaceBidRequest } from "./types";
+import type {
+  AuctionListParams,
+  CancelAuctionPayload,
+  CreateAuctionPayload,
+  MyAuctionsParams,
+  PlaceBidRequest,
+  UpdateAuctionPayload,
+} from "./types";
 
 export async function getAuctions(
   params?: AuctionListParams
@@ -72,5 +80,56 @@ export async function placeBid(
     method: "POST",
     url: `/auctions/${body.auctionId}/bids`,
     data: { amount: body.amount },
+  });
+}
+
+export async function getMyAuctions(
+  params?: MyAuctionsParams
+): Promise<Page<MyAuctionItem>> {
+  const cleanParams: Record<string, string | number> = {};
+  if (params) {
+    if (params.status) cleanParams.status = params.status;
+    if (params.keyword?.trim()) cleanParams.keyword = params.keyword.trim();
+    if (params.page !== undefined) cleanParams.page = params.page;
+    if (params.size !== undefined) cleanParams.size = params.size;
+    if (params.sort) cleanParams.sort = params.sort;
+  }
+
+  return apiRequest<Page<MyAuctionItem>>({
+    method: "GET",
+    url: "/auctions/mine",
+    params: cleanParams,
+  });
+}
+
+export async function createAuction(
+  payload: CreateAuctionPayload
+): Promise<AuctionDetail> {
+  return apiRequest<AuctionDetail>({
+    method: "POST",
+    url: "/auctions",
+    data: payload,
+  });
+}
+
+export async function updateAuction(
+  id: number,
+  payload: UpdateAuctionPayload
+): Promise<AuctionDetail> {
+  return apiRequest<AuctionDetail>({
+    method: "PATCH",
+    url: `/auctions/${id}`,
+    data: payload,
+  });
+}
+
+export async function cancelAuction(
+  id: number,
+  payload: CancelAuctionPayload
+): Promise<AuctionDetail> {
+  return apiRequest<AuctionDetail>({
+    method: "POST",
+    url: `/auctions/${id}/cancel`,
+    data: payload,
   });
 }
