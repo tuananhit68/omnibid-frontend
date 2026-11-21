@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/Toast";
 import { useBanAdminUser, useUnbanAdminUser } from "../users/hooks";
 import { useHideAdminProduct } from "../products/hooks";
 import { useCancelAdminAuction } from "../auctions/hooks";
+import { useCancelAdminOrder } from "../orders/hooks";
 
 export interface BanUserTarget {
   id: number;
@@ -271,6 +272,73 @@ export function CancelAuctionDialog({
             onError: (err) => {
               toast.error(
                 isApiError(err) ? err.message : "Không thể hủy phiên đấu giá."
+              );
+            },
+          }
+        );
+      }}
+    />
+  );
+}
+
+export interface CancelOrderTarget {
+  id: number;
+  title?: string;
+}
+
+export function CancelOrderDialog({
+  target,
+  onClose,
+  onSuccess,
+}: {
+  target: CancelOrderTarget | null;
+  onClose: () => void;
+  onSuccess?: () => void;
+}) {
+  const toast = useToast();
+  const mutation = useCancelAdminOrder();
+
+  return (
+    <ConfirmDialog
+      open={target !== null}
+      onClose={onClose}
+      title={
+        target
+          ? `Hủy đơn hàng ${formatDisplayCode("ORD", target.id)}`
+          : "Hủy đơn hàng"
+      }
+      description={
+        <div className="space-y-2">
+          {target?.title && <p className="font-medium text-text">{target.title}</p>}
+          <p>
+            Đơn hàng đang chờ thanh toán sẽ bị hủy vĩnh viễn. Sản phẩm trở về trạng
+            thái Sẵn sàng (trừ khi đã bị ẩn); cả người mua và người bán sẽ nhận
+            được thông báo.
+          </p>
+        </div>
+      }
+      confirmLabel="Xác nhận hủy đơn"
+      confirmVariant="danger-soft"
+      tone="danger"
+      reasonMode="required"
+      reasonLabel="Lý do hủy đơn"
+      reasonPlaceholder="Nhập lý do hủy đơn hàng (bắt buộc)..."
+      loading={mutation.isPending}
+      onConfirm={(reason) => {
+        if (!target || !reason) return;
+        mutation.mutate(
+          { orderId: target.id, reason },
+          {
+            onSuccess: () => {
+              toast.success(
+                `Đã hủy đơn hàng ${formatDisplayCode("ORD", target.id)}.`
+              );
+              onClose();
+              onSuccess?.();
+            },
+            onError: (err) => {
+              toast.error(
+                isApiError(err) ? err.message : "Không thể hủy đơn hàng."
               );
             },
           }
