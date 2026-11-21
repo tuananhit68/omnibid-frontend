@@ -31,6 +31,17 @@ import {
   handleUpdateAuction,
 } from "./handlers/auctions";
 import { handleCreateReport } from "./handlers/reports";
+import {
+  handleConfirmReceipt,
+  handleGetOrderDetail,
+  handleGetOrders,
+  handleShipOrder,
+  handleUpdateShippingInfo,
+} from "./handlers/orders";
+import {
+  handleCreatePayment,
+  handleGetOrderPayments,
+} from "./handlers/payments";
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -77,17 +88,28 @@ function extractPathAndParams(config: InternalAxiosRequestConfig): {
   return { path: normalizedPath, params };
 }
 
-function getAuthHeader(config: InternalAxiosRequestConfig): string | undefined {
+function getHeader(
+  config: InternalAxiosRequestConfig,
+  headerName: string
+): string | undefined {
   const headers = config.headers;
   if (!headers) return undefined;
   if (typeof headers.get === "function") {
-    const val = headers.get("Authorization");
+    const val = headers.get(headerName) ?? headers.get(headerName.toLowerCase());
     return typeof val === "string" ? val : undefined;
   }
-  const raw =
-    (headers as Record<string, unknown>).Authorization ??
-    (headers as Record<string, unknown>).authorization;
-  return typeof raw === "string" ? raw : undefined;
+  const record = headers as Record<string, unknown>;
+  const target = headerName.toLowerCase();
+  for (const [key, val] of Object.entries(record)) {
+    if (key.toLowerCase() === target && typeof val === "string") {
+      return val;
+    }
+  }
+  return undefined;
+}
+
+function getAuthHeader(config: InternalAxiosRequestConfig): string | undefined {
+  return getHeader(config, "Authorization");
 }
 
 async function routeMockRequest(
@@ -267,6 +289,68 @@ async function routeMockRequest(
   }
   if (method === "GET" && path === "/bids/mine") {
     return { status: 200, data: handleGetMyBids(authHeader, params) };
+  }
+
+  // 2.4 Orders & Payments
+  if (method === "GET" && path === "/orders") {
+    return { status: 200, data: handleGetOrders(authHeader, params) };
+  }
+  const orderShippingMatch = path.match(/^\/orders\/(\d+)\/shipping-info$/);
+  if (method === "PATCH" && orderShippingMatch) {
+    return {
+      status: 200,
+      data: handleUpdateShippingInfo(
+        Number(orderShippingMatch[1]),
+        authHeader,
+        parseJsonBody(config.data)
+      ),
+    };
+  }
+  const orderPaymentsMatch = path.match(/^\/orders\/(\d+)\/payments$/);
+  if (orderPaymentsMatch) {
+    const orderId = Number(orderPaymentsMatch[1]);
+    if (method === "POST") {
+      return {
+        status: 200,
+        data: handleCreatePayment(
+          orderId,
+          authHeader,
+          getHeader(config, "Idempotency-Key"),
+          parseJsonBody(config.data)
+        ),
+      };
+    }
+    if (method === "GET") {
+      return {
+        status: 200,
+        data: handleGetOrderPayments(orderId, authHeader, params),
+      };
+    }
+  }
+  const orderShipMatch = path.match(/^\/orders\/(\d+)\/ship$/);
+  if (method === "POST" && orderShipMatch) {
+    return {
+      status: 200,
+      data: handleShipOrder(
+        Number(orderShipMatch[1]),
+        authHeader,
+        parseJsonBody(config.data)
+      ),
+    };
+  }
+  const orderConfirmMatch = path.match(/^\/orders\/(\d+)\/confirm-receipt$/);
+  if (method === "POST" && orderConfirmMatch) {
+    return {
+      status: 200,
+      data: handleConfirmReceipt(Number(orderConfirmMatch[1]), authHeader),
+    };
+  }
+  const orderDetailMatch = path.match(/^\/orders\/(\d+)$/);
+  if (method === "GET" && orderDetailMatch) {
+    return {
+      status: 200,
+      data: handleGetOrderDetail(Number(orderDetailMatch[1]), authHeader),
+    };
   }
 
   // 2.5 Reports

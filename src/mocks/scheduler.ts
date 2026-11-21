@@ -186,6 +186,28 @@ export function tickMockScheduler(): boolean {
         product.status = ProductStatus.AVAILABLE;
         product.updatedAt = nowIso;
       }
+      db.notifications.push({
+        id: db.nextIds.notification++,
+        userId: order.buyerId,
+        type: NotificationType.ORDER_UPDATE,
+        title: `Đơn hàng ORD-${order.id} đã hết hạn thanh toán`,
+        content: `Đơn hàng ORD-${order.id} đã quá hạn thanh toán và chuyển sang trạng thái Hết hạn.`,
+        refType: "ORDER",
+        refId: order.id,
+        isRead: false,
+        createdAt: nowIso,
+      });
+      db.notifications.push({
+        id: db.nextIds.notification++,
+        userId: order.sellerId,
+        type: NotificationType.ORDER_UPDATE,
+        title: `Đơn hàng ORD-${order.id} đã hết hạn thanh toán`,
+        content: `Người mua không thanh toán đúng hạn cho đơn ORD-${order.id}. Sản phẩm đã trở về trạng thái Sẵn sàng.`,
+        refType: "ORDER",
+        refId: order.id,
+        isRead: false,
+        createdAt: nowIso,
+      });
       changed = true;
     }
   }
@@ -204,6 +226,28 @@ export function tickMockScheduler(): boolean {
         product.status = ProductStatus.SOLD;
         product.updatedAt = nowIso;
       }
+      db.notifications.push({
+        id: db.nextIds.notification++,
+        userId: order.buyerId,
+        type: NotificationType.ORDER_UPDATE,
+        title: `Đơn hàng ORD-${order.id} đã tự động hoàn tất`,
+        content: `Đơn hàng ORD-${order.id} đã hết thời hạn xác nhận nhận hàng và chuyển sang Hoàn tất.`,
+        refType: "ORDER",
+        refId: order.id,
+        isRead: false,
+        createdAt: nowIso,
+      });
+      db.notifications.push({
+        id: db.nextIds.notification++,
+        userId: order.sellerId,
+        type: NotificationType.ORDER_UPDATE,
+        title: `Đơn hàng ORD-${order.id} đã hoàn tất`,
+        content: `Đơn hàng ORD-${order.id} đã tự động chuyển sang trạng thái Hoàn tất.`,
+        refType: "ORDER",
+        refId: order.id,
+        isRead: false,
+        createdAt: nowIso,
+      });
       changed = true;
     }
   }
