@@ -9,7 +9,6 @@ import { ApiError } from "@/lib/api";
 import { getErrorMessage } from "@/lib/errors";
 import { Input } from "@/components/ui/Input";
 import { PasswordInput } from "@/components/ui/PasswordInput";
-import { Checkbox } from "@/components/ui/Checkbox";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import {
@@ -22,17 +21,16 @@ import {
 } from "@/components/icons";
 import { registerSchema, type RegisterFormValues } from "../schemas";
 import { useRegister } from "../hooks";
+import { PasswordStrengthMeter } from "./PasswordStrengthMeter";
 
 const FORM_FIELDS = [
   "fullName",
   "email",
-  "phoneNumber",
   "password",
   "confirmPassword",
-  "agreeTerms",
+  "phoneNumber",
 ] as const;
 
-// TODO fe-v4 register
 export function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -54,14 +52,13 @@ export function RegisterForm() {
     defaultValues: {
       fullName: "",
       email: "",
-      phoneNumber: "",
       password: "",
       confirmPassword: "",
-      agreeTerms: false,
+      phoneNumber: "",
     },
   });
 
-  const agreeTerms = useWatch({ control, name: "agreeTerms" });
+  const passwordValue = useWatch({ control, name: "password" });
 
   const onSubmit = (values: RegisterFormValues) => {
     setServerError(null);
@@ -75,10 +72,15 @@ export function RegisterForm() {
       },
       {
         onSuccess: (profile) => {
-          toast.success("Đăng ký tài khoản thành công! Vui lòng đăng nhập.");
-          router.push(
-            `/login?registered=1&email=${encodeURIComponent(profile.email)}`
-          );
+          toast.success("Đăng ký tài khoản thành công. Vui lòng đăng nhập.");
+          const nextParams = new URLSearchParams({
+            registered: "1",
+            email: profile.email,
+          });
+          if (redirectParam) {
+            nextParams.set("redirect", redirectParam);
+          }
+          router.push(`/login?${nextParams.toString()}`);
           router.refresh();
         },
         onError: (err) => {
@@ -88,9 +90,7 @@ export function RegisterForm() {
               const unmappedMessages: string[] = [];
 
               Object.entries(err.fieldErrors).forEach(([field, msg]) => {
-                if (
-                  (FORM_FIELDS as readonly string[]).includes(field)
-                ) {
+                if ((FORM_FIELDS as readonly string[]).includes(field)) {
                   const key = field as keyof RegisterFormValues;
                   setError(key, { type: "server", message: msg });
                   if (!firstFocused) {
@@ -129,7 +129,7 @@ export function RegisterForm() {
       {serverError && (
         <div
           role="alert"
-          className="flex items-start gap-2.5 p-3.5 rounded-xl bg-danger-bg border border-danger-border text-small text-danger"
+          className="flex items-start gap-2.5 rounded-lg border border-danger-border bg-danger-bg p-3.5 text-small text-danger"
         >
           <AlertCircleIcon className="size-5 shrink-0 mt-0.5" />
           <span>{serverError}</span>
@@ -138,51 +138,40 @@ export function RegisterForm() {
 
       <div className="space-y-4">
         <Input
-          label="Họ và tên"
+          label="Họ tên"
           required
           autoComplete="name"
-          placeholder="Nhập họ và tên"
-          hint="Nhập họ và tên đầy đủ theo giấy tờ tùy thân"
+          placeholder="Nhập họ và tên đầy đủ"
           leftIcon={<UserIcon />}
           error={errors.fullName?.message}
-          className="text-body-lg md:text-body"
           {...register("fullName")}
         />
 
         <Input
-          label="Địa chỉ Email"
+          label="Email"
           type="email"
           required
           autoComplete="email"
           placeholder="example@gmail.com"
+          hint="Dùng để đăng nhập, không đổi được"
           leftIcon={<MailIcon />}
           error={errors.email?.message}
-          className="text-body-lg md:text-body"
           {...register("email")}
         />
 
-        <Input
-          label="Số điện thoại (Không bắt buộc)"
-          type="tel"
-          autoComplete="tel"
-          placeholder="Ví dụ: 0912 345 678"
-          leftIcon={<PhoneIcon />}
-          error={errors.phoneNumber?.message}
-          className="text-body-lg md:text-body"
-          {...register("phoneNumber")}
-        />
-
-        <PasswordInput
-          label="Mật khẩu"
-          required
-          autoComplete="new-password"
-          placeholder="Nhập mật khẩu"
-          hint="Mật khẩu phải chứa ít nhất 6 ký tự"
-          leftIcon={<LockIcon />}
-          error={errors.password?.message}
-          className="text-body-lg md:text-body"
-          {...register("password")}
-        />
+        <div>
+          <PasswordInput
+            label="Mật khẩu"
+            required
+            autoComplete="new-password"
+            placeholder="Nhập mật khẩu"
+            hint="Tối thiểu 8 ký tự, có chữ hoa, chữ thường và chữ số"
+            leftIcon={<LockIcon />}
+            error={errors.password?.message}
+            {...register("password")}
+          />
+          <PasswordStrengthMeter password={passwordValue ?? ""} />
+        </div>
 
         <PasswordInput
           label="Nhập lại mật khẩu"
@@ -191,59 +180,41 @@ export function RegisterForm() {
           placeholder="Nhập lại mật khẩu"
           leftIcon={<LockIcon />}
           error={errors.confirmPassword?.message}
-          className="text-body-lg md:text-body"
           {...register("confirmPassword")}
         />
-      </div>
 
-      <Checkbox
-        error={errors.agreeTerms?.message}
-        label={
-          <span className="font-normal text-text-secondary">
-            Tôi đồng ý với{" "}
-            <Link
-              href="/terms"
-              onClick={(e) => e.stopPropagation()}
-              className="font-semibold text-primary-600 hover:underline"
-            >
-              Điều khoản sử dụng
-            </Link>{" "}
-            và{" "}
-            <Link
-              href="/rules"
-              onClick={(e) => e.stopPropagation()}
-              className="font-semibold text-primary-600 hover:underline"
-            >
-              Chính sách hoạt động
-            </Link>{" "}
-            của sàn đấu giá OmniBid.
-          </span>
-        }
-        {...register("agreeTerms")}
-      />
+        <Input
+          label="Số điện thoại"
+          type="tel"
+          required
+          autoComplete="tel"
+          placeholder="Ví dụ: 0912345678"
+          leftIcon={<PhoneIcon />}
+          error={errors.phoneNumber?.message}
+          {...register("phoneNumber")}
+        />
+      </div>
 
       <Button
         type="submit"
         variant="primary"
-        size="xl"
+        size="lg"
         loading={registerMutation.isPending}
-        disabled={!agreeTerms}
         rightIcon={<ArrowRightIcon className="size-4" />}
         className="w-full"
       >
-        Đăng ký tài khoản
+        Tạo tài khoản
       </Button>
 
-      <p className="text-center text-small text-text-secondary pt-1">
+      <p className="pt-1 text-center text-small text-text-secondary">
         Đã có tài khoản?{" "}
         <Link
           href={loginHref}
           className="font-semibold text-primary-600 hover:underline"
         >
-          Đăng nhập ngay
+          Đăng nhập
         </Link>
       </p>
     </form>
   );
 }
-
