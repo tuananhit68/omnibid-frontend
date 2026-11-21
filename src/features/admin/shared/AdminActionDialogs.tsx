@@ -6,6 +6,7 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useToast } from "@/components/ui/Toast";
 import { useBanAdminUser, useUnbanAdminUser } from "../users/hooks";
 import { useHideAdminProduct } from "../products/hooks";
+import { useCancelAdminAuction } from "../auctions/hooks";
 
 export interface BanUserTarget {
   id: number;
@@ -201,6 +202,75 @@ export function HideProductDialog({
             onError: (err) => {
               toast.error(
                 isApiError(err) ? err.message : "Không thể ẩn sản phẩm."
+              );
+            },
+          }
+        );
+      }}
+    />
+  );
+}
+
+export interface CancelAuctionTarget {
+  id: number;
+  title?: string;
+  bidCount?: number;
+}
+
+export function CancelAuctionDialog({
+  target,
+  onClose,
+  onSuccess,
+}: {
+  target: CancelAuctionTarget | null;
+  onClose: () => void;
+  onSuccess?: () => void;
+}) {
+  const toast = useToast();
+  const mutation = useCancelAdminAuction();
+
+  return (
+    <ConfirmDialog
+      open={target !== null}
+      onClose={onClose}
+      title={
+        target
+          ? `Hủy phiên đấu giá ${formatDisplayCode("AUC", target.id)}`
+          : "Hủy phiên đấu giá"
+      }
+      description={
+        <div className="space-y-2">
+          {target?.title && <p className="font-medium text-text">{target.title}</p>}
+          <p>
+            Phiên đấu giá sẽ bị hủy ngay lập tức (kể cả khi đã có{" "}
+            {target?.bidCount ? `${target.bidCount} lượt đặt giá` : "lượt đặt giá"}).
+            Sản phẩm sẽ trở về trạng thái Sẵn sàng (trừ khi đã bị ẩn); người bán và
+            người đang dẫn đầu sẽ nhận được thông báo.
+          </p>
+        </div>
+      }
+      confirmLabel="Xác nhận hủy phiên"
+      confirmVariant="danger-soft"
+      tone="danger"
+      reasonMode="required"
+      reasonLabel="Lý do hủy phiên"
+      reasonPlaceholder="Nhập lý do hủy phiên (bắt buộc)..."
+      loading={mutation.isPending}
+      onConfirm={(reason) => {
+        if (!target || !reason) return;
+        mutation.mutate(
+          { auctionId: target.id, reason },
+          {
+            onSuccess: () => {
+              toast.success(
+                `Đã hủy phiên ${formatDisplayCode("AUC", target.id)}.`
+              );
+              onClose();
+              onSuccess?.();
+            },
+            onError: (err) => {
+              toast.error(
+                isApiError(err) ? err.message : "Không thể hủy phiên đấu giá."
               );
             },
           }
