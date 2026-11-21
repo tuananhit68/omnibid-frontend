@@ -5,7 +5,7 @@ Nhánh: `feature/fe-v4` · Kit: `.agents/skills/omnibid-fe-v4` · Agent cập nh
 ## Phase
 - [x] 0. Chuẩn bị
 - [x] 1. Nền tảng (contract.ts, API v4, mock, enums, thời gian, phiên, proxy, WS, hệ thiết kế, layout, UI kit, gỡ code cũ)
-- [ ] 2. Tài khoản — login, register, profile, admin-profile
+- [x] 2. Tài khoản — login, register, profile, admin-profile
 - [ ] 3. Phiên công khai — home, auction-list, auction-detail, report-modal
 - [ ] 4. Bán hàng — my-products, product-form, auction-create, my-auctions, my-auction
 - [ ] 5. Mua hàng — my-bids, my-orders, order-detail
@@ -30,8 +30,10 @@ Người dùng xác nhận tiếp tục phát triển mặc định ở chế đ
 - Phase 1: `OrderDetail.viewerRole` giữ đúng hợp đồng `RESPONSE_DTO_v4.md` §5 (`'BUYER' | 'SELLER'`), dù script `verify-fe-v4.ps1` hiện lọc chuỗi `viewerRole` theo `DELETE_LIST_FE.md` (áp dụng cho enum cũ trong `types/enums.ts`).
 - Phase 1: đã thêm sẵn mock handler cho `auctions` và `bids` (ngoài `auth`, `users`, `categories`) để các màn công khai hiện có và `/dev/mock` hoạt động ngay ở chế độ mock.
 - Phase 1: đổi `src/middleware.ts` sang `src/proxy.ts` theo quy chuẩn Next.js 16.
+- Phase 2: tạo `src/app/admin/layout.tsx` và trang tạm `src/app/admin/page.tsx` (`// TODO fe-v4 admin-dashboard`) để ADMIN đăng nhập chuyển tới `/admin` không bị 404 trước Phase 7.
+- Phase 2: đổi mật khẩu xác nhận qua `ConfirmDialog` trước khi gọi `PATCH /users/me/password` (đúng quy tắc hành động không đảo ngược trong `ux-states.md`).
 
 ## Cần backend (khối bị ẩn vì thiếu API)
 
 ## Việc tồn
-- Các màn cũ (`/`, `/auctions`, `/auctions/[id]`, `/login`, `/register`, `/me/bids`) đã được sửa tạm (`// TODO fe-v4 <id>`) để biên dịch và chạy mock ở Phase 1; sẽ được thiết kế lại đầy đủ ở Phase 2, 3, 5.
+- Các màn cũ (`/`, `/auctions`, `/auctions/[id]`, `/me/bids`, `/admin`) đang ở bản tạm (`// TODO fe-v4 <id>`) để biên dịch và chạy mock; sẽ được thiết kế lại đầy đủ ở Phase 3, 5, 7.
