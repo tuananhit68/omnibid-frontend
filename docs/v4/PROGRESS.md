@@ -11,7 +11,7 @@ Nhánh: `feature/fe-v4` · Kit: `.agents/skills/omnibid-fe-v4` · Agent cập nh
 - [x] 5. Mua hàng — my-bids, my-orders, order-detail
 - [x] 6. Thông báo — notifications, notification-bell
 - [x] 7. Quản trị — admin-dashboard, admin-users, admin-categories, admin-products, admin-auctions, admin-orders, admin-reports
-- [ ] 8. Rà soát cuối
+- [x] 8. Rà soát cuối
 
 ## Baseline
 - Ngày: 2026-11-21 · Nhánh gốc: `develop` (`e100f25`) · Nhánh làm việc: `feature/fe-v4`
@@ -40,7 +40,32 @@ Người dùng xác nhận tiếp tục phát triển mặc định ở chế đ
 - Phase 5: làm lại `my-bids` (`/me/bids`, `size=20`, lọc nhanh phía client trên trang hiện tại + lọc theo `auctionId`), thêm `my-orders` (`/me/orders`, tabs `BUYER`/`SELLER`, 6 trạng thái, tô nền `warning-subtle-bg` + nhãn "Cần bạn xử lý"), thêm `order-detail` (`/orders/[id]`, đủ nhánh `BUYER`/`SELLER` × trạng thái, thanh toán đồng bộ `Idempotency-Key` giữ khóa khi retry lỗi mạng, `ReportModal`, `ConfirmDialog`). Bổ sung mock handler `orders.ts`, `payments.ts` và thông báo `ORDER_UPDATE` trong `scheduler.ts`.
 - Phase 6: làm mới `features/notification` (`GET /notifications`, `POST /notifications/{id}/read` optimistic + rollback), màn `/me/notifications` (`Tabs` Tất cả/Chưa đọc, lọc 5 loại, `size=20`, điều hướng AUCTION/ORDER và mở rộng tại chỗ cho REPORT, không có "đánh dấu tất cả"), `NotificationBell` ở `PublicLayout` (chỉ USER, `totalElements` của `isRead=false&size=1`, refetch khi focus/điều hướng/60s, `"9+"` khi > 9, popover 5 mục + "Xem tất cả") và số chưa đọc đồng bộ ở sidebar `AccountLayout`. Bổ sung mock handler `notifications.ts`, cập nhật sinh thông báo `AUCTION_CANCELLED` trong `auctions.ts`, `AUCTION_RESULT` kèm hạn thanh toán + `refType: "AUCTION"` trong `scheduler.ts` và `ORDER_UPDATE` khi hết hạn trong `payments.ts` đúng `BUSINESS_RULES_v4.md` §7.
 - Phase 7: hoàn thiện 7 màn quản trị (`admin-dashboard`, `admin-users`, `admin-categories`, `admin-products`, `admin-auctions`, `admin-orders`, `admin-reports`) dưới `src/features/admin/{shared,statistics,users,categories,products,auctions,orders,reports}` và `src/app/admin/**`; dùng chung `AdminActionDialogs` cho trang danh sách/chi tiết và panel báo cáo vi phạm; `AdminLayoutShell` đồng bộ badge `pendingReports` trên sidebar; bổ sung đầy đủ 20 endpoint admin trong `src/mocks/handlers/admin.ts` kèm hệ quả khóa người dùng/ẩn sản phẩm (hủy phiên mở + WS event, hủy đơn `PENDING_PAYMENT`, giữ bid, `release()` trừ `HIDDEN`, sinh thông báo), xử lý báo cáo chỉ đổi trạng thái báo cáo + gửi `REPORT_RESOLVED`, thống kê tính trực tiếp từ kho mock.
+- Phase 8: rà soát cuối hoàn tất — `npm run lint` PASS (0 lỗi, 4 cảnh báo `window.location.href` khi đăng xuất/chuyển hướng phiên), `npm run typecheck` PASS, `npm run build` PASS (34/34 routes). `verify-fe-v4.ps1` đạt 8/9 kiểm tra (0 cảnh báo màu cứng/uppercase/viền một bên, đủ 28 route v4, cô lập mock); mục duy nhất báo `viewerRole` là trường hợp lệ của `OrderDetail` theo `RESPONSE_DTO_v4.md` §5 (đã ghi ở Phase 1, không sửa `.agents/`). Đã cập nhật `README.md` đầy đủ cho v4.
+
+## Kết quả kiểm thử Phase 8
+### Kịch bản đầu-cuối chế độ Mock (`NEXT_PUBLIC_API_MODE=mock`) — 12/12 bước PASS
+Thực thi qua toàn bộ mock handler thực tế + kiểm tra lược đồ zod (`src/lib/api/contract.ts`) + kênh WS `src/mocks/ws-bus.ts`:
+1. Đăng ký tài khoản mới (`e2e.seller@omnibid.local`) → `UserProfileSchema` hợp lệ.
+2. Đăng nhập tài khoản vừa tạo → `LoginResponseSchema` hợp lệ.
+3. Tạo sản phẩm multipart 3 ảnh PNG (kiểm tra magic bytes) → `ProductSchema` hợp lệ, `imageCount=3`, ảnh đầu `isPrimary=true`.
+4. Tạo phiên đấu giá (`SCHEDULED`) → `AuctionDetailSchema` hợp lệ.
+5. Tua đồng hồ mở phiên (`AUCTION_STARTED`), người khác (`buyer1`) đặt giá 1.600.000đ → `PlaceBidResponseSchema` + sự kiện WS `BID_PLACED` (`AuctionEventSchema`) hợp lệ.
+6. Tua đồng hồ quá `endTime` chốt phiên → `AUCTION_ENDED`, trạng thái `ENDED`, tự sinh đơn hàng `PENDING_PAYMENT`.
+7. Người mua (`buyer1`) cập nhật địa chỉ/SĐT, thanh toán mô phỏng `FAILED` (lần 1, đơn giữ `PENDING_PAYMENT`), sau đó thử lại với `Idempotency-Key` mới và kết quả `SUCCESS` (lần 2, đơn chuyển `PAID`); lịch sử thanh toán ghi nhận đủ 2 lần.
+8. Người bán gửi hàng kèm mã vận đơn → `ShipResultSchema` hợp lệ, đơn chuyển `SHIPPING`.
+9. Người mua xác nhận đã nhận hàng → `ConfirmReceiptResultSchema` hợp lệ, đơn chuyển `COMPLETED`, sản phẩm chuyển `SOLD`.
+10. Thông báo hai bên: người mua và người bán đều nhận đủ `AUCTION_RESULT` và `ORDER_UPDATE`; đánh dấu đã đọc (`POST /notifications/{id}/read`) → `NotificationSchema` hợp lệ.
+11. Người mua gửi báo cáo vi phạm cho sản phẩm & đơn hàng → `CreateReportResponseSchema` hợp lệ (`PENDING`).
+12. Admin xử lý báo cáo (`RESOLVED` + ghi chú → người mua nhận thông báo `REPORT_RESOLVED`), ẩn vĩnh viễn sản phẩm (`HIDDEN`), khóa người bán (`BANNED` → đăng nhập lại bị chặn với mã `ACCOUNT_BANNED`), thống kê `AdminStatisticsSchema` hợp lệ.
+
+### Chế độ Live
+- Chưa thực thi do backend v4 chưa khởi chạy trên máy; cần chạy lại kịch bản ở chế độ `NEXT_PUBLIC_API_MODE=live` khi ghép backend thật và ghi nhận mọi cảnh báo lệch hợp đồng zod (nếu có) vào mục "Lệch hợp đồng".
+
+### A11y & Responsive
+- Đã xác nhận `aria-live="polite"` trên khối giá realtime (`PricePanel.tsx`), thông báo nổi (`Toast.tsx`) và các vùng trạng thái tải/cập nhật; 0 màu cứng, 0 chữ hoa nhỏ (`uppercase`/`tracking-wide*`), 0 viền màu một bên.
 
 ## Cần backend (khối bị ẩn vì thiếu API)
 
 ## Việc tồn
+- Kiểm thử trực quan trên trình duyệt ở các mốc 375/768/1280px (Chrome remote debugging chưa bật trên máy trong lúc chạy Phase 8) và chạy lại kịch bản E2E ở chế độ `live` khi có backend v4.
+- (Tùy chọn) Cập nhật ngoại lệ `OrderDetail.viewerRole` trong `.agents/skills/omnibid-fe-v4/scripts/verify-fe-v4.ps1` nếu người dùng đồng ý cho phép sửa kit `.agents/`.
