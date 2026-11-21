@@ -5,6 +5,7 @@ import { formatDisplayCode } from "@/lib/format";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useToast } from "@/components/ui/Toast";
 import { useBanAdminUser, useUnbanAdminUser } from "../users/hooks";
+import { useHideAdminProduct } from "../products/hooks";
 
 export interface BanUserTarget {
   id: number;
@@ -133,6 +134,73 @@ export function UnbanUserDialog({
             onError: (err) => {
               toast.error(
                 isApiError(err) ? err.message : "Không thể mở khóa tài khoản."
+              );
+            },
+          }
+        );
+      }}
+    />
+  );
+}
+
+export interface HideProductTarget {
+  id: number;
+  title: string;
+}
+
+export function HideProductDialog({
+  target,
+  onClose,
+  onSuccess,
+}: {
+  target: HideProductTarget | null;
+  onClose: () => void;
+  onSuccess?: () => void;
+}) {
+  const toast = useToast();
+  const mutation = useHideAdminProduct();
+
+  return (
+    <ConfirmDialog
+      open={target !== null}
+      onClose={onClose}
+      title={
+        target
+          ? `Ẩn sản phẩm ${formatDisplayCode("PRD", target.id)}`
+          : "Ẩn sản phẩm"
+      }
+      description={
+        <div className="space-y-2">
+          {target && <p className="font-medium text-text">{target.title}</p>}
+          <p>
+            Phiên đang mở bị hủy; đơn chờ thanh toán bị hủy; đơn đã thanh toán hoặc
+            đang giao vẫn tiếp tục.{" "}
+            <strong className="font-semibold text-danger">Ẩn là vĩnh viễn.</strong>
+          </p>
+        </div>
+      }
+      confirmLabel="Ẩn vĩnh viễn"
+      confirmVariant="danger-soft"
+      tone="danger"
+      reasonMode="optional"
+      reasonLabel="Lý do ẩn"
+      reasonPlaceholder="Nhập lý do ẩn sản phẩm (tùy chọn)..."
+      loading={mutation.isPending}
+      onConfirm={(reason) => {
+        if (!target) return;
+        mutation.mutate(
+          { productId: target.id, reason },
+          {
+            onSuccess: (res) => {
+              toast.success(
+                `Đã ẩn sản phẩm; hủy ${res.cancelledAuctions} phiên, ${res.cancelledOrders} đơn`
+              );
+              onClose();
+              onSuccess?.();
+            },
+            onError: (err) => {
+              toast.error(
+                isApiError(err) ? err.message : "Không thể ẩn sản phẩm."
               );
             },
           }
