@@ -31,7 +31,7 @@ export default function AuctionsLoading() {
                 key={i}
                 className="bg-surface border border-border-brand rounded-xl overflow-hidden"
               >
-                <Skeleton className="aspect-[4/3] w-full rounded-none" />
+                <Skeleton className="aspect-4/3 w-full rounded-none" />
                 <div className="p-4 space-y-3">
                   <Skeleton className="h-3.5 w-1/3" />
                   <Skeleton className="h-5 w-5/6" />

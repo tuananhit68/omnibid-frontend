@@ -1,10 +1,10 @@
-// TODO fe-v4 auction-list
 "use client";
 
 import { CloseIcon } from "@/components/icons";
 import { formatMoney } from "@/lib/format";
 import { AUCTION_STATUS_META, type AuctionStatus } from "@/types/enums";
 import type { Category } from "../types";
+import { ENDING_IN_OPTIONS, type EndingInOption } from "./FilterPanel";
 
 export interface FilterChipsProps {
   keyword?: string;
@@ -12,11 +12,13 @@ export interface FilterChipsProps {
   status?: string;
   minPrice?: number;
   maxPrice?: number;
+  endingIn?: EndingInOption;
   categories: Category[];
   onRemoveKeyword: () => void;
   onRemoveCategory: () => void;
   onRemoveStatus: () => void;
   onRemovePrice: () => void;
+  onRemoveEndingIn: () => void;
   onClearAll: () => void;
 }
 
@@ -26,17 +28,23 @@ export function FilterChips({
   status,
   minPrice,
   maxPrice,
+  endingIn,
   categories,
   onRemoveKeyword,
   onRemoveCategory,
   onRemoveStatus,
   onRemovePrice,
+  onRemoveEndingIn,
   onClearAll,
 }: FilterChipsProps) {
   const chips: Array<{ key: string; label: string; onRemove: () => void }> = [];
 
   if (keyword) {
-    chips.push({ key: "keyword", label: `Từ khóa: ${keyword}`, onRemove: onRemoveKeyword });
+    chips.push({
+      key: "keyword",
+      label: `Từ khóa: ${keyword}`,
+      onRemove: onRemoveKeyword,
+    });
   }
   if (categoryId !== undefined) {
     const cat = categories.find((c) => c.id === categoryId);
@@ -54,10 +62,20 @@ export function FilterChips({
       onRemove: onRemoveStatus,
     });
   }
+  if (endingIn) {
+    const opt = ENDING_IN_OPTIONS.find((o) => o.value === endingIn);
+    chips.push({
+      key: "endingIn",
+      label: `Kết thúc: ${opt?.label ?? endingIn}`,
+      onRemove: onRemoveEndingIn,
+    });
+  }
   if (minPrice !== undefined || maxPrice !== undefined) {
     chips.push({
       key: "price",
-      label: `Giá: ${minPrice ? formatMoney(minPrice) : "0 ₫"} – ${maxPrice ? formatMoney(maxPrice) : "Không giới hạn"}`,
+      label: `Giá: ${minPrice ? formatMoney(minPrice) : "0 ₫"} – ${
+        maxPrice ? formatMoney(maxPrice) : "Không giới hạn"
+      }`,
       onRemove: onRemovePrice,
     });
   }
@@ -76,7 +94,7 @@ export function FilterChips({
             type="button"
             onClick={chip.onRemove}
             aria-label={`Bỏ lọc ${chip.label}`}
-            className="text-text-tertiary hover:text-text"
+            className="inline-flex size-5 items-center justify-center rounded-full text-text-tertiary hover:bg-surface hover:text-text"
           >
             <CloseIcon className="size-3.5" />
           </button>
@@ -85,7 +103,7 @@ export function FilterChips({
       <button
         type="button"
         onClick={onClearAll}
-        className="text-caption font-medium text-primary-600 hover:underline"
+        className="text-caption font-medium text-primary-600 hover:underline px-1 py-1"
       >
         Xóa tất cả
       </button>
