@@ -76,18 +76,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             aria-invalid={hasError ? "true" : undefined}
             aria-describedby={describedBy}
             className={cn(
-              "w-full text-body text-text placeholder:text-text-placeholder transition-colors rounded-md",
-              "border outline-none",
-              "focus-visible:border-primary-600 focus-visible:ring-2 focus-visible:ring-focus/20",
+              "w-full text-body-lg md:text-body text-text placeholder:text-text-placeholder transition-colors rounded-md",
+              "border",
+              "focus-visible:border-primary-600 focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2",
               "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-muted",
               // Variant & height
-              controlSize === "lg" ? "h-11 px-3.5" : "h-10 px-3 text-small",
+              controlSize === "lg" ? "h-11 px-3.5" : "h-10 px-3 text-body-lg md:text-small",
               variant === "default"
                 ? "bg-surface-subtle border-border-brand"
                 : "bg-bg border-border-strong",
               leftIcon && "pl-10",
-              rightIcon && "pr-10",
-              hasError && "border-danger focus-visible:border-danger focus-visible:ring-danger/20",
+              rightIcon && "pr-11",
+              hasError && "border-danger focus-visible:border-danger focus-visible:outline-danger",
               className
             )}
             {...props}

@@ -40,6 +40,8 @@ export function Avatar({ src, name, size = "md", className }: AvatarProps) {
         <img
           src={src}
           alt={name ? `Ảnh đại diện ${name}` : "Ảnh đại diện"}
+          loading="lazy"
+          decoding="async"
           className="size-full object-cover"
         />
       ) : (

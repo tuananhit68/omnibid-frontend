@@ -3,6 +3,7 @@
 import {
   createContext,
   useContext,
+  useId,
   useState,
   type ReactNode,
   type KeyboardEvent,
@@ -10,6 +11,7 @@ import {
 import { cn } from "@/lib/cn";
 
 interface TabsContextValue {
+  baseId: string;
   selectedTab: string;
   setSelectedTab: (val: string) => void;
 }
@@ -31,6 +33,7 @@ export function Tabs({
   children,
   className,
 }: TabsProps) {
+  const baseId = useId();
   const [internalTab, setInternalTab] = useState(defaultValue || "");
   const selectedTab =
     controlledValue !== undefined ? controlledValue : internalTab;
@@ -43,7 +46,7 @@ export function Tabs({
   };
 
   return (
-    <TabsContext.Provider value={{ selectedTab, setSelectedTab }}>
+    <TabsContext.Provider value={{ baseId, selectedTab, setSelectedTab }}>
       <div className={cn("w-full", className)}>{children}</div>
     </TabsContext.Provider>
   );
@@ -116,19 +119,24 @@ export function TabTrigger({
   if (!ctx) throw new Error("TabTrigger must be used within Tabs");
 
   const isSelected = ctx.selectedTab === value;
+  const tabId = `${ctx.baseId}-tab-${value}`;
+  const panelId = `${ctx.baseId}-panel-${value}`;
 
   return (
     <button
+      id={tabId}
       role="tab"
       type="button"
       aria-selected={isSelected}
+      aria-controls={panelId}
+      tabIndex={isSelected ? 0 : -1}
       onClick={() => ctx.setSelectedTab(value)}
       className={cn(
         "inline-flex items-center gap-2 whitespace-nowrap text-small font-semibold transition-all select-none",
-        "focus-visible:outline-2 focus-visible:outline-focus",
+        "focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2",
         variant === "underline"
           ? cn(
-              "h-full relative py-3 px-1 border-b-2 -mb-[1px]",
+              "h-full relative py-3 px-1 border-b-2 -mb-px",
               isSelected
                 ? "border-primary-600 text-primary-700"
                 : "border-transparent text-text-secondary hover:text-text hover:border-border-strong"
@@ -173,8 +181,13 @@ export function TabContent({ value, children, className }: TabContentProps) {
 
   return (
     <div
+      id={`${ctx.baseId}-panel-${value}`}
       role="tabpanel"
-      className={cn("pt-4 focus-visible:outline-none", className)}
+      aria-labelledby={`${ctx.baseId}-tab-${value}`}
+      className={cn(
+        "pt-4 rounded-md focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2",
+        className
+      )}
       tabIndex={0}
     >
       {children}

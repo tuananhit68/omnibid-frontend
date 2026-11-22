@@ -24,11 +24,14 @@ export interface ModalProps {
 }
 
 const maxWidthStyles = {
-  sm: "max-w-[380px]",
-  md: "max-w-[448px]", // Chuẩn 448px theo Figma S13
-  lg: "max-w-[560px]",
-  xl: "max-w-[680px]",
+  sm: "max-w-sm",
+  md: "max-w-md", // 448px
+  lg: "max-w-xl",
+  xl: "max-w-2xl",
 };
+
+const FOCUSABLE_SELECTOR =
+  'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export function Modal({
   open,
@@ -70,9 +73,8 @@ export function Modal({
 
       // Focus trap
       if (e.key === "Tab" && modalRef.current) {
-        const focusables = modalRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
+        const focusables =
+          modalRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
         if (focusables.length === 0) return;
 
         const first = focusables[0];
@@ -97,9 +99,8 @@ export function Modal({
     // Focus vào phần tử đầu tiên trong modal
     const timer = setTimeout(() => {
       if (modalRef.current) {
-        const firstFocusable = modalRef.current.querySelector<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
+        const firstFocusable =
+          modalRef.current.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
         firstFocusable?.focus();
       }
     }, 50);
@@ -127,7 +128,7 @@ export function Modal({
         aria-labelledby={titleId}
         aria-describedby={description ? descId : undefined}
         className={cn(
-          "w-full bg-surface border border-border-brand rounded-2xl shadow-lg flex flex-col max-h-[90vh] overflow-hidden",
+          "w-full bg-surface border border-border-brand rounded-2xl shadow-lg flex flex-col max-h-full overflow-hidden",
           maxWidthStyles[maxWidth],
           className
         )}
@@ -136,7 +137,7 @@ export function Modal({
         <div className="flex items-start justify-between p-6 pb-4 border-b border-border-subtle">
           <div className="flex items-start gap-3.5 pr-2">
             {icon && (
-              <div className="size-10 rounded-[10px] flex items-center justify-center shrink-0 [&>svg]:size-5">
+              <div className="size-10 rounded-lg flex items-center justify-center shrink-0 [&>svg]:size-5">
                 {icon}
               </div>
             )}
@@ -156,7 +157,7 @@ export function Modal({
             icon={<CloseIcon />}
             size="sm"
             onClick={onClose}
-            className="-mr-2 -mt-1"
+            className="-mr-2 -mt-1 min-h-11 min-w-11 md:min-h-8 md:min-w-8"
           />
         </div>
 

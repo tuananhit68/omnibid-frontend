@@ -111,7 +111,8 @@
 
 /* Tiện ích dùng lại */
 @layer base {
-  html { font-family: var(--font-sans); font-size: 15px; line-height: 24px; color: var(--color-text); background: var(--color-bg); -webkit-font-smoothing: antialiased; }
+  html { font-family: var(--font-sans); font-size: 15px; line-height: 24px; color: var(--color-text); background: var(--color-bg); -webkit-font-smoothing: antialiased; caret-color: var(--color-primary-600); }
+  ::selection { background-color: var(--color-primary-100); color: var(--color-text); }
   :focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
   .tabular { font-variant-numeric: tabular-nums; } /* giá tiền, đồng hồ đếm ngược */
   /* Nhãn phụ (thay cho nhãn chữ hoa của Figma): viết thường kiểu câu, không giãn chữ */
@@ -120,7 +121,10 @@
   @keyframes price-flash { from { background-color: var(--color-primary-50); } to { background-color: transparent; } }
   .price-flash { animation: price-flash 600ms ease-out; border-radius: var(--radius-md); }
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    html { scroll-behavior: auto; }
+    .price-flash { animation: none; background-color: var(--color-primary-50); }
+    .animate-pulse, .animate-bounce { animation: none !important; }
+    .animate-spin { animation-duration: 1.5s; animation-timing-function: steps(8, end); }
   }
 }
 

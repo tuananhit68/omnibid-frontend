@@ -22,7 +22,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
             aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
-            className="p-1 rounded text-text-tertiary hover:text-text transition-colors focus-visible:outline-2 focus-visible:outline-focus"
+            className="-mr-2 inline-flex size-11 items-center justify-center rounded-md text-text-tertiary hover:text-text transition-colors focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
           >
             {showPassword ? (
               <EyeOffIcon className="size-4.5" />

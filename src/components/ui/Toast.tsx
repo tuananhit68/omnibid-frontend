@@ -5,6 +5,7 @@ import {
   useContext,
   useState,
   useCallback,
+  useMemo,
   type ReactNode,
 } from "react";
 import { cn } from "@/lib/cn";
@@ -83,13 +84,18 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     [showToast]
   );
 
+  const contextValue = useMemo(
+    () => ({ showToast, success, error, info, dismiss }),
+    [showToast, success, error, info, dismiss]
+  );
+
   return (
-    <ToastContext.Provider value={{ showToast, success, error, info, dismiss }}>
+    <ToastContext.Provider value={contextValue}>
       {children}
       {/* Toast viewport: bottom-right on desktop, top on mobile */}
       <div
         aria-live="polite"
-        className="fixed z-50 pointer-events-none top-4 inset-x-4 md:inset-x-auto md:top-auto md:bottom-6 md:right-6 flex flex-col gap-2.5 max-w-sm w-full"
+        className="fixed z-50 pointer-events-none top-4 inset-x-4 md:inset-x-auto md:top-auto md:bottom-6 md:right-6 flex flex-col gap-2.5 md:max-w-sm md:w-full"
       >
         {toasts.map((toast) => {
           const isError = toast.type === "error";
@@ -130,7 +136,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 size="sm"
                 icon={<CloseIcon className="size-4" />}
                 onClick={() => dismiss(toast.id)}
-                className="-mr-1.5 -mt-1.5"
+                className="-mr-1.5 -mt-1.5 min-h-11 min-w-11 md:min-h-8 md:min-w-8"
               />
             </div>
           );
