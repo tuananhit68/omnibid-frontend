@@ -131,10 +131,10 @@ function AdminLayoutInner({ children, pendingReports = 0 }: AdminLayoutProps) {
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             <Link
               href="/"
-              className="text-small font-medium text-text-link hover:underline"
+              className="hidden sm:inline-flex whitespace-nowrap text-small font-medium text-text-link hover:underline"
             >
               Xem sàn đấu giá
             </Link>
@@ -219,6 +219,15 @@ function AdminLayoutInner({ children, pendingReports = 0 }: AdminLayoutProps) {
                 </button>
               </div>
               {renderNavLinks(() => setDrawerOpen(false))}
+              <div className="mt-auto border-t border-border-subtle pt-4">
+                <Link
+                  href="/"
+                  onClick={() => setDrawerOpen(false)}
+                  className="flex h-10 items-center rounded-md px-3 text-small font-medium text-text-link hover:bg-surface-subtle"
+                >
+                  Xem sàn đấu giá
+                </Link>
+              </div>
             </div>
           </div>
         )}

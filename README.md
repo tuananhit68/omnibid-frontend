@@ -54,7 +54,7 @@ File `.env.example` mặc định cấu hình chế độ `live`. Tạo `.env.lo
 | `npm run dev` | Chạy môi trường phát triển (`http://localhost:3000`) |
 | `npm run lint` | Kiểm tra ESLint |
 | `npm run typecheck` | Kiểm tra kiểu TypeScript (`tsc --noEmit`) |
-| `npm run build` | Build production (Next.js webpack) |
+| `npm run build` | Build production (Next.js Turbopack) |
 | `npm run start` | Chạy bản build production |
 | `powershell -ExecutionPolicy Bypass -File .agents\skills\omnibid-fe-v4\scripts\verify-fe-v4.ps1` | Rà soát tuân thủ quy chuẩn frontend v4 |
 

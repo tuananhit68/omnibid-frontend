@@ -87,7 +87,7 @@ export function TabList({
       onKeyDown={handleKeyDown}
       className={cn(
         variant === "underline"
-          ? "flex items-center gap-6 border-b border-border h-14 md:h-14 overflow-x-auto no-scrollbar"
+          ? "flex items-center gap-6 border-b border-border h-14 overflow-x-auto overflow-y-hidden no-scrollbar"
           : "inline-flex p-1 bg-surface-subtle rounded-lg gap-1 border border-border-brand",
         className
       )}

@@ -172,7 +172,7 @@ export function NotificationsClient() {
               Đang cập nhật…
             </span>
           )}
-          <div className="w-full sm:w-56">
+          <div className="w-full sm:w-64">
             <Select
               aria-label="Lọc theo loại thông báo"
               value={selectedType ?? ""}

@@ -61,11 +61,15 @@ Thực thi qua toàn bộ mock handler thực tế + kiểm tra lược đồ zo
 ### Chế độ Live
 - Chưa thực thi do backend v4 chưa khởi chạy trên máy; cần chạy lại kịch bản ở chế độ `NEXT_PUBLIC_API_MODE=live` khi ghép backend thật và ghi nhận mọi cảnh báo lệch hợp đồng zod (nếu có) vào mục "Lệch hợp đồng".
 
-### A11y & Responsive
-- Đã xác nhận `aria-live="polite"` trên khối giá realtime (`PricePanel.tsx`), thông báo nổi (`Toast.tsx`) và các vùng trạng thái tải/cập nhật; 0 màu cứng, 0 chữ hoa nhỏ (`uppercase`/`tracking-wide*`), 0 viền màu một bên.
+### A11y & Responsive (kiểm thử trực quan Chrome 375/768/1280px)
+- Đã kiểm thử trực quan trên trình duyệt thật (Chrome) toàn bộ 19 màn đại diện (Guest: `/`, `/auctions`, `/auctions/1`, `/login`, `/register`; USER: `/me/profile`, `/me/products`, `/me/auctions`, `/me/bids`, `/me/orders`, `/orders/1`, `/me/notifications`; ADMIN: `/admin`, `/admin/users`, `/admin/categories`, `/admin/products`, `/admin/auctions`, `/admin/orders`, `/admin/reports`) ở 3 mốc `375×812`, `768×1024`, `1280×800`:
+  - Phát hiện và sửa lỗi build production: `package.json` cũ dùng `next build --webpack` khiến `@tailwindcss/turbopack` không biên dịch Tailwind v4; đã đổi sang `next build` (Turbopack).
+  - **Tràn ngang cấp trang (`scrollWidth <= innerWidth`)**: đạt `0px` trên 57/57 tổ hợp màn × kích thước; `0` lỗi console; xác nhận `aria-live="polite"` + `aria-atomic="true"` trên khối giá realtime tại `/auctions/1`.
+  - Đã sửa và kiểm tra lại 4 lỗi hiển thị phát hiện khi test trực quan: (1) ẩn link `"Xem sàn đấu giá"` khỏi header admin `< sm` và đưa vào drawer mobile (`AdminLayout.tsx`), (2) đổi lưới KPI `/admin` sang `lg:grid-cols-3 2xl:grid-cols-5` + `StatCard` dùng `text-h1 font-bold whitespace-nowrap`, (3) thêm `overflow-y-hidden` và `.no-scrollbar` cho `Tabs.tsx`, (4) sửa `pl-3.5 pr-10` + `::picker-icon` + mở rộng ô lọc thông báo `sm:w-64`.
+  - Bảng dữ liệu nhiều cột ở các trang quản trị/tài khoản cuộn ngang an toàn trong vùng `overflow-x-auto` riêng mà không làm tràn khung trang.
 
 ## Cần backend (khối bị ẩn vì thiếu API)
 
 ## Việc tồn
-- Kiểm thử trực quan trên trình duyệt ở các mốc 375/768/1280px (Chrome remote debugging chưa bật trên máy trong lúc chạy Phase 8) và chạy lại kịch bản E2E ở chế độ `live` khi có backend v4.
+- Chạy lại kịch bản E2E ở chế độ `NEXT_PUBLIC_API_MODE=live` khi có backend v4 để đối chiếu cảnh báo zod.
 - (Tùy chọn) Cập nhật ngoại lệ `OrderDetail.viewerRole` trong `.agents/skills/omnibid-fe-v4/scripts/verify-fe-v4.ps1` nếu người dùng đồng ý cho phép sửa kit `.agents/`.

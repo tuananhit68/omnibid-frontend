@@ -60,7 +60,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(
         </div>
 
         <div className="mt-3">
-          <div className="text-[28px] leading-[36px] font-bold tabular text-text">
+          <div className="text-h1 font-bold tabular text-text whitespace-nowrap">
             {value}
           </div>
           {subText && (
