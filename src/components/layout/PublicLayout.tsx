@@ -439,23 +439,12 @@ export function PublicFooter() {
   return (
     <footer className="mt-auto border-t border-border-brand bg-surface">
       <div className="mx-auto flex max-w-page flex-col items-start justify-between gap-4 px-4 py-6 sm:flex-row sm:items-center md:px-6 lg:px-8">
-        <div className="flex items-center gap-3">
-          <Logo />
-          <span className="text-caption text-text-tertiary">
-            Sàn đấu giá trực tuyến minh bạch
-          </span>
-        </div>
-        <div className="flex flex-wrap items-center gap-4 text-small text-text-secondary">
-          <Link href="/" className="hover:text-primary-600">
-            Trang chủ
-          </Link>
-          <Link href="/auctions" className="hover:text-primary-600">
-            Phiên đấu giá
-          </Link>
-          <span className="text-caption text-text-tertiary">
-            © 2026 OmniBid
-          </span>
-        </div>
+        <span className="text-caption text-text-tertiary">
+          © 2026 OmniBid
+        </span>
+        <span className="text-caption text-text-tertiary">
+          Sàn đấu giá trực tuyến minh bạch
+        </span>
       </div>
     </footer>
   );
