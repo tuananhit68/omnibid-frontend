@@ -150,13 +150,13 @@ export function MyProductsClient() {
         <div className="flex flex-wrap items-center gap-2">
           <Link
             href={`/me/products/${row.id}/edit`}
-            className="inline-flex h-8 items-center rounded-md border border-border-brand bg-surface px-2.5 text-caption font-medium text-text hover:bg-surface-subtle transition-colors"
+            className="inline-flex min-h-11 md:min-h-8 items-center rounded-md border border-border-brand bg-surface px-3 md:px-2.5 text-small md:text-caption font-medium text-text hover:bg-surface-subtle transition-colors focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
           >
             Sửa
           </Link>
           <Link
             href={`/me/auctions/new?productId=${row.id}`}
-            className="inline-flex h-8 items-center rounded-md bg-primary-600 px-2.5 text-caption font-medium text-text-inverse hover:bg-primary-700 transition-colors"
+            className="inline-flex min-h-11 md:min-h-8 items-center rounded-md bg-primary-600 px-3 md:px-2.5 text-small md:text-caption font-medium text-text-inverse hover:bg-primary-700 transition-colors focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
           >
             Tạo phiên
           </Link>
@@ -165,7 +165,7 @@ export function MyProductsClient() {
               type="button"
               variant="ghost"
               size="sm"
-              className="h-8 px-2.5 text-caption text-danger hover:bg-danger-bg hover:text-danger"
+              className="min-h-11 md:min-h-8 px-3 md:px-2.5 text-small md:text-caption text-danger hover:bg-danger-bg hover:text-danger"
               onClick={() => setDeleteTarget(row)}
             >
               Xóa
@@ -179,7 +179,7 @@ export function MyProductsClient() {
       return (
         <Link
           href={`/me/auctions/${row.activeAuctionId}`}
-          className="inline-flex h-8 items-center rounded-md border border-border-brand bg-surface px-2.5 text-caption font-medium text-primary-600 hover:bg-primary-50 transition-colors"
+          className="inline-flex min-h-11 md:min-h-8 items-center rounded-md border border-border-brand bg-surface px-3 md:px-2.5 text-small md:text-caption font-medium text-primary-600 hover:bg-primary-50 transition-colors focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
         >
           Xem phiên
         </Link>
@@ -193,7 +193,7 @@ export function MyProductsClient() {
       return (
         <Link
           href="/me/orders?role=SELLER"
-          className="inline-flex h-8 items-center rounded-md border border-border-brand bg-surface px-2.5 text-caption font-medium text-primary-600 hover:bg-primary-50 transition-colors"
+          className="inline-flex min-h-11 md:min-h-8 items-center rounded-md border border-border-brand bg-surface px-3 md:px-2.5 text-small md:text-caption font-medium text-primary-600 hover:bg-primary-50 transition-colors focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
         >
           Xem đơn
         </Link>
@@ -215,6 +215,8 @@ export function MyProductsClient() {
               <img
                 src={row.primaryImageUrl}
                 alt={row.title}
+                loading="lazy"
+                decoding="async"
                 className="size-full object-cover"
               />
             ) : (
@@ -429,6 +431,8 @@ export function MyProductsClient() {
                             <img
                               src={row.primaryImageUrl}
                               alt={row.title}
+                              loading="lazy"
+                              decoding="async"
                               className="size-full object-cover"
                             />
                           ) : (
