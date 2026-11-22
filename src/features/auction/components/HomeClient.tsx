@@ -138,7 +138,7 @@ export function HomeClient({
                 onChange={(e) => setKeyword(e.target.value)}
                 placeholder="Tìm đồng hồ, máy ảnh, điện thoại…"
                 aria-label="Tìm kiếm phiên đấu giá"
-                className="h-12 w-full rounded-lg border border-border-brand bg-surface-subtle pl-11 pr-4 text-body text-text placeholder:text-text-placeholder transition-colors focus:border-primary-600 focus:bg-surface focus:outline-2 focus:outline-focus"
+                className="h-12 w-full rounded-lg border border-border-brand bg-surface-subtle pl-11 pr-4 text-body-lg md:text-body text-text placeholder:text-text-placeholder transition-colors focus-visible:border-primary-600 focus-visible:bg-surface focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
               />
             </div>
             <Button type="submit" variant="primary" size="lg" className="sm:h-12 sm:px-6">

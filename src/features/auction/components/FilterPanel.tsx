@@ -59,6 +59,7 @@ export function FilterPanel({
 }: FilterPanelProps) {
   const [minDraft, setMinDraft] = useState(minPrice ? String(minPrice) : "");
   const [maxDraft, setMaxDraft] = useState(maxPrice ? String(maxPrice) : "");
+  const [priceError, setPriceError] = useState<string | null>(null);
   const [syncedPriceKey, setSyncedPriceKey] = useState(
     `${minPrice ?? ""}-${maxPrice ?? ""}`
   );
@@ -68,16 +69,29 @@ export function FilterPanel({
     setSyncedPriceKey(currentPriceKey);
     setMinDraft(minPrice ? String(minPrice) : "");
     setMaxDraft(maxPrice ? String(maxPrice) : "");
+    setPriceError(null);
   }
 
   const handleApplyPrice = (e: FormEvent) => {
     e.preventDefault();
     const parsedMin = minDraft.trim() ? Number(minDraft.trim()) : undefined;
     const parsedMax = maxDraft.trim() ? Number(maxDraft.trim()) : undefined;
-    onPriceChange(
-      parsedMin && !Number.isNaN(parsedMin) && parsedMin > 0 ? Math.floor(parsedMin) : undefined,
-      parsedMax && !Number.isNaN(parsedMax) && parsedMax > 0 ? Math.floor(parsedMax) : undefined
-    );
+    const validMin =
+      parsedMin && !Number.isNaN(parsedMin) && parsedMin > 0
+        ? Math.floor(parsedMin)
+        : undefined;
+    const validMax =
+      parsedMax && !Number.isNaN(parsedMax) && parsedMax > 0
+        ? Math.floor(parsedMax)
+        : undefined;
+
+    if (validMin !== undefined && validMax !== undefined && validMin > validMax) {
+      setPriceError("Giá tối thiểu không được lớn hơn giá tối đa.");
+      return;
+    }
+
+    setPriceError(null);
+    onPriceChange(validMin, validMax);
   };
 
   return (
@@ -160,7 +174,10 @@ export function FilterPanel({
             step={100000}
             placeholder="0"
             value={minDraft}
-            onChange={(e) => setMinDraft(e.target.value)}
+            onChange={(e) => {
+              setMinDraft(e.target.value);
+              if (priceError) setPriceError(null);
+            }}
           />
           <Input
             label="Đến"
@@ -169,10 +186,18 @@ export function FilterPanel({
             step={100000}
             placeholder="Tối đa"
             value={maxDraft}
-            onChange={(e) => setMaxDraft(e.target.value)}
+            onChange={(e) => {
+              setMaxDraft(e.target.value);
+              if (priceError) setPriceError(null);
+            }}
           />
         </div>
-        <Button type="submit" variant="secondary" size="sm" className="w-full">
+        {priceError && (
+          <p role="alert" className="text-caption text-danger">
+            {priceError}
+          </p>
+        )}
+        <Button type="submit" variant="secondary" size="md" className="w-full min-h-11 md:min-h-9">
           Áp dụng khoảng giá
         </Button>
       </form>

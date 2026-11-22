@@ -175,7 +175,7 @@ export function AuctionListClient() {
             onChange={(e) => setKeywordInput(e.target.value)}
             placeholder="Tìm theo tên sản phẩm…"
             aria-label="Tìm theo tên sản phẩm"
-            className="h-11 w-full rounded-md border border-border-brand bg-surface-subtle pl-10 pr-3 text-body md:text-small text-text placeholder:text-text-placeholder transition-colors focus:border-primary-600 focus:bg-surface focus:outline-2 focus:outline-focus"
+            className="h-11 w-full rounded-md border border-border-brand bg-surface-subtle pl-10 pr-3 text-body-lg md:text-small text-text placeholder:text-text-placeholder transition-colors focus-visible:border-primary-600 focus-visible:bg-surface focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
           />
         </div>
 
@@ -191,7 +191,7 @@ export function AuctionListClient() {
             <Button
               type="button"
               variant="outline"
-              size="md"
+              size="lg"
               leftIcon={<FilterIcon className="size-4" />}
               onClick={() => setMobileFilterOpen(true)}
               className="lg:hidden"

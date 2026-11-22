@@ -53,6 +53,8 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
           <img
             src={current.imageUrl}
             alt={title}
+            fetchPriority="high"
+            decoding="async"
             className="size-full object-cover"
           />
         ) : (
@@ -111,6 +113,8 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
               <img
                 src={img.imageUrl}
                 alt={`${title} - ảnh ${idx + 1}`}
+                loading="lazy"
+                decoding="async"
                 className="size-full object-cover"
               />
             </button>

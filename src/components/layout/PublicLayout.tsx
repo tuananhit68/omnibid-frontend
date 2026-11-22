@@ -117,24 +117,26 @@ export function PublicHeader() {
           </nav>
         </div>
 
-        {/* Ô tìm kiếm */}
-        <form
-          onSubmit={handleSearch}
-          role="search"
-          className="hidden sm:flex flex-1 max-w-sm items-center"
-        >
-          <div className="relative w-full">
-            <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-placeholder" />
-            <input
-              type="search"
-              value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
-              placeholder="Tìm phiên đấu giá…"
-              aria-label="Tìm phiên đấu giá"
-              className="h-10 w-full rounded-md border border-border-brand bg-surface-subtle pl-9 pr-3 text-body-lg md:text-small text-text placeholder:text-text-placeholder focus-visible:bg-surface focus-visible:border-primary-600 focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
-            />
-          </div>
-        </form>
+        {/* Ô tìm kiếm (ẩn trên trang chủ vì hero đã có ô tìm kiếm chính) */}
+        {pathname !== "/" && (
+          <form
+            onSubmit={handleSearch}
+            role="search"
+            className="hidden sm:flex flex-1 max-w-sm items-center"
+          >
+            <div className="relative w-full">
+              <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-placeholder" />
+              <input
+                type="search"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                placeholder="Tìm phiên đấu giá…"
+                aria-label="Tìm phiên đấu giá"
+                className="h-10 w-full rounded-md border border-border-brand bg-surface-subtle pl-9 pr-3 text-body-lg md:text-small text-text placeholder:text-text-placeholder focus-visible:bg-surface focus-visible:border-primary-600 focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
+              />
+            </div>
+          </form>
+        )}
 
         {/* Khu vực hành động theo vai trò */}
         <div className="flex items-center gap-2">

@@ -57,10 +57,10 @@ export function BidHistoryTable({
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-border-subtle bg-surface-subtle">
-              <th className="label px-3 py-2.5">Thời điểm</th>
-              <th className="label px-3 py-2.5">Người đặt</th>
-              <th className="label px-3 py-2.5 text-right">Mức giá</th>
+            <tr className="h-11 border-b border-border-brand bg-surface-subtle">
+              <th scope="col" className="label px-3 py-2.5">Thời điểm</th>
+              <th scope="col" className="label px-3 py-2.5">Người đặt</th>
+              <th scope="col" className="label px-3 py-2.5 text-right">Mức giá</th>
             </tr>
           </thead>
           <tbody>
