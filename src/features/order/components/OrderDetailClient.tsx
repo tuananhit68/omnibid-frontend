@@ -211,6 +211,8 @@ export function OrderDetailClient({ orderId }: { orderId: number }) {
                   <img
                     src={order.primaryImageUrl}
                     alt={order.title}
+                    loading="lazy"
+                    decoding="async"
                     className="size-full object-cover"
                   />
                 ) : null}
@@ -234,17 +236,11 @@ export function OrderDetailClient({ orderId }: { orderId: number }) {
 
                 <h1 className="text-h2 text-text">{order.title}</h1>
 
-                <div className="flex flex-wrap items-baseline justify-between gap-3 pt-1">
-                  <div>
-                    <span className="label block">Giá thắng</span>
-                    <span className="text-price-lg text-primary-700 tabular">
-                      {formatMoney(order.finalPrice)}
-                    </span>
-                  </div>
-                  <div className="text-small text-text-secondary">
-                    {counterpartyLabel}:{" "}
-                    <strong className="text-text">{counterparty.fullName}</strong>
-                  </div>
+                <div className="pt-1">
+                  <span className="label block">Giá thắng</span>
+                  <span className="text-price-lg text-primary-700 tabular">
+                    {formatMoney(order.finalPrice)}
+                  </span>
                 </div>
               </div>
             </div>

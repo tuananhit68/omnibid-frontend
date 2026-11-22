@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { CloseIcon, UploadIcon } from "../icons";
 
@@ -36,7 +36,16 @@ export function ImageUploader({
   className,
 }: ImageUploaderProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const blobUrlsRef = useRef<Set<string>>(new Set());
   const [localError, setLocalError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const urls = blobUrlsRef.current;
+    return () => {
+      urls.forEach((url) => URL.revokeObjectURL(url));
+      urls.clear();
+    };
+  }, []);
 
   const handleFilesSelected = (fileList: FileList | null) => {
     if (!fileList || fileList.length === 0) return;
@@ -60,9 +69,11 @@ export function ImageUploader({
         setLocalError("Mỗi ảnh tối đa 5 MB.");
         continue;
       }
+      const previewUrl = URL.createObjectURL(file);
+      blobUrlsRef.current.add(previewUrl);
       nextItems.push({
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-        previewUrl: URL.createObjectURL(file),
+        previewUrl,
         file,
       });
     }
@@ -81,6 +92,11 @@ export function ImageUploader({
   };
 
   const handleRemove = (id: string) => {
+    const removed = items.find((item) => item.id === id);
+    if (removed?.previewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(removed.previewUrl);
+      blobUrlsRef.current.delete(removed.previewUrl);
+    }
     const filtered = items
       .filter((item) => item.id !== id)
       .map((item, idx) => ({ ...item, isPrimary: idx === 0 }));
@@ -119,6 +135,8 @@ export function ImageUploader({
             <img
               src={item.previewUrl}
               alt={`Ảnh sản phẩm ${index + 1}`}
+              loading="lazy"
+              decoding="async"
               className="size-full object-cover"
             />
             {index === 0 ? (
@@ -131,7 +149,7 @@ export function ImageUploader({
                 <button
                   type="button"
                   onClick={() => handleSetPrimary(index)}
-                  className="absolute bottom-1.5 left-1.5 right-1.5 rounded-sm bg-surface/95 px-2 py-1 text-caption font-medium text-text hover:bg-primary-50 hover:text-primary-600"
+                  className="absolute bottom-1.5 left-1.5 right-1.5 min-h-9 rounded-sm bg-surface/95 px-2 py-1 text-caption font-medium text-text hover:bg-primary-50 hover:text-primary-600 focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
                 >
                   Đặt làm ảnh chính
                 </button>
@@ -142,7 +160,7 @@ export function ImageUploader({
                 type="button"
                 aria-label={`Xóa ảnh ${index + 1}`}
                 onClick={() => handleRemove(item.id)}
-                className="absolute right-1.5 top-1.5 flex size-7 items-center justify-center rounded-full bg-surface/90 text-text hover:bg-danger-bg hover:text-danger"
+                className="absolute right-1 top-1 flex size-11 md:size-8 items-center justify-center rounded-full bg-surface/90 text-text hover:bg-danger-bg hover:text-danger focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
               >
                 <CloseIcon className="size-4" />
               </button>
@@ -154,7 +172,7 @@ export function ImageUploader({
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="flex aspect-square flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-border-strong bg-surface-subtle p-3 text-text-secondary transition-colors hover:border-primary-600 hover:bg-primary-50 hover:text-primary-600"
+            className="flex aspect-square flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-border-strong bg-surface-subtle p-3 text-text-secondary transition-colors hover:border-primary-600 hover:bg-primary-50 hover:text-primary-600 focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
           >
             <UploadIcon className="size-5" />
             <span className="text-caption font-medium text-center">Thêm ảnh</span>
@@ -168,6 +186,8 @@ export function ImageUploader({
         accept="image/jpeg,image/png,image/webp"
         multiple
         disabled={disabled}
+        tabIndex={-1}
+        aria-hidden="true"
         className="sr-only"
         onChange={(e) => handleFilesSelected(e.target.files)}
       />

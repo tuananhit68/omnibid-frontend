@@ -6,7 +6,7 @@ export default function NotFound() {
   return (
     <PublicLayout>
       <div className="flex flex-col items-center justify-center py-16 md:py-24 text-center">
-        <span className="text-[64px] md:text-[96px] font-bold text-primary-700 tabular leading-none">
+        <span className="text-6xl md:text-8xl font-bold text-primary-700 tabular leading-none">
           404
         </span>
         <h1 className="mt-4 text-h2 font-semibold text-text">

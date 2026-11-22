@@ -105,7 +105,7 @@ export function BidForm({
                 setAmount(suggested);
                 if (errorMsg) setErrorMsg(null);
               }}
-              className="min-h-9 rounded-md border border-border-brand bg-surface-subtle px-3 py-1.5 text-caption font-medium text-text transition-colors hover:border-primary-600 hover:bg-primary-50 hover:text-primary-700 tabular disabled:opacity-50"
+              className="min-h-11 md:min-h-9 rounded-md border border-border-brand bg-surface-subtle px-3 py-1.5 text-caption font-medium text-text transition-colors hover:border-primary-600 hover:bg-primary-50 hover:text-primary-700 focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2 tabular disabled:opacity-50"
             >
               {formatMoney(suggested)}
             </button>

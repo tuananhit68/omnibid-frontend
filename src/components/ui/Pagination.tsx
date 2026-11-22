@@ -68,8 +68,8 @@ export function Pagination({
           disabled={page <= 0}
           onClick={() => onPageChange(page - 1)}
           className={cn(
-            "h-9 px-3 inline-flex items-center gap-1 text-small font-medium rounded-md border border-border transition-colors",
-            "focus-visible:outline-2 focus-visible:outline-focus",
+            "min-h-11 md:min-h-9 px-3 inline-flex items-center gap-1 text-small font-medium rounded-md border border-border transition-colors",
+            "focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2",
             page <= 0
               ? "opacity-40 cursor-not-allowed bg-surface"
               : "bg-surface text-text hover:bg-surface-subtle"
@@ -85,7 +85,7 @@ export function Pagination({
               return (
                 <span
                   key={`ellipsis-${idx}`}
-                  className="size-9 flex items-center justify-center text-text-tertiary"
+                  className="size-11 md:size-9 flex items-center justify-center text-text-tertiary"
                 >
                   …
                 </span>
@@ -100,8 +100,8 @@ export function Pagination({
                 aria-current={isCurrent ? "page" : undefined}
                 onClick={() => onPageChange(p - 1)}
                 className={cn(
-                  "size-9 inline-flex items-center justify-center text-small font-medium rounded-md transition-colors tabular",
-                  "focus-visible:outline-2 focus-visible:outline-focus",
+                  "size-11 md:size-9 inline-flex items-center justify-center text-small font-medium rounded-md transition-colors tabular",
+                  "focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2",
                   isCurrent
                     ? "bg-primary-600 text-text-inverse font-semibold"
                     : "bg-surface border border-border text-text hover:bg-surface-subtle"
@@ -118,8 +118,8 @@ export function Pagination({
           disabled={page >= totalPages - 1}
           onClick={() => onPageChange(page + 1)}
           className={cn(
-            "h-9 px-3 inline-flex items-center gap-1 text-small font-medium rounded-md border border-border transition-colors",
-            "focus-visible:outline-2 focus-visible:outline-focus",
+            "min-h-11 md:min-h-9 px-3 inline-flex items-center gap-1 text-small font-medium rounded-md border border-border transition-colors",
+            "focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2",
             page >= totalPages - 1
               ? "opacity-40 cursor-not-allowed bg-surface"
               : "bg-surface text-text hover:bg-surface-subtle"

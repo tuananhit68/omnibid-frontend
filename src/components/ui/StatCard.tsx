@@ -50,7 +50,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(
           {icon && (
             <div
               className={cn(
-                "size-10 rounded-[10px] flex items-center justify-center shrink-0 [&>svg]:size-5",
+                "size-10 rounded-lg flex items-center justify-center shrink-0 [&>svg]:size-5",
                 iconToneStyles[tone]
               )}
             >
@@ -60,7 +60,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(
         </div>
 
         <div className="mt-3">
-          <div className="text-h1 font-bold tabular text-text whitespace-nowrap">
+          <div className="text-h2 xl:text-h1 font-bold tabular text-text break-words">
             {value}
           </div>
           {subText && (

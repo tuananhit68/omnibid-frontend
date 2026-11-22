@@ -44,15 +44,26 @@ export function DateTimeInput({
 }: DateTimeInputProps) {
   const autoId = useId();
   const inputId = id || autoId;
+  const helperId = `${inputId}-helper`;
+  const errorId = `${inputId}-error`;
   const localVal = toLocalInputValue(value);
   const localMin = min ? toLocalInputValue(min) : undefined;
+  const describedBy = [
+    error ? errorId : null,
+    helperText && !error ? helperId : null,
+  ]
+    .filter(Boolean)
+    .join(" ") || undefined;
 
   return (
     <div className={cn("w-full space-y-1.5", className)}>
       {label && (
-        <label htmlFor={inputId} className="label block">
+        <label
+          htmlFor={inputId}
+          className="block text-small font-semibold text-text select-none"
+        >
           {label}
-          {required && <span className="text-danger ml-0.5">*</span>}
+          {required && <span className="ml-1 text-danger">*</span>}
         </label>
       )}
       <input
@@ -72,11 +83,12 @@ export function DateTimeInput({
           onChange(toBackendDateTimeString(raw));
         }}
         aria-invalid={error ? "true" : undefined}
+        aria-describedby={describedBy}
         className={cn(
-          "h-11 w-full rounded-md border bg-surface-subtle px-3.5 text-body text-text tabular transition-colors",
-          "focus:bg-surface focus:outline-2 focus:outline-focus focus:outline-offset-0",
+          "h-11 w-full rounded-md border bg-surface-subtle px-3.5 text-body-lg md:text-body text-text tabular transition-colors",
+          "focus-visible:border-primary-600 focus-visible:bg-surface focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2",
           "disabled:cursor-not-allowed disabled:text-text-disabled disabled:opacity-70",
-          error ? "border-danger" : "border-border-brand"
+          error ? "border-danger focus-visible:border-danger focus-visible:outline-danger" : "border-border-brand"
         )}
       />
       {value && !error && (
@@ -85,10 +97,10 @@ export function DateTimeInput({
         </p>
       )}
       {helperText && !error && (
-        <p className="text-caption text-text-tertiary">{helperText}</p>
+        <p id={helperId} className="text-caption text-text-tertiary">{helperText}</p>
       )}
       {error && (
-        <p role="alert" className="text-caption text-danger">
+        <p id={errorId} role="alert" className="text-caption text-danger">
           {error}
         </p>
       )}

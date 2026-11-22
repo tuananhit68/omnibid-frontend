@@ -117,24 +117,26 @@ export function PublicHeader() {
           </nav>
         </div>
 
-        {/* Ô tìm kiếm */}
-        <form
-          onSubmit={handleSearch}
-          role="search"
-          className="hidden sm:flex flex-1 max-w-sm items-center"
-        >
-          <div className="relative w-full">
-            <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-placeholder" />
-            <input
-              type="search"
-              value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
-              placeholder="Tìm phiên đấu giá…"
-              aria-label="Tìm phiên đấu giá"
-              className="h-10 w-full rounded-md border border-border-brand bg-surface-subtle pl-9 pr-3 text-small text-text placeholder:text-text-placeholder focus:bg-surface focus:outline-2 focus:outline-focus"
-            />
-          </div>
-        </form>
+        {/* Ô tìm kiếm (ẩn trên trang chủ vì hero đã có ô tìm kiếm chính) */}
+        {pathname !== "/" && (
+          <form
+            onSubmit={handleSearch}
+            role="search"
+            className="hidden sm:flex flex-1 max-w-sm items-center"
+          >
+            <div className="relative w-full">
+              <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-placeholder" />
+              <input
+                type="search"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                placeholder="Tìm phiên đấu giá…"
+                aria-label="Tìm phiên đấu giá"
+                className="h-10 w-full rounded-md border border-border-brand bg-surface-subtle pl-9 pr-3 text-body-lg md:text-small text-text placeholder:text-text-placeholder focus-visible:bg-surface focus-visible:border-primary-600 focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
+              />
+            </div>
+          </form>
+        )}
 
         {/* Khu vực hành động theo vai trò */}
         <div className="flex items-center gap-2">
@@ -329,17 +331,17 @@ export function PublicHeader() {
               onChange={(e) => setKeyword(e.target.value)}
               placeholder="Tìm phiên đấu giá…"
               aria-label="Tìm phiên đấu giá"
-              className="h-11 w-full rounded-md border border-border-brand bg-surface-subtle pl-9 pr-3 text-body text-text placeholder:text-text-placeholder"
+              className="h-11 w-full rounded-md border border-border-brand bg-surface-subtle pl-9 pr-3 text-body-lg md:text-body text-text placeholder:text-text-placeholder"
             />
           </form>
 
-          <nav className="flex flex-col gap-1">
+          <nav aria-label="Điều hướng di động" className="flex flex-col gap-1">
             {PUBLIC_NAV.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileNavOpen(false)}
-                className="rounded-md px-3 py-2.5 text-body font-medium text-text hover:bg-surface-subtle"
+                className="flex min-h-11 items-center rounded-md px-3 py-2 text-body font-medium text-text hover:bg-surface-subtle"
               >
                 {item.label}
               </Link>
@@ -352,14 +354,14 @@ export function PublicHeader() {
                 <Link
                   href="/register"
                   onClick={() => setMobileNavOpen(false)}
-                  className={getButtonClassName({ variant: "secondary", size: "md" })}
+                  className={getButtonClassName({ variant: "secondary", size: "lg" })}
                 >
                   Đăng ký
                 </Link>
                 <Link
                   href="/login"
                   onClick={() => setMobileNavOpen(false)}
-                  className={getButtonClassName({ variant: "primary", size: "md" })}
+                  className={getButtonClassName({ variant: "primary", size: "lg" })}
                 >
                   Đăng nhập
                 </Link>
@@ -369,21 +371,21 @@ export function PublicHeader() {
                 <Link
                   href="/admin"
                   onClick={() => setMobileNavOpen(false)}
-                  className="rounded-md px-3 py-2.5 text-body font-medium text-primary-600 hover:bg-primary-50"
+                  className="flex min-h-11 items-center rounded-md px-3 py-2 text-body font-medium text-primary-600 hover:bg-primary-50"
                 >
                   Trang quản trị
                 </Link>
                 <Link
                   href="/admin/profile"
                   onClick={() => setMobileNavOpen(false)}
-                  className="rounded-md px-3 py-2.5 text-body text-text hover:bg-surface-subtle"
+                  className="flex min-h-11 items-center rounded-md px-3 py-2 text-body text-text hover:bg-surface-subtle"
                 >
                   Hồ sơ cá nhân
                 </Link>
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="rounded-md px-3 py-2.5 text-left text-body font-medium text-danger hover:bg-danger-bg"
+                  className="flex min-h-11 items-center rounded-md px-3 py-2 text-left text-body font-medium text-danger hover:bg-danger-bg"
                 >
                   Đăng xuất (mọi thiết bị)
                 </button>
@@ -393,28 +395,42 @@ export function PublicHeader() {
                 <Link
                   href="/me/profile"
                   onClick={() => setMobileNavOpen(false)}
-                  className="rounded-md px-3 py-2.5 text-body text-text hover:bg-surface-subtle"
+                  className="flex min-h-11 items-center rounded-md px-3 py-2 text-body text-text hover:bg-surface-subtle"
                 >
                   Tài khoản ({user.fullName})
                 </Link>
                 <Link
+                  href="/me/products"
+                  onClick={() => setMobileNavOpen(false)}
+                  className="flex min-h-11 items-center rounded-md px-3 py-2 text-body text-text hover:bg-surface-subtle"
+                >
+                  Sản phẩm của tôi
+                </Link>
+                <Link
+                  href="/me/auctions"
+                  onClick={() => setMobileNavOpen(false)}
+                  className="flex min-h-11 items-center rounded-md px-3 py-2 text-body text-text hover:bg-surface-subtle"
+                >
+                  Phiên của tôi
+                </Link>
+                <Link
                   href="/me/bids"
                   onClick={() => setMobileNavOpen(false)}
-                  className="rounded-md px-3 py-2.5 text-body text-text hover:bg-surface-subtle"
+                  className="flex min-h-11 items-center rounded-md px-3 py-2 text-body text-text hover:bg-surface-subtle"
                 >
                   Lượt đặt giá
                 </Link>
                 <Link
                   href="/me/orders"
                   onClick={() => setMobileNavOpen(false)}
-                  className="rounded-md px-3 py-2.5 text-body text-text hover:bg-surface-subtle"
+                  className="flex min-h-11 items-center rounded-md px-3 py-2 text-body text-text hover:bg-surface-subtle"
                 >
                   Đơn hàng
                 </Link>
                 <Link
                   href="/me/notifications"
                   onClick={() => setMobileNavOpen(false)}
-                  className="flex items-center justify-between rounded-md px-3 py-2.5 text-body text-text hover:bg-surface-subtle"
+                  className="flex min-h-11 items-center justify-between rounded-md px-3 py-2 text-body text-text hover:bg-surface-subtle"
                 >
                   <span>Thông báo</span>
                   <NotificationUnreadBadge />
@@ -422,7 +438,7 @@ export function PublicHeader() {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="rounded-md px-3 py-2.5 text-left text-body font-medium text-danger hover:bg-danger-bg"
+                  className="flex min-h-11 items-center rounded-md px-3 py-2 text-left text-body font-medium text-danger hover:bg-danger-bg"
                 >
                   Đăng xuất (mọi thiết bị)
                 </button>

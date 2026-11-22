@@ -196,9 +196,10 @@ export function AdminReportsClient() {
                   {/* Desktop: chọn mở panel phải */}
                   <button
                     type="button"
+                    aria-current={selected ? "true" : undefined}
                     onClick={() => updateUrl({ id: item.id })}
                     className={cn(
-                      "hidden lg:block w-full rounded-xl border p-4 text-left transition-colors",
+                      "hidden lg:block w-full rounded-xl border p-4 text-left transition-colors focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2",
                       selected
                         ? "border-primary-600 bg-primary-50/50"
                         : "border-border-brand bg-surface hover:bg-surface-subtle/60"

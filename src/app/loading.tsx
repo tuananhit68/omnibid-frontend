@@ -17,7 +17,7 @@ export default function Loading() {
             </div>
           </div>
           <div className="lg:col-span-5">
-            <Skeleton className="h-[480px] w-full rounded-xl" />
+            <Skeleton className="h-96 w-full rounded-xl" />
           </div>
         </div>
 

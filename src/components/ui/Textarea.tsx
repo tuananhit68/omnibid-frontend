@@ -84,11 +84,11 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           aria-invalid={hasError ? "true" : undefined}
           aria-describedby={describedBy}
           className={cn(
-            "w-full p-3.5 text-body text-text placeholder:text-text-placeholder transition-colors rounded-md",
-            "bg-surface-subtle border border-border-brand outline-none resize-y",
-            "focus-visible:border-primary-600 focus-visible:ring-2 focus-visible:ring-focus/20",
+            "w-full p-3.5 text-body-lg md:text-body text-text placeholder:text-text-placeholder transition-colors rounded-md",
+            "bg-surface-subtle border border-border-brand resize-y",
+            "focus-visible:border-primary-600 focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2",
             "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-muted",
-            hasError && "border-danger focus-visible:border-danger focus-visible:ring-danger/20",
+            hasError && "border-danger focus-visible:border-danger focus-visible:outline-danger",
             className
           )}
           {...props}

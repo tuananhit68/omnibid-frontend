@@ -84,7 +84,7 @@ function resolveStatusMeta(
 
   if (!statusType || !value) {
     return {
-      label: explicitLabel || value || "--",
+      label: explicitLabel || value || "—",
       tone: explicitTone || "neutral",
       isAuction: false,
     };

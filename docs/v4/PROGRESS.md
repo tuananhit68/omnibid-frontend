@@ -68,6 +68,21 @@ Thực thi qua toàn bộ mock handler thực tế + kiểm tra lược đồ zo
   - Đã sửa và kiểm tra lại 4 lỗi hiển thị phát hiện khi test trực quan: (1) ẩn link `"Xem sàn đấu giá"` khỏi header admin `< sm` và đưa vào drawer mobile (`AdminLayout.tsx`), (2) đổi lưới KPI `/admin` sang `lg:grid-cols-3 2xl:grid-cols-5` + `StatCard` dùng `text-h1 font-bold whitespace-nowrap`, (3) thêm `overflow-y-hidden` và `.no-scrollbar` cho `Tabs.tsx`, (4) sửa `pl-3.5 pr-10` + `::picker-icon` + mở rộng ô lọc thông báo `sm:w-64`.
   - Bảng dữ liệu nhiều cột ở các trang quản trị/tài khoản cuộn ngang an toàn trong vùng `overflow-x-auto` riêng mà không làm tràn khung trang.
 
+## Nâng cấp giao diện bằng Impeccable (`feature/fe-polish`, 2026-11-22)
+- Nhánh gốc: `develop` · Nhánh làm việc: `feature/fe-polish` · Tuân thủ nghiêm `.agents/rules/design-skills.md` (giữ nguyên toàn bộ bảng màu `tokens.css`, không đổi hợp đồng/nghiệp vụ).
+- **Bước 0–2 (Baseline & Audit/Critique độc lập):** Audit ban đầu `13/20`, Critique `28/40` (0 P0 · 7 P1 · 8 P2 · 2 P3); tạo ngữ cảnh `PRODUCT.md`, `DESIGN.md`.
+- **Bước 3 (`1fc5dbd` — UI Kit & 4 Layout):** thay quy tắc `0.01ms` `prefers-reduced-motion` bằng reduced-motion có chủ đích + `::selection`/`caret-color` trong `src/styles/tokens.css`; chuẩn hóa focus ring `outline-2 outline-focus outline-offset-2`; bổ sung `useDialogFocusTrap` cho drawer `AccountLayout`/`AdminLayout`; sửa `:not([disabled])` ở `Modal`; hoàn thiện WAI-ARIA `Tabs`/`SegmentedControl`/`DateTimeInput`/`ImageUploader`; nâng input mobile `>= 16px` và vùng bấm mobile `>= 44×44px`; sửa tràn mép phải `Toast`; thêm `/me/products` và `/me/auctions` vào menu mobile `PublicLayout`; bỏ 19 class arbitrary `[...]` và `text-white`; thống nhất `"—"` ở `DataTable`/`StatusBadge`; sửa bọc dòng `StatCard`; giải phóng `URL.createObjectURL`; memoize `ToastContext`; thêm `.agents/**` vào `eslint.config.mjs`.
+- **Bước 4 (`6dd704b` — Public & Auth):** ẩn ô tìm kiếm trùng trên header ở `/`; tách `useSharedNowMs()` sang `ActiveAuctionMeta` chỉ chạy khi phiên `ACTIVE`; bỏ Tab stop trùng trên ảnh `AuctionCard`; nâng chip đặt giá nhanh & nút lọc mobile `>= 44px`; thêm kiểm tra `minPrice > maxPrice` ở `FilterPanel`; thêm `scope="col"` ở `BidHistoryTable`; thêm `fetchPriority="high"` ảnh chính + `loading="lazy" decoding="async"` cho ảnh thẻ/thumbnail; thêm tooltip giải thích `ReserveBadge`.
+- **Bước 5 (`2625b63` — Bán hàng):** nâng vùng bấm mobile `>= 44px` + focus ring ở `MyProductsClient`, `MyAuctionsClient`, `ProductFormClient`; `loading="lazy" decoding="async"` cho toàn bộ thumbnail bán hàng.
+- **Bước 6 (`ae6a199` — Mua hàng, Đơn hàng & Thông báo):** nâng `NotificationBell` lên `44×44px` + gắn `useDialogFocusTrap`; ánh xạ `failureReason` thanh toán sang tiếng Việt (không lộ `MOCK_DECLINED`) và cảnh báo/chặn bấm nhầm `Thanh toán` khi form nhận hàng `isDirty` ở `OrderBuyerPendingCard`; lược bỏ dòng đối tác lặp lại trong thẻ tóm tắt `OrderDetailClient`; `loading="lazy" decoding="async"` cho thumbnail đơn hàng/lượt đặt giá.
+- **Bước 7 (`95b07a4` — Quản trị):** sửa 2 class sai token ở `AdminDashboardClient` (`bg-neutral-400` → `bg-neutral`, `bg-tertiary-500` → `bg-tertiary-600`), gỡ `focus:outline-none` và gắn `focus-visible` ring cho 4 KPI `<Link>`; thêm `aria-current="true"` ở `AdminReportsClient`; thay `aspect-[4/3]` → `aspect-4/3` và thêm `aria-label`/`aria-current` thumbnail ở `AdminProductDetailClient`.
+- **Bước 8 (Kiểm tra tổng thể):**
+  - `npm run lint`: PASS (0 lỗi, 4 cảnh báo `window.location.href` cũ).
+  - `npm run typecheck`: PASS (0 lỗi).
+  - `npm run build`: PASS (34/34 routes, Next.js 16.4.5 Turbopack).
+  - `verify-fe-v4.ps1`: 8/9 PASS (chỉ cảnh báo `OrderDetail.viewerRole` đã ghi nhận từ Phase 1).
+  - Quét hồi quy tĩnh `src/`: 0 `focus:outline-none`, 0 `bg-neutral-400`/`bg-tertiary-500`, 0 `0.01ms`, 0 `text-white`, 0 `MOCK_DECLINED`.
+
 ## Cần backend (khối bị ẩn vì thiếu API)
 
 ## Việc tồn

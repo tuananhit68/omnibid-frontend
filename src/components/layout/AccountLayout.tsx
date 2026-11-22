@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useEffect, type ReactNode } from "react";
+import { Suspense, useCallback, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
@@ -8,6 +8,7 @@ import { useUnreadNotificationCount } from "@/features/notification/hooks";
 import { SkipLink } from "./SkipLink";
 import { PublicFooter, PublicHeader } from "./PublicLayout";
 import { Breadcrumb } from "../ui/Breadcrumb";
+import { useDialogFocusTrap } from "../ui/useDialogFocusTrap";
 import {
   BellIcon,
   BoxIcon,
@@ -45,16 +46,12 @@ function AccountLayoutInner({
 }: AccountLayoutProps) {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const drawerRef = useRef<HTMLDivElement | null>(null);
+  const closeDrawer = useCallback(() => setDrawerOpen(false), []);
   const { unreadCount: fetchedUnread } = useUnreadNotificationCount();
   const unreadCount = unreadNotifications ?? fetchedUnread;
 
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setDrawerOpen(false);
-    };
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, []);
+  useDialogFocusTrap(drawerOpen, drawerRef, closeDrawer);
 
   const currentLabel = resolveCurrentSectionLabel(pathname);
 
@@ -113,7 +110,7 @@ function AccountLayoutInner({
             type="button"
             onClick={() => setDrawerOpen(true)}
             aria-label="Mở danh mục tài khoản"
-            className="inline-flex h-10 items-center gap-2 rounded-md border border-border-brand bg-surface px-3 text-small font-medium text-text lg:hidden hover:bg-surface-subtle"
+            className="inline-flex h-11 items-center gap-2 rounded-md border border-border-brand bg-surface px-3 text-small font-medium text-text lg:hidden hover:bg-surface-subtle"
           >
             <MenuIcon className="size-4" />
             <span>Tài khoản</span>
@@ -137,21 +134,24 @@ function AccountLayoutInner({
             >
               <div
                 className="fixed inset-0 bg-overlay"
-                onClick={() => setDrawerOpen(false)}
+                onClick={closeDrawer}
               />
-              <div className="relative z-10 flex w-72 max-w-full flex-col bg-surface p-4 shadow-lg">
+              <div
+                ref={drawerRef}
+                className="relative z-10 flex w-72 max-w-full flex-col bg-surface p-4 shadow-lg"
+              >
                 <div className="mb-4 flex items-center justify-between">
                   <span className="text-h3 text-text">Tài khoản</span>
                   <button
                     type="button"
                     aria-label="Đóng danh mục tài khoản"
-                    onClick={() => setDrawerOpen(false)}
-                    className="inline-flex size-10 items-center justify-center rounded-md text-text-secondary hover:bg-surface-subtle"
+                    onClick={closeDrawer}
+                    className="inline-flex size-11 items-center justify-center rounded-md text-text-secondary hover:bg-surface-subtle"
                   >
                     <CloseIcon className="size-5" />
                   </button>
                 </div>
-                {renderNavLinks(() => setDrawerOpen(false))}
+                {renderNavLinks(closeDrawer)}
               </div>
             </div>
           )}

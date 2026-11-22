@@ -35,7 +35,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
         <label
           htmlFor={id}
           className={cn(
-            "inline-flex items-center gap-3 min-h-[44px] cursor-pointer select-none",
+            "inline-flex items-center gap-3 min-h-11 cursor-pointer select-none",
             disabled && "cursor-not-allowed opacity-50"
           )}
         >
@@ -53,7 +53,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
               className={cn(
                 "size-4.5 rounded-full border border-border-strong bg-surface transition-colors flex items-center justify-center",
                 "peer-checked:border-primary-600 peer-checked:bg-surface peer-checked:[&>div]:opacity-100",
-                "peer-focus-visible:ring-2 peer-focus-visible:ring-focus/30 peer-focus-visible:ring-offset-2",
+                "peer-focus-visible:outline-2 peer-focus-visible:outline-focus peer-focus-visible:outline-offset-2",
                 error && "border-danger"
               )}
             >

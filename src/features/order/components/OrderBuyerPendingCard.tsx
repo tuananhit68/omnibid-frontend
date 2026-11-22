@@ -119,8 +119,22 @@ export function OrderBuyerPendingCard({
     );
   };
 
+function formatPaymentFailureReason(reason?: string | null): string {
+  switch (reason) {
+    case "MOCK_DECLINED":
+    case "CARD_DECLINED":
+      return "thẻ bị từ chối";
+    case "INSUFFICIENT_FUNDS":
+      return "số dư không đủ";
+    case "EXPIRED_CARD":
+      return "thẻ đã hết hạn";
+    default:
+      return "giao dịch không được chấp nhận";
+  }
+}
+
   const handlePay = () => {
-    if (paymentMutation.isPending || isDeadlinePassed) return;
+    if (paymentMutation.isPending || isDeadlinePassed || isDirty) return;
 
     setPaymentError(null);
     setIsNetworkRetry(false);
@@ -145,9 +159,9 @@ export function OrderBuyerPendingCard({
             toast.success("Thanh toán thành công!");
             setPaymentError(null);
           } else {
-            const reason = res.failureReason ?? "MOCK_DECLINED";
+            const reasonText = formatPaymentFailureReason(res.failureReason);
             setPaymentError(
-              `Thanh toán thất bại (${reason}), bạn có thể thử lại trước hạn.`
+              `Thanh toán thất bại (${reasonText}), bạn có thể thử lại trước hạn.`
             );
           }
         },
@@ -381,13 +395,25 @@ export function OrderBuyerPendingCard({
           </div>
         )}
 
+        {isDirty && !isDeadlinePassed && (
+          <div
+            role="status"
+            className="flex items-start gap-2.5 rounded-lg border border-warning-border bg-warning-subtle-bg px-3.5 py-3 text-small text-warning-strong"
+          >
+            <InfoIcon className="mt-0.5 size-4 shrink-0" />
+            <span>
+              Bạn có thay đổi thông tin nhận hàng chưa lưu. Vui lòng bấm &ldquo;Lưu thông tin nhận hàng&rdquo; trước khi thanh toán.
+            </span>
+          </div>
+        )}
+
         <Button
           type="button"
           variant="money"
           size="xl"
           className="w-full"
           loading={paymentMutation.isPending}
-          disabled={isDeadlinePassed}
+          disabled={isDeadlinePassed || isDirty}
           onClick={handlePay}
         >
           Thanh toán {formatMoney(order.finalPrice)}

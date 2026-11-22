@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
@@ -9,6 +9,7 @@ import { useSession } from "@/lib/auth/session";
 import { getErrorMessage } from "@/lib/errors";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { useDialogFocusTrap } from "@/components/ui/useDialogFocusTrap";
 import { BellIcon } from "@/components/icons";
 import {
   useMarkNotificationRead,
@@ -41,13 +42,17 @@ export function NotificationBell({ className }: NotificationBellProps) {
   const pathname = usePathname();
   const popoverId = useId();
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const popoverRef = useRef<HTMLDivElement | null>(null);
   const [openedPathname, setOpenedPathname] = useState<string | null>(null);
   const open = openedPathname === pathname;
+  const closePopover = useCallback(() => setOpenedPathname(null), []);
 
   const isUser = ready && isAuthenticated && !isAdmin;
   const { unreadCount } = useUnreadNotificationCount();
   const recentQuery = useRecentNotifications(open);
   const markReadMutation = useMarkNotificationRead();
+
+  useDialogFocusTrap(open, popoverRef, closePopover, { lockScroll: false });
 
   useEffect(() => {
     if (!open) return;
@@ -57,22 +62,15 @@ export function NotificationBell({ className }: NotificationBellProps) {
         containerRef.current &&
         !containerRef.current.contains(e.target as Node)
       ) {
-        setOpenedPathname(null);
-      }
-    };
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setOpenedPathname(null);
+        closePopover();
       }
     };
 
     document.addEventListener("mousedown", handleOutside);
-    document.addEventListener("keydown", handleEsc);
     return () => {
       document.removeEventListener("mousedown", handleOutside);
-      document.removeEventListener("keydown", handleEsc);
     };
-  }, [open]);
+  }, [open, closePopover]);
 
   if (!isUser) return null;
 
@@ -89,7 +87,7 @@ export function NotificationBell({ className }: NotificationBellProps) {
         aria-haspopup="dialog"
         aria-controls={popoverId}
         className={cn(
-          "relative inline-flex size-10 items-center justify-center rounded-md transition-colors",
+          "relative inline-flex size-11 items-center justify-center rounded-md transition-colors focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2",
           open
             ? "bg-primary-50 text-primary-600"
             : "text-text-secondary hover:bg-surface-subtle hover:text-text"
@@ -108,6 +106,7 @@ export function NotificationBell({ className }: NotificationBellProps) {
 
       {open && (
         <div
+          ref={popoverRef}
           id={popoverId}
           role="dialog"
           aria-label="Thông báo mới nhất"

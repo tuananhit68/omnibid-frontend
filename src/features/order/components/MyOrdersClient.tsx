@@ -146,6 +146,8 @@ export function MyOrdersClient() {
                 <img
                   src={row.primaryImageUrl}
                   alt={row.title}
+                  loading="lazy"
+                  decoding="async"
                   className="size-full object-cover"
                 />
               ) : null}

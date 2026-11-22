@@ -590,6 +590,8 @@ function ProductEditForm({ product, categories, onRefresh }: ProductEditFormProp
                   <img
                     src={img.imageUrl}
                     alt={`Ảnh sản phẩm ${idx + 1}`}
+                    loading="lazy"
+                    decoding="async"
                     className="size-full object-cover"
                   />
                   {img.isPrimary && (
@@ -607,7 +609,7 @@ function ProductEditForm({ product, categories, onRefresh }: ProductEditFormProp
                         : "Sản phẩm phải giữ lại ít nhất 1 ảnh"
                     }
                     onClick={() => setDeleteImageTarget(img)}
-                    className="absolute right-1.5 top-1.5 flex size-7 items-center justify-center rounded-full bg-surface/90 text-text hover:bg-danger-bg hover:text-danger disabled:cursor-not-allowed disabled:opacity-40"
+                    className="absolute right-1 top-1 flex size-11 md:size-8 items-center justify-center rounded-full bg-surface/90 text-text hover:bg-danger-bg hover:text-danger focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     <CloseIcon className="size-4" />
                   </button>
@@ -620,7 +622,7 @@ function ProductEditForm({ product, categories, onRefresh }: ProductEditFormProp
                 type="button"
                 disabled={addImagesMutation.isPending}
                 onClick={() => fileInputRef.current?.click()}
-                className="flex aspect-square flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-border-strong bg-surface-subtle p-3 text-text-secondary transition-colors hover:border-primary-600 hover:bg-primary-50 hover:text-primary-600 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex aspect-square flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-border-strong bg-surface-subtle p-3 text-text-secondary transition-colors hover:border-primary-600 hover:bg-primary-50 hover:text-primary-600 focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <UploadIcon className="size-5" />
                 <span className="text-caption font-medium text-center">Thêm ảnh</span>
@@ -633,6 +635,8 @@ function ProductEditForm({ product, categories, onRefresh }: ProductEditFormProp
             type="file"
             accept="image/jpeg,image/png,image/webp"
             multiple
+            tabIndex={-1}
+            aria-hidden="true"
             disabled={addImagesMutation.isPending}
             className="sr-only"
             onChange={(e) => handleAddFiles(e.target.files)}

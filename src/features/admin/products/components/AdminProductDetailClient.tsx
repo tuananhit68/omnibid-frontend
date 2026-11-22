@@ -107,7 +107,7 @@ export function AdminProductDetailClient({ productId }: { productId: number }) {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Thư viện ảnh */}
         <Card className="p-4 lg:col-span-5 space-y-3">
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-border-subtle bg-surface-subtle">
+          <div className="relative aspect-4/3 w-full overflow-hidden rounded-lg border border-border-subtle bg-surface-subtle">
             {activeImage ? (
               <Image
                 src={activeImage.imageUrl}
@@ -129,9 +129,11 @@ export function AdminProductDetailClient({ productId }: { productId: number }) {
                 <button
                   key={img.id}
                   type="button"
+                  aria-label={`Xem ảnh ${idx + 1}`}
+                  aria-current={idx === safeIndex ? "true" : undefined}
                   onClick={() => setSelectedIndex(idx)}
                   className={cn(
-                    "relative aspect-square overflow-hidden rounded-md border bg-surface-subtle",
+                    "relative aspect-square overflow-hidden rounded-md border bg-surface-subtle focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2",
                     idx === safeIndex
                       ? "border-primary-600 ring-2 ring-primary-100"
                       : "border-border-subtle hover:border-border-brand"

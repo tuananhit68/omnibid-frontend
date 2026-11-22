@@ -30,8 +30,8 @@ const TONE_BAR_CLASS: Record<StatusTone, string> = {
   success: "bg-success",
   warning: "bg-warning",
   danger: "bg-danger",
-  neutral: "bg-neutral-400",
-  tertiary: "bg-tertiary-500",
+  neutral: "bg-neutral",
+  tertiary: "bg-tertiary-600",
 };
 
 const AUCTION_STATUS_ORDER: AuctionStatus[] = [
@@ -172,7 +172,10 @@ export function AdminDashboardClient() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
-        <Link href="/admin/users" className="block focus:outline-none">
+        <Link
+          href="/admin/users"
+          className="block rounded-xl focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
+        >
           <StatCard
             label="Người dùng"
             value={formatNumber(data.totalUsers)}
@@ -183,7 +186,10 @@ export function AdminDashboardClient() {
           />
         </Link>
 
-        <Link href="/admin/auctions" className="block focus:outline-none">
+        <Link
+          href="/admin/auctions"
+          className="block rounded-xl focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
+        >
           <StatCard
             label="Phiên đấu giá"
             value={formatNumber(totalAuctions)}
@@ -194,7 +200,10 @@ export function AdminDashboardClient() {
           />
         </Link>
 
-        <Link href="/admin/orders" className="block focus:outline-none">
+        <Link
+          href="/admin/orders"
+          className="block rounded-xl focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
+        >
           <StatCard
             label="Đơn hàng"
             value={formatNumber(totalOrders)}
@@ -214,7 +223,10 @@ export function AdminDashboardClient() {
           className="h-full"
         />
 
-        <Link href="/admin/reports" className="block focus:outline-none">
+        <Link
+          href="/admin/reports"
+          className="block rounded-xl focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
+        >
           <StatCard
             label="Báo cáo chờ xử lý"
             value={formatNumber(data.pendingReports)}

@@ -106,14 +106,14 @@ export function MyAuctionsClient() {
     <div className="flex flex-wrap items-center gap-2">
       <Link
         href={`/me/auctions/${row.id}`}
-        className="inline-flex h-8 items-center rounded-md bg-primary-600 px-2.5 text-caption font-medium text-text-inverse hover:bg-primary-700 transition-colors"
+        className="inline-flex min-h-11 md:min-h-8 items-center rounded-md bg-primary-600 px-3 md:px-2.5 text-small md:text-caption font-medium text-text-inverse hover:bg-primary-700 transition-colors focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
       >
         Quản lý
       </Link>
       {row.orderId !== null && (
         <Link
           href={`/orders/${row.orderId}`}
-          className="inline-flex h-8 items-center rounded-md border border-border-brand bg-surface px-2.5 text-caption font-medium text-primary-600 hover:bg-primary-50 transition-colors"
+          className="inline-flex min-h-11 md:min-h-8 items-center rounded-md border border-border-brand bg-surface px-3 md:px-2.5 text-small md:text-caption font-medium text-primary-600 hover:bg-primary-50 transition-colors focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
         >
           Xem đơn
         </Link>
@@ -133,6 +133,8 @@ export function MyAuctionsClient() {
               <img
                 src={row.primaryImageUrl}
                 alt={row.title}
+                loading="lazy"
+                decoding="async"
                 className="size-full object-cover"
               />
             ) : (
@@ -364,6 +366,8 @@ export function MyAuctionsClient() {
                             <img
                               src={row.primaryImageUrl}
                               alt={row.title}
+                              loading="lazy"
+                              decoding="async"
                               className="size-full object-cover"
                             />
                           ) : (

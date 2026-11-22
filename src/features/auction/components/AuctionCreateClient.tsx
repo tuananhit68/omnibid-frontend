@@ -109,6 +109,8 @@ export function AuctionCreateClient() {
               <img
                 src={product.primaryImageUrl}
                 alt={product.title}
+                loading="lazy"
+                decoding="async"
                 className="size-full object-cover"
               />
             ) : (

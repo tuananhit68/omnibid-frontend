@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useRef, useEffect, type ReactNode } from "react";
+import { Suspense, useCallback, useState, useRef, useEffect, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
@@ -10,6 +10,7 @@ import { Logo } from "./Logo";
 import { SkipLink } from "./SkipLink";
 import { MockModeBanner } from "./MockModeBanner";
 import { Avatar } from "../ui/Avatar";
+import { useDialogFocusTrap } from "../ui/useDialogFocusTrap";
 import {
   BoxIcon,
   ChevronDownIcon,
@@ -47,6 +48,10 @@ function AdminLayoutInner({ children, pendingReports = 0 }: AdminLayoutProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const drawerRef = useRef<HTMLDivElement | null>(null);
+  const closeDrawer = useCallback(() => setDrawerOpen(false), []);
+
+  useDialogFocusTrap(drawerOpen, drawerRef, closeDrawer);
 
   useEffect(() => {
     const handleOutside = (e: MouseEvent) => {
@@ -57,7 +62,6 @@ function AdminLayoutInner({ children, pendingReports = 0 }: AdminLayoutProps) {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setMenuOpen(false);
-        setDrawerOpen(false);
       }
     };
     document.addEventListener("mousedown", handleOutside);
@@ -121,7 +125,7 @@ function AdminLayoutInner({ children, pendingReports = 0 }: AdminLayoutProps) {
               type="button"
               aria-label="Mở menu quản trị"
               onClick={() => setDrawerOpen(true)}
-              className="inline-flex size-10 items-center justify-center rounded-md text-text lg:hidden hover:bg-surface-subtle"
+              className="inline-flex size-11 items-center justify-center rounded-md text-text lg:hidden hover:bg-surface-subtle"
             >
               <MenuIcon className="size-5" />
             </button>
@@ -204,26 +208,29 @@ function AdminLayoutInner({ children, pendingReports = 0 }: AdminLayoutProps) {
           >
             <div
               className="fixed inset-0 bg-overlay"
-              onClick={() => setDrawerOpen(false)}
+              onClick={closeDrawer}
             />
-            <div className="relative z-10 flex w-72 max-w-full flex-col bg-surface p-4 shadow-lg">
+            <div
+              ref={drawerRef}
+              className="relative z-10 flex w-72 max-w-full flex-col bg-surface p-4 shadow-lg"
+            >
               <div className="mb-4 flex items-center justify-between">
                 <Logo href="/admin" />
                 <button
                   type="button"
                   aria-label="Đóng menu quản trị"
-                  onClick={() => setDrawerOpen(false)}
-                  className="inline-flex size-10 items-center justify-center rounded-md text-text-secondary hover:bg-surface-subtle"
+                  onClick={closeDrawer}
+                  className="inline-flex size-11 items-center justify-center rounded-md text-text-secondary hover:bg-surface-subtle"
                 >
                   <CloseIcon className="size-5" />
                 </button>
               </div>
-              {renderNavLinks(() => setDrawerOpen(false))}
+              {renderNavLinks(closeDrawer)}
               <div className="mt-auto border-t border-border-subtle pt-4">
                 <Link
                   href="/"
-                  onClick={() => setDrawerOpen(false)}
-                  className="flex h-10 items-center rounded-md px-3 text-small font-medium text-text-link hover:bg-surface-subtle"
+                  onClick={closeDrawer}
+                  className="flex h-11 items-center rounded-md px-3 text-small font-medium text-text-link hover:bg-surface-subtle"
                 >
                   Xem sàn đấu giá
                 </Link>

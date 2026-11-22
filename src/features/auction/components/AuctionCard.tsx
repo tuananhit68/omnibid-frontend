@@ -13,14 +13,32 @@ export interface AuctionCardProps {
   auction: AuctionSummary;
 }
 
-export function AuctionCard({ auction }: AuctionCardProps) {
+function ActiveAuctionMeta({
+  endTime,
+  bidCount,
+}: {
+  endTime: string;
+  bidCount: number;
+}) {
   const nowMs = useSharedNowMs();
+  const countdown =
+    nowMs > 0 ? calculateCountdown(endTime, 0, nowMs) : null;
+
+  return (
+    <>
+      {bidCount} lượt ·{" "}
+      {!countdown
+        ? "Đang tải…"
+        : countdown.isZero
+          ? "Đang chốt phiên…"
+          : `còn ${countdown.formatted}`}
+    </>
+  );
+}
+
+export function AuctionCard({ auction }: AuctionCardProps) {
   const isActive = auction.status === AuctionStatus.ACTIVE;
   const isScheduled = auction.status === AuctionStatus.SCHEDULED;
-  const countdown =
-    isActive && nowMs > 0
-      ? calculateCountdown(auction.endTime, 0, nowMs)
-      : null;
 
   const priceLabel = isScheduled
     ? "Giá khởi điểm"
@@ -36,13 +54,17 @@ export function AuctionCard({ auction }: AuctionCardProps) {
     <article className="flex flex-col overflow-hidden rounded-xl border border-border-brand bg-surface transition-colors hover:border-border-strong">
       <Link
         href={`/auctions/${auction.id}`}
-        className="relative block aspect-4/3 w-full overflow-hidden bg-surface-subtle focus-visible:outline-2 focus-visible:outline-focus"
+        tabIndex={-1}
+        aria-hidden="true"
+        className="relative block aspect-4/3 w-full overflow-hidden bg-surface-subtle"
       >
         {auction.primaryImageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={auction.primaryImageUrl}
-            alt={auction.title}
+            alt=""
+            loading="lazy"
+            decoding="async"
             className="size-full object-cover"
           />
         ) : (
@@ -65,7 +87,7 @@ export function AuctionCard({ auction }: AuctionCardProps) {
           </div>
           <Link
             href={`/auctions/${auction.id}`}
-            className="block text-h4 text-text hover:text-primary-600 line-clamp-2 focus-visible:outline-2 focus-visible:outline-focus rounded-xs"
+            className="block text-h4 text-text hover:text-primary-600 line-clamp-2 focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2 rounded-xs"
           >
             {auction.title}
           </Link>
@@ -81,14 +103,10 @@ export function AuctionCard({ auction }: AuctionCardProps) {
 
           <p className="text-caption text-text-secondary tabular">
             {isActive ? (
-              <>
-                {auction.bidCount} lượt ·{" "}
-                {!countdown
-                  ? "Đang tải…"
-                  : countdown.isZero
-                    ? "Đang chốt phiên…"
-                    : `còn ${countdown.formatted}`}
-              </>
+              <ActiveAuctionMeta
+                endTime={auction.endTime}
+                bidCount={auction.bidCount}
+              />
             ) : isScheduled ? (
               <>Bắt đầu {formatDateTime(auction.startTime, "HH:mm DD/MM")}</>
             ) : (
@@ -103,7 +121,7 @@ export function AuctionCard({ auction }: AuctionCardProps) {
             className={getButtonClassName({
               variant: "secondary",
               size: "md",
-              className: "w-full",
+              className: "w-full min-h-11 md:min-h-10",
             })}
           >
             Xem chi tiết

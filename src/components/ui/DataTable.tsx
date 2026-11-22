@@ -89,7 +89,7 @@ export function DataTable<T>({
             </tr>
           ) : loading ? (
             Array.from({ length: 5 }).map((_, i) => (
-              <tr key={i} className="h-[52px]">
+              <tr key={i} className="h-13">
                 {columns.map((col) => (
                   <td key={col.key} className="px-4 py-3">
                     <Skeleton className="h-4 w-3/4" />
@@ -117,7 +117,7 @@ export function DataTable<T>({
                 <tr
                   key={keyExtractor(row, index)}
                   className={cn(
-                    "h-[52px] transition-colors hover:bg-surface-subtle/70",
+                    "h-13 transition-colors hover:bg-surface-subtle/70",
                     isHighlighted && "bg-surface-info",
                     isSelected && "bg-primary-50 font-semibold",
                     extraRowClass
@@ -128,7 +128,7 @@ export function DataTable<T>({
                       ? col.render(row, index)
                       : (row as Record<string, unknown>)[col.key] != null
                       ? String((row as Record<string, unknown>)[col.key])
-                      : "--";
+                      : "—";
 
                     return (
                       <td

@@ -36,7 +36,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         <label
           htmlFor={id}
           className={cn(
-            "inline-flex items-center gap-3 min-h-[44px] cursor-pointer select-none",
+            "inline-flex items-center gap-3 min-h-11 cursor-pointer select-none",
             disabled && "cursor-not-allowed opacity-50"
           )}
         >
@@ -52,13 +52,13 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             />
             <div
               className={cn(
-                "size-4.5 rounded-[4px] border border-border-strong bg-surface transition-colors flex items-center justify-center",
+                "size-4.5 rounded-sm border border-border-strong bg-surface transition-colors flex items-center justify-center",
                 "peer-checked:bg-primary-600 peer-checked:border-primary-600 peer-checked:text-text-inverse peer-checked:[&>svg]:opacity-100",
-                "peer-focus-visible:ring-2 peer-focus-visible:ring-focus/30 peer-focus-visible:ring-offset-2",
+                "peer-focus-visible:outline-2 peer-focus-visible:outline-focus peer-focus-visible:outline-offset-2",
                 error && "border-danger"
               )}
             >
-              <CheckIcon className="size-3.5 stroke-[2.5] opacity-0 transition-opacity text-white" />
+              <CheckIcon className="size-3.5 stroke-2 opacity-0 transition-opacity text-text-inverse" />
             </div>
           </div>
 
