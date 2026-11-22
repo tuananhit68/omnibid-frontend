@@ -36,6 +36,8 @@ export function OrderMobileCard({
               <img
                 src={order.primaryImageUrl}
                 alt={order.title}
+                loading="lazy"
+                decoding="async"
                 className="size-full object-cover"
               />
             ) : null}
