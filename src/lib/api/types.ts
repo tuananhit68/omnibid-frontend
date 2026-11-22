@@ -1,35 +1,46 @@
-/**
- * OmniBid - Types chuẩn cho API Response và Phân trang
- */
+import type { ErrorCode } from "@/lib/errors";
+export type { Page } from "./contract";
 
-export interface ApiResponse<T = unknown> {
-  success: boolean;
-  errorCode?: string;
-  message?: string;
+export type ApiSuccess<T> = {
+  success: true;
   data: T;
-  timestamp?: string;
+};
+
+export type ApiFailure = {
+  success: false;
+  error: {
+    code: ErrorCode;
+    message: string;
+    details?: Record<string, unknown>;
+  };
+};
+
+export type ApiResponse<T> = ApiSuccess<T> | ApiFailure;
+
+export interface ApiErrorOptions {
+  status: number;
+  code: ErrorCode;
+  message: string;
+  details?: Record<string, unknown>;
+  fieldErrors?: Record<string, string>;
 }
 
-export interface Page<T> {
-  content: T[];
-  page: number;
-  size: number;
-  totalElements: number;
-  totalPages: number;
+export class ApiError extends Error {
+  readonly status: number;
+  readonly code: ErrorCode;
+  readonly details?: Record<string, unknown>;
+  readonly fieldErrors?: Record<string, string>;
+
+  constructor(options: ApiErrorOptions) {
+    super(options.message);
+    this.name = "ApiError";
+    this.status = options.status;
+    this.code = options.code;
+    this.details = options.details;
+    this.fieldErrors = options.fieldErrors;
+  }
 }
 
-export interface PageParams {
-  page?: number;
-  size?: number;
-  sort?: string;
+export function isApiError(error: unknown): error is ApiError {
+  return error instanceof ApiError;
 }
-
-export interface AuthResponse {
-  accessToken: string;
-  tokenType: string;
-  userId: number;
-  email: string;
-  fullName: string;
-  role: "USER" | "ADMIN";
-}
-

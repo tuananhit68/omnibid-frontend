@@ -12,15 +12,14 @@ dayjs.locale("vi");
 export const VIETNAM_TIMEZONE = "Asia/Ho_Chi_Minh";
 
 /**
- * Định dạng tiền tệ VND: 21.500.000 ₫
- * Dấu chấm hàng nghìn, cách một khoảng và ký hiệu ₫
+ * Định dạng tiền tệ VND nguyên: 21.500.000 ₫
  */
 export function formatMoney(amount: number | string | null | undefined): string {
   if (amount === null || amount === undefined || amount === "") {
     return "0 ₫";
   }
   const num = typeof amount === "string" ? Number(amount) : amount;
-  if (isNaN(num)) {
+  if (Number.isNaN(num)) {
     return "0 ₫";
   }
   const formattedNumber = Math.round(num)
@@ -30,14 +29,14 @@ export function formatMoney(amount: number | string | null | undefined): string 
 }
 
 /**
- * Định dạng số nguyên có dấu chấm hàng nghìn (dành cho ô nhập tiền hoặc số lượng)
+ * Định dạng số nguyên có dấu chấm hàng nghìn
  */
 export function formatNumber(value: number | string | null | undefined): string {
   if (value === null || value === undefined || value === "") {
     return "0";
   }
   const num = typeof value === "string" ? Number(value) : value;
-  if (isNaN(num)) {
+  if (Number.isNaN(num)) {
     return "0";
   }
   return Math.round(num)
@@ -46,88 +45,78 @@ export function formatNumber(value: number | string | null | undefined): string 
 }
 
 /**
- * Phân tích chuỗi LocalDateTime không múi giờ của backend thành Dayjs giờ Việt Nam
+ * Parse chuỗi ISO 8601 có offset (+07:00 hoặc Z) sang Dayjs giờ Việt Nam.
  */
 export function parseBackendDateTime(
-  value: string | Date | null | undefined
+  value: string | Date | number | null | undefined
 ): dayjs.Dayjs | null {
-  if (!value) return null;
-  if (value instanceof Date) {
-    return dayjs(value).tz(VIETNAM_TIMEZONE);
-  }
-  // Nếu chuỗi ISO có dạng 2026-10-28T21:30:00 (không múi giờ)
-  return dayjs.tz(value, VIETNAM_TIMEZONE);
+  if (value === null || value === undefined || value === "") return null;
+  const parsed = dayjs(value);
+  if (!parsed.isValid()) return null;
+  return parsed.tz(VIETNAM_TIMEZONE);
 }
 
 /**
- * Định dạng chuỗi ngày giờ theo định dạng chỉ định (mặc định DD/MM/YYYY HH:mm)
+ * Định dạng ngày giờ giờ Việt Nam (mặc định DD/MM/YYYY HH:mm)
  */
 export function formatDateTime(
-  value: string | Date | null | undefined,
+  value: string | Date | number | null | undefined,
   template = "DD/MM/YYYY HH:mm"
 ): string {
-  if (!value) return "--";
-
-  if (typeof value === "string") {
-    // Phân tích chuỗi ISO của backend mà không gọi new Date() để an toàn cho SSR / prerender
-    const match = value.match(
-      /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2}))?)?/
-    );
-    if (match) {
-      const [, y, m, d, hh = "00", mm = "00"] = match;
-      if (template === "DD/MM/YYYY HH:mm") return `${d}/${m}/${y} ${hh}:${mm}`;
-      if (template === "DD/MM HH:mm") return `${d}/${m} ${hh}:${mm}`;
-      if (template === "DD/MM/YYYY") return `${d}/${m}/${y}`;
-      if (template === "HH:mm") return `${hh}:${mm}`;
-    }
-  }
-
   const d = parseBackendDateTime(value);
-  if (!d || !d.isValid()) return "--";
+  if (!d) return "--";
   return d.format(template);
 }
 
-/**
- * Định dạng ngày: DD/MM/YYYY
- */
-export function formatDate(value: string | Date | null | undefined): string {
+export function formatDate(value: string | Date | number | null | undefined): string {
   return formatDateTime(value, "DD/MM/YYYY");
 }
 
-/**
- * Định dạng giờ: HH:mm
- */
-export function formatTime(value: string | Date | null | undefined): string {
+export function formatTime(value: string | Date | number | null | undefined): string {
   return formatDateTime(value, "HH:mm");
 }
 
 /**
- * Định dạng thời gian tương đối: ví dụ "5 phút trước", "vừa xong"
+ * Định dạng giờ đặt giá đến mili giây: HH:mm:ss.SSS
  */
-export function formatRelativeTime(
-  value: string | Date | null | undefined,
-  now = dayjs()
+export function formatBidTimestamp(
+  value: string | Date | number | null | undefined
 ): string {
-  const d = parseBackendDateTime(value);
-  if (!d || !d.isValid()) return "--";
-  return d.from(now);
+  return formatDateTime(value, "HH:mm:ss.SSS");
 }
 
 /**
- * Chuyển Dayjs thành chuỗi gửi lên backend theo chuẩn LocalDateTime Việt Nam
- * Định dạng: YYYY-MM-DDTHH:mm:ss (không có Z)
+ * Thời gian tương đối: ví dụ "5 phút trước"
+ */
+export function formatRelativeTime(
+  value: string | Date | number | null | undefined,
+  now?: dayjs.Dayjs | Date | number
+): string {
+  const d = parseBackendDateTime(value);
+  if (!d) return "--";
+  const base = now ? dayjs(now).tz(VIETNAM_TIMEZONE) : dayjs().tz(VIETNAM_TIMEZONE);
+  return d.from(base);
+}
+
+/**
+ * Chuyển input ngày giờ địa phương (YYYY-MM-DDTHH:mm hoặc Date/Dayjs)
+ * thành chuỗi ISO 8601 có offset +07:00 để gửi backend.
  */
 export function toBackendDateTimeString(
   date: dayjs.Dayjs | Date | string
 ): string {
-  const d = dayjs(date).tz(VIETNAM_TIMEZONE);
-  return d.format("YYYY-MM-DDTHH:mm:ss");
+  if (typeof date === "string") {
+    // Nếu đã có offset (Z hoặc +/-HH:mm) thì giữ nguyên mốc thời gian và đổi sang +07:00
+    if (/(Z|[+-]\d{2}:\d{2})$/.test(date.trim())) {
+      return dayjs(date).tz(VIETNAM_TIMEZONE).format();
+    }
+    return dayjs.tz(date, VIETNAM_TIMEZONE).format();
+  }
+  return dayjs(date).tz(VIETNAM_TIMEZONE).format();
 }
 
-/**
- * Thông tin đếm ngược thời gian còn lại
- */
 export interface CountdownInfo {
+  days: number;
   hours: string;
   minutes: string;
   seconds: string;
@@ -138,15 +127,18 @@ export interface CountdownInfo {
 }
 
 /**
- * Tính đếm ngược thời gian từ thời điểm kết thúc và độ lệch giờ máy chủ (serverOffsetMs)
+ * Tính đếm ngược từ endTime (ISO có offset) + serverOffsetMs.
+ * Trên 24h hiển thị "X ngày Y giờ", dưới 24h hiển thị "HH:mm:ss".
  */
 export function calculateCountdown(
   endTime: string | Date | null | undefined,
-  serverOffsetMs = 0
+  serverOffsetMs = 0,
+  nowMs?: number
 ): CountdownInfo {
   const end = parseBackendDateTime(endTime);
-  if (!end || !end.isValid()) {
+  if (!end) {
     return {
+      days: 0,
       hours: "00",
       minutes: "00",
       seconds: "00",
@@ -157,12 +149,12 @@ export function calculateCountdown(
     };
   }
 
-  // Giờ hiện tại cộng với độ lệch máy chủ
-  const currentServerTime = dayjs().tz(VIETNAM_TIMEZONE).add(serverOffsetMs, "millisecond");
-  const diffMs = end.diff(currentServerTime);
+  const currentMs = (nowMs ?? Date.now()) + serverOffsetMs;
+  const diffMs = end.valueOf() - currentMs;
 
   if (diffMs <= 0) {
     return {
+      days: 0,
       hours: "00",
       minutes: "00",
       seconds: "00",
@@ -174,63 +166,41 @@ export function calculateCountdown(
   }
 
   const totalSeconds = Math.floor(diffMs / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
+  const days = Math.floor(totalSeconds / 86400);
+  const remHours = Math.floor((totalSeconds % 86400) / 3600);
+  const totalHours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
 
   const pad = (n: number) => n.toString().padStart(2, "0");
-  const hStr = pad(hours);
-  const mStr = pad(minutes);
-  const sStr = pad(seconds);
+  const formatted =
+    days >= 1
+      ? `${days} ngày ${remHours} giờ`
+      : `${pad(totalHours)}:${pad(minutes)}:${pad(seconds)}`;
 
   return {
-    hours: hStr,
-    minutes: mStr,
-    seconds: sStr,
+    days,
+    hours: pad(totalHours),
+    minutes: pad(minutes),
+    seconds: pad(seconds),
     totalSeconds,
-    formatted: `${hStr}:${mStr}:${sStr}`,
+    formatted,
     isLessThanFiveMinutes: totalSeconds <= 300,
     isZero: false,
   };
 }
 
 /**
- * Che tên hiển thị bảo mật: Tr***g, Ng***n
+ * Định dạng mã hiển thị: AUC-12, PRD-5, ORD-9, REP-3, USR-4
  */
-export function maskName(name: string | null | undefined): string {
-  if (!name) return "***";
-  const trimmed = name.trim();
-  if (trimmed.length <= 2) {
-    return `${trimmed.charAt(0)}*`;
-  }
-  const first = trimmed.slice(0, 2);
-  const last = trimmed.slice(-1);
-  return `${first}***${last}`;
-}
-
-/**
- * Che số điện thoại bảo mật: 090****123
- */
-export function maskPhone(phone: string | null | undefined): string {
-  if (!phone) return "***";
-  const clean = phone.replace(/\s+/g, "");
-  if (clean.length < 7) return clean;
-  const start = clean.slice(0, 3);
-  const end = clean.slice(-3);
-  return `${start}****${end}`;
-}
-
-/**
- * Định dạng mã hiển thị: #AUC-9821, #ORD-8841
- */
-export function formatDisplayCode(prefix: string, id: string | number): string {
-  if (!id) return "";
-  const strId = id.toString();
-  if (strId.startsWith(prefix) || strId.startsWith(`#${prefix}`)) {
-    return strId.startsWith("#") ? strId : `#${strId}`;
-  }
-  return `#${prefix}-${strId}`;
+export function formatDisplayCode(
+  prefix: "AUC" | "PRD" | "ORD" | "REP" | "USR" | string,
+  id: string | number
+): string {
+  if (id === "" || id === null || id === undefined) return "";
+  const strId = String(id);
+  if (strId.startsWith(`${prefix}-`)) return strId;
+  return `${prefix}-${strId}`;
 }
 
 export { dayjs };
-

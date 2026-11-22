@@ -1,2 +1,3 @@
-export * from "./RegisterForm";
-export * from "./LoginForm";
+export { LoginForm } from "./LoginForm";
+export { RegisterForm } from "./RegisterForm";
+export { PasswordStrengthMeter } from "./PasswordStrengthMeter";

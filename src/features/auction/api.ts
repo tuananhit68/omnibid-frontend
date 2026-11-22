@@ -1,104 +1,135 @@
-import { apiClient, type Page } from "@/lib/api";
+import { apiRequest, apiRequestWithMeta } from "@/lib/api/client";
 import type {
   AuctionDetail,
-  AuctionItem,
+  AuctionSummary,
+  BidHistoryItem,
+  Category,
+  MyAuctionItem,
+  Page,
+  PlaceBidResponse,
+} from "@/lib/api/contract";
+import type {
   AuctionListParams,
-  BidItem,
-  CategoryItem,
-  CreateReportRequest,
+  CancelAuctionPayload,
+  CreateAuctionPayload,
+  MyAuctionsParams,
   PlaceBidRequest,
+  UpdateAuctionPayload,
 } from "./types";
 
-/**
- * Lấy danh sách phiên đấu giá từ backend
- * Endpoint: GET /api/v1/auctions
- */
 export async function getAuctions(
   params?: AuctionListParams
-): Promise<Page<AuctionItem>> {
+): Promise<Page<AuctionSummary>> {
   const cleanParams: Record<string, string | number> = {};
   if (params) {
-    if (params.status) cleanParams.status = params.status;
-    if (params.q?.trim()) cleanParams.q = params.q.trim();
-    if (params.categoryIds) cleanParams.categoryIds = params.categoryIds;
+    if (params.keyword?.trim()) cleanParams.keyword = params.keyword.trim();
+    if (params.categoryId !== undefined) cleanParams.categoryId = params.categoryId;
     if (params.minPrice !== undefined && params.minPrice > 0) {
       cleanParams.minPrice = params.minPrice;
     }
     if (params.maxPrice !== undefined && params.maxPrice > 0) {
       cleanParams.maxPrice = params.maxPrice;
     }
-    if (params.sellerId !== undefined) cleanParams.sellerId = params.sellerId;
+    if (params.status) cleanParams.status = params.status;
+    if (params.endBefore) cleanParams.endBefore = params.endBefore;
     if (params.sort) cleanParams.sort = params.sort;
     if (params.page !== undefined) cleanParams.page = params.page;
     if (params.size !== undefined) cleanParams.size = params.size;
   }
 
-  return apiClient.get<unknown, Page<AuctionItem>>("/auctions", {
+  return apiRequest<Page<AuctionSummary>>({
+    method: "GET",
+    url: "/auctions",
     params: cleanParams,
   });
 }
 
-/**
- * Lấy danh sách danh mục công khai
- * Endpoint: GET /api/v1/categories
- */
-export async function getCategories(): Promise<CategoryItem[]> {
-  return apiClient.get<unknown, CategoryItem[]>("/categories");
-}
-
-/**
- * Thêm phiên đấu giá vào danh sách theo dõi
- * Endpoint: POST /api/v1/watchlist/{auctionId}
- */
-export async function watchAuction(
-  auctionId: number
-): Promise<{ auctionId: number; watchedAt: string }> {
-  return apiClient.post<unknown, { auctionId: number; watchedAt: string }>(
-    `/watchlist/${auctionId}`
-  );
-}
-
-/**
- * Bỏ theo dõi phiên đấu giá
- * Endpoint: DELETE /api/v1/watchlist/{auctionId}
- */
-export async function unwatchAuction(auctionId: number): Promise<void> {
-  await apiClient.delete(`/watchlist/${auctionId}`);
-}
-
-/**
- * Lấy chi tiết phiên đấu giá
- * Endpoint: GET /api/v1/auctions/{id}
- */
-export async function getAuctionDetail(id: number): Promise<AuctionDetail> {
-  return apiClient.get<unknown, AuctionDetail>(`/auctions/${id}`);
-}
-
-/**
- * Lấy lịch sử đặt giá của phiên
- * Endpoint: GET /api/v1/auctions/{id}/bids
- */
-export async function getAuctionBids(
-  id: number,
-  limit?: number
-): Promise<BidItem[]> {
-  return apiClient.get<unknown, BidItem[]>(`/auctions/${id}/bids`, {
-    params: limit !== undefined ? { limit } : undefined,
+export async function getCategories(size = 100): Promise<Page<Category>> {
+  return apiRequest<Page<Category>>({
+    method: "GET",
+    url: "/categories",
+    params: { page: 0, size },
   });
 }
 
-/**
- * Đặt giá vào phiên đang ACTIVE
- * Endpoint: POST /api/v1/bids
- */
-export async function placeBid(body: PlaceBidRequest): Promise<BidItem> {
-  return apiClient.post<unknown, BidItem>("/bids", body);
+export async function getAuctionDetailWithMeta(
+  id: number
+): Promise<{ data: AuctionDetail; serverOffsetMs: number }> {
+  return apiRequestWithMeta<AuctionDetail>({
+    method: "GET",
+    url: `/auctions/${id}`,
+  });
 }
 
-/**
- * Gửi báo cáo vi phạm hoặc khiếu nại
- * Endpoint: POST /api/v1/reports
- */
-export async function createReport(body: CreateReportRequest): Promise<unknown> {
-  return apiClient.post("/reports", body);
+export async function getAuctionBids(
+  id: number,
+  page = 0,
+  size = 10
+): Promise<Page<BidHistoryItem>> {
+  return apiRequest<Page<BidHistoryItem>>({
+    method: "GET",
+    url: `/auctions/${id}/bids`,
+    params: { page, size, sort: "createdAt,desc" },
+  });
+}
+
+export async function placeBid(
+  body: PlaceBidRequest
+): Promise<PlaceBidResponse> {
+  return apiRequest<PlaceBidResponse>({
+    method: "POST",
+    url: `/auctions/${body.auctionId}/bids`,
+    data: { amount: body.amount },
+  });
+}
+
+export async function getMyAuctions(
+  params?: MyAuctionsParams
+): Promise<Page<MyAuctionItem>> {
+  const cleanParams: Record<string, string | number> = {};
+  if (params) {
+    if (params.status) cleanParams.status = params.status;
+    if (params.keyword?.trim()) cleanParams.keyword = params.keyword.trim();
+    if (params.page !== undefined) cleanParams.page = params.page;
+    if (params.size !== undefined) cleanParams.size = params.size;
+    if (params.sort) cleanParams.sort = params.sort;
+  }
+
+  return apiRequest<Page<MyAuctionItem>>({
+    method: "GET",
+    url: "/auctions/mine",
+    params: cleanParams,
+  });
+}
+
+export async function createAuction(
+  payload: CreateAuctionPayload
+): Promise<AuctionDetail> {
+  return apiRequest<AuctionDetail>({
+    method: "POST",
+    url: "/auctions",
+    data: payload,
+  });
+}
+
+export async function updateAuction(
+  id: number,
+  payload: UpdateAuctionPayload
+): Promise<AuctionDetail> {
+  return apiRequest<AuctionDetail>({
+    method: "PATCH",
+    url: `/auctions/${id}`,
+    data: payload,
+  });
+}
+
+export async function cancelAuction(
+  id: number,
+  payload: CancelAuctionPayload
+): Promise<AuctionDetail> {
+  return apiRequest<AuctionDetail>({
+    method: "POST",
+    url: `/auctions/${id}/cancel`,
+    data: payload,
+  });
 }

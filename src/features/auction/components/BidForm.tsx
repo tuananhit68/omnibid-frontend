@@ -1,197 +1,132 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
-import { ApiError, clearAuthSession } from "@/lib/api";
-import { getErrorMessage } from "@/lib/errors";
+import { ApiError } from "@/lib/api/types";
 import { formatMoney } from "@/lib/format";
 import { MoneyInput } from "@/components/ui/MoneyInput";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
-import { GavelIcon, InfoIcon } from "@/components/icons";
 import { usePlaceBid } from "../hooks";
-import type { AuctionDetail } from "../types";
 
 export interface BidFormProps {
-  auction: AuctionDetail;
-  onBidSuccess?: () => void;
-  onRefetchAuction?: () => void;
+  auctionId: number;
+  minNextBid: number;
+  bidIncrement: number;
+  disabled?: boolean;
 }
 
 export function BidForm({
-  auction,
-  onBidSuccess,
-  onRefetchAuction,
+  auctionId,
+  minNextBid,
+  bidIncrement,
+  disabled = false,
 }: BidFormProps) {
-  const router = useRouter();
   const toast = useToast();
   const placeBidMutation = usePlaceBid();
+  const [amount, setAmount] = useState<number>(minNextBid);
+  const [syncedMinNextBid, setSyncedMinNextBid] = useState<number>(minNextBid);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const suggestedMinNext =
-    auction.minNextBid ??
-    (auction.bidCount === 0
-      ? auction.startPrice
-      : auction.currentPrice + auction.bidIncrement);
-
-  const [amount, setAmount] = useState<number>(suggestedMinNext);
-  const [lastMinNext, setLastMinNext] = useState<number>(suggestedMinNext);
-  const [inlineError, setInlineError] = useState<string | undefined>();
-
-  // Đồng bộ giá gợi ý mới khi có bid mới qua WebSocket (tránh setState trong useEffect)
-  if (suggestedMinNext !== lastMinNext) {
-    setLastMinNext(suggestedMinNext);
-    if (amount < suggestedMinNext) {
-      setAmount(suggestedMinNext);
+  if (minNextBid !== syncedMinNextBid) {
+    setSyncedMinNextBid(minNextBid);
+    if (amount < minNextBid) {
+      setAmount(minNextBid);
     }
-    setInlineError(undefined);
   }
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (placeBidMutation.isPending) return;
+    setErrorMsg(null);
 
-    if (!amount || amount <= 0) {
-      setInlineError("Vui lòng nhập mức giá đặt hợp lệ.");
+    if (!amount || !Number.isInteger(amount) || amount < minNextBid) {
+      setErrorMsg(`Mức giá tối thiểu là ${formatMoney(minNextBid)}.`);
       return;
     }
 
-    setInlineError(undefined);
-
     placeBidMutation.mutate(
-      { auctionId: auction.id, amount },
+      { auctionId, amount },
       {
-        onSuccess: () => {
-          toast.success("Đặt giá thành công!");
-          onBidSuccess?.();
+        onSuccess: (res) => {
+          toast.success(`Đặt giá ${formatMoney(res.amount)} thành công.`);
+          setAmount(res.minNextBid);
+          setSyncedMinNextBid(res.minNextBid);
         },
         onError: (err) => {
           if (err instanceof ApiError) {
-            if (err.errorCode === "BID_TOO_LOW") {
-              const nextMin = (err.data as { minNextBid?: number } | undefined)
-                ?.minNextBid;
-              if (typeof nextMin === "number" && nextMin > 0) {
-                setAmount(nextMin);
-                setInlineError(
-                  `Mức giá đặt phải tối thiểu ${formatMoney(nextMin)}.`
-                );
-              } else {
-                setInlineError(err.message);
-              }
-              return;
-            }
-
-            if (err.errorCode === "ACCOUNT_BANNED") {
-              toast.error(err.message);
-              clearAuthSession();
-              router.push("/login");
-              return;
-            }
-
             if (
-              err.errorCode === "ALREADY_LEADING" ||
-              err.errorCode === "SELF_BID_NOT_ALLOWED" ||
-              err.errorCode === "AUCTION_NOT_ACTIVE"
+              err.code === "BID_TOO_LOW" &&
+              typeof err.details?.minNextBid === "number"
             ) {
-              toast.error(err.message);
-              onRefetchAuction?.();
+              const nextMin = err.details.minNextBid;
+              setAmount(nextMin);
+              setSyncedMinNextBid(nextMin);
+              setErrorMsg(
+                `Vừa có người đặt cao hơn, mức tối thiểu mới là ${formatMoney(nextMin)}.`
+              );
               return;
             }
-
-            setInlineError(err.message);
+            setErrorMsg(err.message);
             return;
           }
-
-          setInlineError(getErrorMessage("INTERNAL_ERROR"));
+          setErrorMsg("Không thể đặt giá. Vui lòng thử lại.");
         },
       }
     );
   };
 
-  const hintLabel =
-    auction.bidCount === 0
-      ? `Tối thiểu ${formatMoney(suggestedMinNext)} (giá khởi điểm)`
-      : `Tối thiểu ${formatMoney(
-          suggestedMinNext
-        )} (giá hiện tại + bước giá ${formatMoney(auction.bidIncrement)})`;
+  const isDisabled = disabled || placeBidMutation.isPending;
 
   return (
-    <>
-      <form
-        id="live-bid-form"
-        onSubmit={handleSubmit}
-        noValidate
-        className="bg-surface-subtle border border-border-brand rounded-xl p-4 space-y-4"
-      >
-        {/* Tiêu đề */}
-        <div className="flex items-center gap-2 pb-2.5 border-b border-border-brand">
-          <GavelIcon className="size-4.5 text-primary-700 shrink-0" />
-          <h2 className="text-body font-semibold text-text">
-            Bảng đặt giá trực tiếp
-          </h2>
-        </div>
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-3 border-t border-border-subtle pt-4"
+      noValidate
+    >
+      <MoneyInput
+        label={`Tối thiểu ${formatMoney(minNextBid)}`}
+        value={amount}
+        onChange={(val) => {
+          setAmount(val);
+          if (errorMsg) setErrorMsg(null);
+        }}
+        disabled={isDisabled}
+        error={errorMsg ?? undefined}
+      />
 
-        {/* Nhãn mức giá của bạn + Đang dẫn đầu */}
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between gap-2 text-small">
-            <span className="font-semibold text-text">Mức giá của bạn</span>
-            <span className="text-caption text-text-tertiary tabular">
-              Hiện tại:{" "}
-              <strong className="text-text font-semibold">
-                {formatMoney(auction.currentPrice)}
-              </strong>
-            </span>
-          </div>
-
-          <MoneyInput
-            value={amount}
-            onChange={(val) => {
-              setAmount(val);
-              if (inlineError) setInlineError(undefined);
-            }}
-            disabled={placeBidMutation.isPending}
-            error={inlineError}
-          />
-
-          <p className="flex items-start gap-1.5 text-caption text-text-tertiary pt-0.5">
-            <InfoIcon className="size-3.5 shrink-0 mt-0.5 text-primary-600" />
-            <span>{hintLabel}</span>
-          </p>
-        </div>
-
-        {/* Nút Đặt giá trên desktop */}
-        <Button
-          type="submit"
-          variant="primary-strong"
-          size="xl"
-          loading={placeBidMutation.isPending}
-          leftIcon={<GavelIcon className="size-4" />}
-          className="w-full hidden lg:inline-flex"
-        >
-          Đặt giá
-        </Button>
-      </form>
-
-      {/* Thanh đáy cố định trên mobile/tablet (< 1024px) */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-surface border-t border-border-brand px-4 py-3 shadow-md flex items-center justify-between gap-4">
-        <div className="min-w-0">
-          <span className="label block">Giá đặt của bạn</span>
-          <span className="text-price-lg font-bold text-primary-700 tabular block truncate">
-            {formatMoney(amount)}
-          </span>
-        </div>
-        <Button
-          type="submit"
-          form="live-bid-form"
-          variant="primary-strong"
-          size="xl"
-          loading={placeBidMutation.isPending}
-          leftIcon={<GavelIcon className="size-4" />}
-          className="shrink-0"
-        >
-          Đặt giá
-        </Button>
+      <div className="flex flex-wrap gap-2">
+        {[0, 1, 2].map((mult) => {
+          const suggested = minNextBid + mult * bidIncrement;
+          return (
+            <button
+              key={mult}
+              type="button"
+              disabled={isDisabled}
+              onClick={() => {
+                setAmount(suggested);
+                if (errorMsg) setErrorMsg(null);
+              }}
+              className="min-h-9 rounded-md border border-border-brand bg-surface-subtle px-3 py-1.5 text-caption font-medium text-text transition-colors hover:border-primary-600 hover:bg-primary-50 hover:text-primary-700 tabular disabled:opacity-50"
+            >
+              {formatMoney(suggested)}
+            </button>
+          );
+        })}
       </div>
-    </>
+
+      <Button
+        type="submit"
+        variant="money"
+        size="xl"
+        loading={placeBidMutation.isPending}
+        disabled={disabled}
+        className="w-full"
+      >
+        Đặt giá
+      </Button>
+
+      <p className="text-caption text-text-tertiary text-center">
+        Lượt đặt giá đã ghi nhận không thể rút.
+      </p>
+    </form>
   );
 }
-

@@ -1,86 +1,221 @@
-import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
-import { getStoredToken, clearAuthSession } from "./auth-storage";
-import { getErrorMessage } from "../errors";
-import type { ApiResponse } from "./types";
+import axios, {
+  type AxiosError,
+  type AxiosInstance,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+  type InternalAxiosRequestConfig,
+} from "axios";
+import { getErrorMessage, isErrorCode, type ErrorCode } from "@/lib/errors";
+import { clearSession, getAccessToken } from "@/lib/auth/session";
+import { validateEndpointResponse } from "./contract";
+import { ApiError, type ApiFailure, type ApiSuccess } from "./types";
 
-export class ApiError extends Error {
-  status: number;
-  errorCode: string;
-  fieldErrors?: Record<string, string>;
-  data?: unknown;
+export const API_MODE =
+  process.env.NEXT_PUBLIC_API_MODE === "mock" ? "mock" : "live";
 
-  constructor(status: number, errorCode: string, message: string, data?: unknown) {
-    super(message);
-    this.name = "ApiError";
-    this.status = status;
-    this.errorCode = errorCode;
-    this.data = data;
-    if (
-      errorCode === "VALIDATION_ERROR" &&
-      typeof data === "object" &&
-      data !== null
-    ) {
-      this.fieldErrors = data as Record<string, string>;
-    }
-  }
+export const IS_MOCK_MODE = API_MODE === "mock";
+
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+
+export const IS_DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+
+const isBrowser = () => typeof window !== "undefined";
+
+function isLoginEndpoint(url?: string): boolean {
+  if (!url) return false;
+  const path = url.split("?")[0];
+  return path === "/auth/login" || path.endsWith("/auth/login");
 }
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+function isLogoutEndpoint(url?: string): boolean {
+  if (!url) return false;
+  const path = url.split("?")[0];
+  return path === "/auth/logout" || path.endsWith("/auth/logout");
+}
 
-export const apiClient = axios.create({
-  baseURL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+function redirectToLogin(query: string) {
+  if (!isBrowser()) return;
+  const pathname = window.location.pathname;
+  if (pathname.startsWith("/login")) return;
+  window.location.href = `/login?${query}`;
+}
+
+export const apiClient: AxiosInstance = axios.create({
+  baseURL: API_BASE_URL,
   timeout: 15000,
+  headers: {
+    Accept: "application/json",
+  },
 });
 
-// Request Interceptor: Gắn token Bearer
+// Gắn adapter mock động khi chạy ở chế độ mock
+if (IS_MOCK_MODE) {
+  apiClient.defaults.adapter = async (config) => {
+    const { mockAdapter } = await import("@/mocks/adapter");
+    return mockAdapter(config);
+  };
+}
+
+// Request interceptor: gắn Bearer token; giữ nguyên boundary khi gửi FormData
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = getStoredToken();
+    const token = getAccessToken();
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    if (typeof FormData !== "undefined" && config.data instanceof FormData) {
+      if (config.headers) {
+        delete config.headers["Content-Type"];
+      }
+    } else if (config.headers && !config.headers["Content-Type"] && config.data !== undefined) {
+      config.headers["Content-Type"] = "application/json";
+    }
+
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// Response Interceptor: Chuẩn hoá envelope & lỗi
+// Response interceptor: unwrap envelope v4, xử lý 401/403 toàn cục, chuẩn hóa ApiError
 apiClient.interceptors.response.use(
-  (response) => {
-    const resData = response.data as ApiResponse;
-    // Kiểm tra envelope { success, data, ... }
-    if (resData && typeof resData === "object" && "success" in resData) {
-      if (resData.success === false) {
-        const errorCode = resData.errorCode || "INTERNAL_ERROR";
-        const message = getErrorMessage(errorCode, resData.message);
-        throw new ApiError(response.status, errorCode, message, resData.data);
+  (response: AxiosResponse<ApiSuccess<unknown> | ApiFailure>) => {
+    const body = response.data;
+
+    if (body && typeof body === "object" && "success" in body) {
+      if (body.success === false) {
+        const failure = body as ApiFailure;
+        const code: ErrorCode = isErrorCode(failure.error?.code)
+          ? failure.error.code
+          : "INTERNAL_ERROR";
+        const details = failure.error?.details;
+        const fieldErrors =
+          code === "VALIDATION_ERROR" &&
+          details &&
+          typeof details.fields === "object" &&
+          details.fields !== null
+            ? (details.fields as Record<string, string>)
+            : undefined;
+
+        throw new ApiError({
+          status: response.status,
+          code,
+          message: getErrorMessage(code, failure.error?.message),
+          details,
+          fieldErrors,
+        });
       }
-      return resData.data;
+
+      if (!IS_MOCK_MODE) {
+        validateEndpointResponse(response.config.method, response.config.url, body.data);
+      }
+
+      return response;
     }
-    return response.data;
+
+    return response;
   },
-  (error: AxiosError<ApiResponse>) => {
-    const status = error.response?.status || 500;
-    const resData = error.response?.data;
+  (error: AxiosError<ApiFailure>) => {
+    if (error instanceof ApiError) {
+      return Promise.reject(error);
+    }
 
-    // 401 Unauthorized: Chuyển hướng đăng nhập
-    if (status === 401) {
-      clearAuthSession();
-      if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
-        const currentPath = window.location.pathname + window.location.search;
-        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-        window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+    if (!error.response) {
+      return Promise.reject(
+        new ApiError({
+          status: 0,
+          code: "NETWORK_ERROR",
+          message: getErrorMessage("NETWORK_ERROR"),
+        })
+      );
+    }
+
+    const { status, data } = error.response;
+    const rawCode = data?.error?.code;
+    const code: ErrorCode = isErrorCode(rawCode)
+      ? rawCode
+      : status === 401
+        ? "UNAUTHORIZED"
+        : status === 403
+          ? "FORBIDDEN"
+          : status === 404
+            ? "NOT_FOUND"
+            : status === 413
+              ? "PAYLOAD_TOO_LARGE"
+              : status === 429
+                ? "TOO_MANY_REQUESTS"
+                : "INTERNAL_ERROR";
+
+    const details = data?.error?.details;
+    const fieldErrors =
+      code === "VALIDATION_ERROR" &&
+      details &&
+      typeof details.fields === "object" &&
+      details.fields !== null
+        ? (details.fields as Record<string, string>)
+        : undefined;
+
+    const url = error.config?.url;
+
+    // 403 ACCOUNT_BANNED ở bất kỳ request nào → xóa phiên & về /login?reason=banned
+    if (status === 403 && code === "ACCOUNT_BANNED") {
+      clearSession();
+      if (!isLoginEndpoint(url)) {
+        redirectToLogin("reason=banned");
       }
     }
 
-    const errorCode = resData?.errorCode || (status === 401 ? "UNAUTHORIZED" : "INTERNAL_ERROR");
-    const message = getErrorMessage(errorCode, resData?.message || error.message);
+    // 401 UNAUTHORIZED → xóa phiên & về /login?redirect= (ngoại lệ: POST /auth/login, POST /auth/logout)
+    if (status === 401 && !isLoginEndpoint(url) && !isLogoutEndpoint(url)) {
+      clearSession();
+      if (isBrowser()) {
+        const currentPath = window.location.pathname + window.location.search;
+        redirectToLogin(`redirect=${encodeURIComponent(currentPath)}`);
+      }
+    }
+
+    const message =
+      status === 401 && isLoginEndpoint(url)
+        ? "Email hoặc mật khẩu không đúng"
+        : getErrorMessage(code, data?.error?.message);
 
     return Promise.reject(
-      new ApiError(status, errorCode, message, resData?.data)
+      new ApiError({
+        status,
+        code,
+        message,
+        details,
+        fieldErrors,
+      })
     );
   }
 );
+
+/**
+ * Helper trích xuất độ lệch đồng hồ từ header Date của response (ms).
+ */
+export function extractServerOffsetMs(headers?: Record<string, unknown>): number {
+  const rawDate = headers?.date ?? headers?.Date;
+  if (typeof rawDate !== "string") return 0;
+  const serverMs = Date.parse(rawDate);
+  if (Number.isNaN(serverMs)) return 0;
+  return serverMs - Date.now();
+}
+
+export async function apiRequest<T>(config: AxiosRequestConfig): Promise<T> {
+  const response = await apiClient.request<ApiSuccess<T>>(config);
+  return response.data.data;
+}
+
+export async function apiRequestWithMeta<T>(
+  config: AxiosRequestConfig
+): Promise<{ data: T; serverOffsetMs: number }> {
+  const response = await apiClient.request<ApiSuccess<T>>(config);
+  return {
+    data: response.data.data,
+    serverOffsetMs: extractServerOffsetMs(
+      response.headers as Record<string, unknown>
+    ),
+  };
+}

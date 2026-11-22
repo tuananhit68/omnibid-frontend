@@ -4,6 +4,7 @@ import { SpinnerIcon } from "../icons";
 
 export type ButtonVariant =
   | "primary"
+  | "money"
   | "primary-strong"
   | "secondary"
   | "tertiary"
@@ -24,8 +25,10 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
     "bg-primary-600 text-text-inverse hover:bg-primary-700 active:bg-primary-800 border border-transparent",
+  money:
+    "bg-primary-700 text-text-inverse hover:bg-primary-800 active:bg-primary-900 border border-transparent",
   "primary-strong":
-    "bg-primary-700 text-text-inverse hover:bg-primary-800 active:bg-primary-900 border border-transparent shadow-xs",
+    "bg-primary-700 text-text-inverse hover:bg-primary-800 active:bg-primary-900 border border-transparent",
   secondary:
     "bg-surface-muted text-text hover:bg-surface-strong active:bg-primary-100 border border-transparent",
   tertiary:
@@ -42,7 +45,7 @@ const sizeStyles: Record<ButtonSize, string> = {
   sm: "h-8 px-3 text-label rounded-md gap-1.5",
   md: "h-10 px-4 text-small rounded-md gap-2",
   lg: "h-11 px-5 text-body rounded-md gap-2",
-  xl: "h-[52px] px-7 text-body-lg font-semibold rounded-lg gap-2.5",
+  xl: "h-13 px-7 text-body-lg font-semibold rounded-lg gap-2.5",
 };
 
 export function getButtonClassName({
@@ -104,4 +107,3 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 );
 
 Button.displayName = "Button";
-

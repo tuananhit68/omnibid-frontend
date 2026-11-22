@@ -1,3 +1,5 @@
+"use client";
+
 import { forwardRef, useState } from "react";
 import { Input, type InputProps } from "./Input";
 import { EyeIcon, EyeOffIcon } from "../icons";

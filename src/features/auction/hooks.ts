@@ -1,51 +1,61 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import {
-  useQuery,
-  useMutation,
-  useQueryClient,
   keepPreviousData,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+  type InfiniteData,
 } from "@tanstack/react-query";
-import type { IMessage, StompSubscription } from "@stomp/stompjs";
-import { getWsClient, subscribeWsStatus, type AuctionWsMessage } from "@/lib/ws";
-import { BidStatus } from "@/types/enums";
-import {
-  getAuctions,
-  getAuctionDetail,
-  getAuctionBids,
-  getCategories,
-  watchAuction,
-  unwatchAuction,
-  placeBid,
-  createReport,
-} from "./api";
+import { useAuctionChannel, type AuctionEvent } from "@/lib/ws";
 import type {
   AuctionDetail,
-  AuctionItem,
+  AuctionSummary,
+  BidHistoryItem,
+  Category,
+  Page,
+} from "@/lib/api/contract";
+import {
+  cancelAuction,
+  createAuction,
+  getAuctionBids,
+  getAuctionDetailWithMeta,
+  getAuctions,
+  getCategories,
+  getMyAuctions,
+  placeBid,
+  updateAuction,
+} from "./api";
+import type {
   AuctionListParams,
-  BidItem,
-  BidPlacedWsPayload,
-  CreateReportRequest,
+  CancelAuctionPayload,
+  CreateAuctionPayload,
+  MyAuctionsParams,
   PlaceBidRequest,
+  UpdateAuctionPayload,
 } from "./types";
 
 export const auctionKeys = {
   all: ["auctions"] as const,
   list: (params?: AuctionListParams) => ["auctions", "list", params] as const,
+  mine: (params?: MyAuctionsParams) => ["auctions", "mine", params] as const,
   detail: (id: number) => ["auctions", "detail", id] as const,
-  bids: (id: number, limit?: number) =>
-    limit !== undefined
-      ? (["auctions", "bids", id, limit] as const)
-      : (["auctions", "bids", id] as const),
+  bids: (id: number, size = 20) => ["auctions", "bids", id, size] as const,
   categories: ["categories"] as const,
 };
 
-export function useAuctions(params?: AuctionListParams) {
+export function useAuctions(
+  params?: AuctionListParams,
+  initialData?: Page<AuctionSummary> | null
+) {
   return useQuery({
     queryKey: auctionKeys.list(params),
     queryFn: () => getAuctions(params),
+    initialData: initialData ?? undefined,
     placeholderData: keepPreviousData,
+    staleTime: 30_000,
   });
 }
 
@@ -55,60 +65,105 @@ export function useAuctionDetail(
 ) {
   return useQuery({
     queryKey: auctionKeys.detail(id),
-    queryFn: () => getAuctionDetail(id),
-    initialData: initialData ?? undefined,
-    // Refetch on mount để khi đã đăng nhập lấy được isWatched thật thay vì giá trị guest SSR
+    queryFn: () => getAuctionDetailWithMeta(id),
+    initialData: initialData
+      ? { data: initialData, serverOffsetMs: 0 }
+      : undefined,
     refetchOnMount: "always",
     enabled: Boolean(id),
   });
 }
 
-export function useAuctionBids(
+export function useAuctionBidsInfinite(
   id: number,
-  limit?: number,
-  initialData?: BidItem[]
+  size = 20,
+  initialData?: Page<BidHistoryItem> | null
 ) {
-  return useQuery({
-    queryKey: auctionKeys.bids(id, limit),
-    queryFn: () => getAuctionBids(id, limit),
-    initialData,
+  return useInfiniteQuery({
+    queryKey: auctionKeys.bids(id, size),
+    queryFn: ({ pageParam }) => getAuctionBids(id, pageParam, size),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) =>
+      lastPage.page + 1 < lastPage.totalPages ? lastPage.page + 1 : undefined,
+    initialData: initialData
+      ? { pages: [initialData], pageParams: [0] }
+      : undefined,
     enabled: Boolean(id),
+    staleTime: 30_000,
   });
 }
 
-export function useCategories() {
+export function useCategories(initialData?: Category[] | null) {
   return useQuery({
     queryKey: auctionKeys.categories,
-    queryFn: getCategories,
-    staleTime: 5 * 60 * 1000, // 5 phút
+    queryFn: async () => {
+      const page = await getCategories(100);
+      return page.content;
+    },
+    initialData: initialData ?? undefined,
+    staleTime: 5 * 60 * 1000,
   });
 }
 
-export function useToggleWatchlist() {
-  const queryClient = useQueryClient();
+export function useMyAuctions(params?: MyAuctionsParams) {
+  return useQuery({
+    queryKey: auctionKeys.mine(params),
+    queryFn: () => getMyAuctions(params),
+    placeholderData: keepPreviousData,
+    staleTime: 30_000,
+  });
+}
 
+export function useCreateAuction() {
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({
-      auctionId,
-      currentlyWatched,
-    }: {
-      auctionId: number;
-      currentlyWatched: boolean;
-    }) => {
-      if (currentlyWatched) {
-        await unwatchAuction(auctionId);
-        return { auctionId, watched: false };
-      }
-      await watchAuction(auctionId);
-      return { auctionId, watched: true };
-    },
-    onSuccess: (res) => {
-      queryClient.setQueryData<AuctionDetail>(
-        auctionKeys.detail(res.auctionId),
-        (prev) => (prev ? { ...prev, isWatched: res.watched } : prev)
-      );
+    mutationFn: (payload: CreateAuctionPayload) => createAuction(payload),
+    onSuccess: (created) => {
       queryClient.invalidateQueries({ queryKey: auctionKeys.all });
-      queryClient.invalidateQueries({ queryKey: ["watchlist"] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.setQueryData(auctionKeys.detail(created.id), {
+        data: created,
+        serverOffsetMs: 0,
+      });
+    },
+  });
+}
+
+export function useUpdateAuction() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: UpdateAuctionPayload }) =>
+      updateAuction(id, payload),
+    onSuccess: (updated) => {
+      queryClient.setQueryData<{ data: AuctionDetail; serverOffsetMs: number }>(
+        auctionKeys.detail(updated.id),
+        (prev) => ({
+          data: updated,
+          serverOffsetMs: prev?.serverOffsetMs ?? 0,
+        })
+      );
+      queryClient.invalidateQueries({ queryKey: ["auctions", "mine"] });
+      queryClient.invalidateQueries({ queryKey: ["auctions", "list"] });
+    },
+  });
+}
+
+export function useCancelAuction() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: CancelAuctionPayload }) =>
+      cancelAuction(id, payload),
+    onSuccess: (updated) => {
+      queryClient.setQueryData<{ data: AuctionDetail; serverOffsetMs: number }>(
+        auctionKeys.detail(updated.id),
+        (prev) => ({
+          data: updated,
+          serverOffsetMs: prev?.serverOffsetMs ?? 0,
+        })
+      );
+      queryClient.invalidateQueries({ queryKey: ["auctions", "mine"] });
+      queryClient.invalidateQueries({ queryKey: ["auctions", "list"] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });
 }
@@ -118,7 +173,25 @@ export function usePlaceBid() {
 
   return useMutation({
     mutationFn: (body: PlaceBidRequest) => placeBid(body),
-    onSuccess: (_bid, variables) => {
+    onSuccess: (res, variables) => {
+      queryClient.setQueryData<{ data: AuctionDetail; serverOffsetMs: number }>(
+        auctionKeys.detail(variables.auctionId),
+        (prev) => {
+          if (!prev) return prev;
+          if (res.bidCount < prev.data.bidCount) return prev;
+          return {
+            ...prev,
+            data: {
+              ...prev.data,
+              currentPrice: res.currentPrice,
+              bidCount: res.bidCount,
+              minNextBid: res.minNextBid,
+              viewerIsLeading: true,
+            },
+          };
+        }
+      );
+
       queryClient.invalidateQueries({
         queryKey: auctionKeys.detail(variables.auctionId),
       });
@@ -129,154 +202,127 @@ export function usePlaceBid() {
   });
 }
 
-export function useCreateReport() {
-  return useMutation({
-    mutationFn: (body: CreateReportRequest) => createReport(body),
-  });
+export interface UseAuctionRealtimeCallbacks {
+  onBidFlash?: () => void;
+  onOutbid?: (event: AuctionEvent) => void;
 }
 
 /**
- * Subscribe kênh realtime /topic/auction/{id} và cập nhật trực tiếp cache TanStack Query
+ * Subscribe kênh realtime /topic/auctions/{id} và cập nhật cache TanStack Query.
  */
 export function useAuctionRealtime(
   auctionId: number,
-  onBidFlash?: () => void
+  callbacks: UseAuctionRealtimeCallbacks = {}
 ) {
   const queryClient = useQueryClient();
-  const flashRef = useRef(onBidFlash);
-
+  const callbacksRef = useRef(callbacks);
   useEffect(() => {
-    flashRef.current = onBidFlash;
-  }, [onBidFlash]);
+    callbacksRef.current = callbacks;
+  }, [callbacks]);
 
-  useEffect(() => {
-    if (!auctionId || typeof window === "undefined") return;
+  const handleEvent = useCallback(
+    (event: AuctionEvent) => {
+      if (event.type === "BID_PLACED") {
+        let wasOutbid = false;
+        let accepted = false;
 
-    let subscription: StompSubscription | null = null;
-    let isSubscribed = false;
-    let hasConnectedOnce = false;
-    const client = getWsClient();
+        queryClient.setQueryData<{ data: AuctionDetail; serverOffsetMs: number }>(
+          auctionKeys.detail(auctionId),
+          (prev) => {
+            if (!prev) return prev;
+            if (event.bidCount < prev.data.bidCount) return prev;
 
-    const doSubscribe = () => {
-      if (!client.connected || isSubscribed) return;
+            const isNewerBid = event.bidCount > prev.data.bidCount;
+            accepted = true;
 
-      subscription = client.subscribe(
-        `/topic/auction/${auctionId}`,
-        (message: IMessage) => {
-          try {
-            const parsed = JSON.parse(message.body) as AuctionWsMessage;
-
-            if (parsed.type === "BID_PLACED") {
-              const payload = parsed.data as BidPlacedWsPayload;
-
-              // Cập nhật chi tiết phiên nếu tin mới hơn
-              queryClient.setQueryData<AuctionDetail>(
-                auctionKeys.detail(auctionId),
-                (prev) => {
-                  if (!prev) return prev;
-                  const nextBidCount =
-                    payload.auctionBidCount ?? prev.bidCount + 1;
-                  if (nextBidCount < prev.bidCount) {
-                    return prev;
-                  }
-                  return {
-                    ...prev,
-                    currentPrice: payload.auctionCurrentPrice ?? payload.amount,
-                    bidCount: nextBidCount,
-                    minNextBid:
-                      payload.minNextBid !== undefined
-                        ? payload.minNextBid
-                        : prev.minNextBid,
-                    reserveStatus:
-                      payload.reserveStatus ?? prev.reserveStatus,
-                    highestBidderName: payload.bidderName,
-                  };
-                }
-              );
-
-              // Chèn bid mới vào đầu các query lịch sử đặt giá của phiên
-              const bidEntry: BidItem = {
-                id: payload.id,
-                auctionId: payload.auctionId,
-                bidderId: payload.bidderId,
-                bidderName: payload.bidderName,
-                amount: payload.amount,
-                status: payload.status,
-                createdAt: payload.createdAt,
-              };
-
-              queryClient.setQueriesData<BidItem[]>(
-                { queryKey: ["auctions", "bids", auctionId] },
-                (prev) => {
-                  if (!Array.isArray(prev)) return [bidEntry];
-                  if (prev.some((b) => b.id === bidEntry.id)) return prev;
-                  const updatedOld = prev.map((b) =>
-                    b.status === BidStatus.LEADING
-                      ? { ...b, status: BidStatus.OUTBID }
-                      : b
-                  );
-                  return [bidEntry, ...updatedOld];
-                }
-              );
-
-              flashRef.current?.();
-            } else if (parsed.type === "AUCTION_UPDATED") {
-              const updated = parsed.data as AuctionItem;
-              queryClient.setQueryData<AuctionDetail>(
-                auctionKeys.detail(auctionId),
-                (prev) => {
-                  if (!prev) return updated;
-                  return {
-                    ...prev,
-                    ...updated,
-                    productDescription: prev.productDescription,
-                    images: prev.images,
-                    serverTime: prev.serverTime,
-                    isWatched: prev.isWatched,
-                  };
-                }
-              );
+            if (isNewerBid && prev.data.viewerIsLeading) {
+              wasOutbid = true;
             }
-          } catch {
-            // Bỏ qua frame lỗi định dạng
+
+            return {
+              ...prev,
+              data: {
+                ...prev.data,
+                status: event.status,
+                currentPrice: event.currentPrice,
+                minNextBid: event.minNextBid,
+                bidCount: event.bidCount,
+                highestBidderName: event.highestBidderName,
+                reserveStatus: event.reserveStatus,
+                viewerIsLeading: isNewerBid ? false : prev.data.viewerIsLeading,
+              },
+            };
           }
+        );
+
+        if (event.bid) {
+          const newBid = event.bid;
+          queryClient.setQueriesData<InfiniteData<Page<BidHistoryItem>>>(
+            { queryKey: ["auctions", "bids", auctionId] },
+            (prev) => {
+              if (!prev || prev.pages.length === 0) return prev;
+              const firstPage = prev.pages[0];
+              if (firstPage.content.some((b) => b.id === newBid.id)) {
+                return prev;
+              }
+              const updatedFirst: Page<BidHistoryItem> = {
+                ...firstPage,
+                content: [newBid, ...firstPage.content],
+                totalElements: firstPage.totalElements + 1,
+              };
+              return {
+                ...prev,
+                pages: [updatedFirst, ...prev.pages.slice(1)],
+              };
+            }
+          );
+        }
+
+        if (accepted) {
+          callbacksRef.current.onBidFlash?.();
+        }
+        if (wasOutbid) {
+          callbacksRef.current.onOutbid?.(event);
+        }
+        return;
+      }
+
+      // AUCTION_UPDATED, AUCTION_STARTED, AUCTION_ENDED, AUCTION_CANCELLED -> cập nhật nhanh + refetch chi tiết
+      queryClient.setQueryData<{ data: AuctionDetail; serverOffsetMs: number }>(
+        auctionKeys.detail(auctionId),
+        (prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            data: {
+              ...prev.data,
+              status: event.status,
+              currentPrice: event.currentPrice,
+              minNextBid: event.minNextBid,
+              bidCount: event.bidCount,
+              highestBidderName: event.highestBidderName,
+              reserveStatus: event.reserveStatus,
+              startTime: event.startTime,
+              endTime: event.endTime,
+            },
+          };
         }
       );
-      isSubscribed = true;
-    };
 
-    if (client.connected) {
-      hasConnectedOnce = true;
-      doSubscribe();
-    }
+      queryClient.invalidateQueries({
+        queryKey: auctionKeys.detail(auctionId),
+      });
+    },
+    [auctionId, queryClient]
+  );
 
-    const unsubStatus = subscribeWsStatus((connected) => {
-      if (connected) {
-        doSubscribe();
-        // Chỉ refetch khi nối lại sau mất kết nối để bù tin bị lỡ
-        if (hasConnectedOnce) {
-          queryClient.invalidateQueries({
-            queryKey: auctionKeys.detail(auctionId),
-          });
-          queryClient.invalidateQueries({
-            queryKey: ["auctions", "bids", auctionId],
-          });
-        }
-        hasConnectedOnce = true;
-      } else {
-        isSubscribed = false;
-      }
-    });
-
-    return () => {
-      unsubStatus();
-      if (subscription) {
-        try {
-          subscription.unsubscribe();
-        } catch {
-          // Bỏ qua lỗi khi client đã đóng
-        }
-      }
-    };
+  const handleReconnect = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: auctionKeys.detail(auctionId) });
+    queryClient.invalidateQueries({ queryKey: ["auctions", "bids", auctionId] });
   }, [auctionId, queryClient]);
+
+  return useAuctionChannel(auctionId, handleEvent, {
+    enabled: Boolean(auctionId),
+    onReconnect: handleReconnect,
+  });
 }

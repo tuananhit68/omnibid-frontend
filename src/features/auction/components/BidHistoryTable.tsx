@@ -1,111 +1,110 @@
 "use client";
 
-import { cn } from "@/lib/cn";
-import { formatDateTime, formatMoney, maskName } from "@/lib/format";
-import { DataTable, type Column } from "@/components/ui/DataTable";
-import { StatusBadge } from "@/components/ui/StatusBadge";
-import { BidStatus } from "@/types/enums";
-import type { BidItem } from "../types";
+import { Button } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorState } from "@/components/ui/ErrorState";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { formatBidTimestamp, formatDateTime, formatMoney } from "@/lib/format";
+import type { BidHistoryItem } from "../types";
 
 export interface BidHistoryTableProps {
-  bids: BidItem[];
-  currentUserId?: number | null;
+  bids: BidHistoryItem[];
   loading?: boolean;
-  error?: string;
+  error?: boolean;
+  errorMessage?: string;
   onRetry?: () => void;
-  className?: string;
+  hasMore?: boolean;
+  loadingMore?: boolean;
+  onLoadMore?: () => void;
 }
 
 export function BidHistoryTable({
   bids,
-  currentUserId,
   loading = false,
-  error,
+  error = false,
+  errorMessage,
   onRetry,
-  className,
+  hasMore = false,
+  loadingMore = false,
+  onLoadMore,
 }: BidHistoryTableProps) {
-  const columns: Column<BidItem>[] = [
-    {
-      key: "bidderName",
-      header: "Người đặt",
-      render: (row) => {
-        const isLeading = row.status === BidStatus.LEADING;
-        const isMe = currentUserId != null && row.bidderId === currentUserId;
-        const display = maskName(row.bidderName);
-        return (
-          <div className="flex items-center gap-2.5">
-            <span
-              aria-hidden="true"
-              className={cn(
-                "size-8 rounded-full flex items-center justify-center text-caption font-bold shrink-0",
-                isLeading || isMe
-                  ? "bg-primary-50 text-primary-700"
-                  : "bg-neutral-bg text-neutral"
-              )}
-            >
-              {display.charAt(0).toUpperCase()}
-            </span>
-            <span
-              className={cn(
-                "font-medium tabular",
-                isLeading ? "text-text font-semibold" : "text-text-secondary"
-              )}
-            >
-              {display}
-            </span>
-            {isMe && (
-              <span className="px-1.5 py-0.5 rounded-sm bg-primary-50 border border-primary-200 text-primary-700 text-caption font-semibold whitespace-nowrap">
-                Bạn
-              </span>
-            )}
-          </div>
-        );
-      },
-    },
-    {
-      key: "amount",
-      header: "Mức giá",
-      align: "right",
-      render: (row) => (
-        <span
-          className={cn(
-            "tabular font-bold",
-            row.status === BidStatus.LEADING ? "text-primary-700" : "text-text"
-          )}
-        >
-          {formatMoney(row.amount)}
-        </span>
-      ),
-    },
-    {
-      key: "createdAt",
-      header: "Thời gian",
-      render: (row) => (
-        <span className="text-small text-text-tertiary tabular">
-          {formatDateTime(row.createdAt, "DD/MM/YYYY HH:mm:ss")}
-        </span>
-      ),
-    },
-    {
-      key: "status",
-      header: "Trạng thái",
-      align: "center",
-      render: (row) => <StatusBadge statusType="bid" value={row.status} />,
-    },
-  ];
+  if (loading) {
+    return (
+      <div className="space-y-2.5 py-2">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-12 w-full rounded-md" />
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return <ErrorState message={errorMessage} onRetry={onRetry} />;
+  }
+
+  if (bids.length === 0) {
+    return (
+      <EmptyState
+        title="Chưa có lượt đặt giá nào"
+        description="Hãy là người đầu tiên đặt giá cho phiên đấu giá này."
+        className="py-8"
+      />
+    );
+  }
 
   return (
-    <DataTable
-      columns={columns}
-      data={bids}
-      keyExtractor={(row) => row.id}
-      loading={loading}
-      error={error}
-      onRetry={onRetry}
-      emptyText="Chưa có lượt đặt giá nào cho phiên đấu giá này."
-      highlightRow={(row) => row.status === BidStatus.LEADING}
-      className={className}
-    />
+    <div className="space-y-4">
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="border-b border-border-subtle bg-surface-subtle">
+              <th className="label px-3 py-2.5">Thời điểm</th>
+              <th className="label px-3 py-2.5">Người đặt</th>
+              <th className="label px-3 py-2.5 text-right">Mức giá</th>
+            </tr>
+          </thead>
+          <tbody>
+            {bids.map((bid, index) => (
+              <tr
+                key={bid.id}
+                className="h-13 border-b border-border-subtle last:border-b-0"
+              >
+                <td
+                  className="px-3 py-3 text-small text-text-secondary tabular whitespace-nowrap"
+                  title={formatDateTime(bid.createdAt)}
+                >
+                  {formatBidTimestamp(bid.createdAt)}
+                </td>
+                <td className="px-3 py-3 text-small font-medium text-text">
+                  <span>{bid.bidderName}</span>
+                  {index === 0 && (
+                    <span className="ml-2 inline-flex items-center rounded-full bg-success-bg px-2 py-0.5 text-caption font-medium text-success-strong">
+                      Cao nhất
+                    </span>
+                  )}
+                </td>
+                <td className="px-3 py-3 text-right text-small font-bold text-primary-700 tabular whitespace-nowrap">
+                  {formatMoney(bid.amount)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {hasMore && onLoadMore && (
+        <div className="flex justify-center pt-1">
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            loading={loadingMore}
+            onClick={onLoadMore}
+          >
+            Xem thêm
+          </Button>
+        </div>
+      )}
+    </div>
   );
 }
-

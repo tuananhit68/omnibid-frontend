@@ -1,2 +1,22 @@
 @import "tailwindcss";
 @import "../styles/tokens.css";
+
+@layer base {
+  select.appearance-none {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: none;
+  }
+  select.appearance-none::picker-icon {
+    display: none;
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

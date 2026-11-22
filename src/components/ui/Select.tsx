@@ -74,11 +74,11 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             aria-invalid={hasError ? "true" : undefined}
             aria-describedby={describedBy}
             className={cn(
-              "w-full text-body text-text appearance-none transition-colors rounded-md",
-              "bg-surface-subtle border border-border-brand outline-none pr-10",
+              "w-full text-body text-text appearance-none whitespace-nowrap transition-colors rounded-md",
+              "bg-surface-subtle border border-border-brand outline-none",
               "focus-visible:border-primary-600 focus-visible:ring-2 focus-visible:ring-focus/20",
               "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-muted",
-              controlSize === "lg" ? "h-11 px-3.5" : "h-10 px-3 text-small",
+              controlSize === "lg" ? "h-11 pl-3.5 pr-10" : "h-10 pl-3 pr-10 text-small",
               hasError && "border-danger focus-visible:border-danger focus-visible:ring-danger/20",
               className
             )}

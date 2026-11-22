@@ -2,103 +2,91 @@
 
 import { cn } from "@/lib/cn";
 import { formatMoney } from "@/lib/format";
-import { StatusBadge } from "@/components/ui/StatusBadge";
-import { AuctionStatus, ReservePriceStatus } from "@/types/enums";
-import type { AuctionDetail } from "../types";
+import { AuctionStatus } from "@/types/enums";
 
 export interface PricePanelProps {
-  auction: AuctionDetail;
-  priceFlash?: boolean;
-  className?: string;
+  status: AuctionStatus;
+  currentPrice: number;
+  startPrice: number;
+  minNextBid: number;
+  bidIncrement: number;
+  bidCount: number;
+  highestBidderName: string | null;
+  flash?: boolean;
 }
 
 export function PricePanel({
-  auction,
-  priceFlash = false,
-  className,
+  status,
+  currentPrice,
+  startPrice,
+  minNextBid,
+  bidIncrement,
+  bidCount,
+  highestBidderName,
+  flash = false,
 }: PricePanelProps) {
-  const isScheduled = auction.status === AuctionStatus.SCHEDULED;
-  const isEnded =
-    auction.status === AuctionStatus.ENDED ||
-    auction.status === AuctionStatus.UNSOLD;
-
-  const displayPrice = isScheduled
-    ? auction.startPrice
-    : isEnded && auction.finalPrice != null
-    ? auction.finalPrice
-    : auction.currentPrice;
-
-  const priceLabel = isScheduled
+  const isScheduled = status === AuctionStatus.SCHEDULED;
+  const priceHeading = isScheduled
     ? "Giá khởi điểm"
-    : isEnded
-    ? "Giá chốt phiên"
-    : "Giá hiện tại";
-
-  const reserveStatus = auction.reserveStatus ?? ReservePriceStatus.NONE;
+    : status === AuctionStatus.ENDED
+      ? "Giá chốt cuối"
+      : "Giá hiện tại";
 
   return (
-    <div
-      className={cn(
-        "bg-surface-subtle border border-border-brand rounded-xl p-4 space-y-4",
-        className
-      )}
-    >
-      {/* Hàng nhãn + badge giá sàn */}
-      <div className="flex items-center justify-between gap-2">
-        <span className="label">{priceLabel}</span>
-        {auction.reserveStatus && (
-          <StatusBadge statusType="reservePrice" value={reserveStatus} />
-        )}
-      </div>
-
-      {/* Giá lớn */}
-      <div
-        className={cn(
-          "text-timer md:text-price-xl font-bold text-primary-700 tabular px-1 -mx-1",
-          priceFlash && "price-flash"
-        )}
-      >
-        {formatMoney(displayPrice)}
-      </div>
-
-      <span className="sr-only" aria-live="polite">
-        {priceLabel} {formatMoney(displayPrice)}, {auction.bidCount} lượt đặt
-      </span>
-
-      {/* Bảng 4 thông số */}
-      <dl className="bg-surface border border-border-brand rounded-lg p-3.5 space-y-2.5 text-small">
-        <div className="flex items-center justify-between gap-4">
-          <dt className="text-text-tertiary">Giá khởi điểm</dt>
-          <dd className="font-semibold text-text tabular">
-            {formatMoney(auction.startPrice)}
-          </dd>
-        </div>
-
-        <div className="flex items-center justify-between gap-4">
-          <dt className="text-text-tertiary">Bước giá tối thiểu</dt>
-          <dd className="font-semibold text-text tabular">
-            {formatMoney(auction.bidIncrement)}
-          </dd>
-        </div>
-
-        <div className="flex items-center justify-between gap-4">
-          <dt className="text-text-tertiary">Tổng số lượt đặt</dt>
-          <dd className="font-semibold text-text tabular">
-            {auction.bidCount} lượt đặt giá
-          </dd>
-        </div>
-
-        {(auction.status === AuctionStatus.ACTIVE || isScheduled) &&
-          auction.minNextBid != null && (
-            <div className="pt-2 border-t border-border-subtle flex items-center justify-between gap-4">
-              <dt className="font-medium text-text">Giá tối thiểu tiếp theo</dt>
-              <dd className="font-bold text-primary-700 tabular">
-                {formatMoney(auction.minNextBid)}
-              </dd>
-            </div>
+    <div className="space-y-4">
+      <div className="space-y-1">
+        <span className="label block">{priceHeading}</span>
+        <p
+          aria-live="polite"
+          aria-atomic="true"
+          className={cn(
+            "text-price-xl text-primary-700 tabular rounded-md px-1 -mx-1",
+            flash && "price-flash"
           )}
-      </dl>
+        >
+          {formatMoney(isScheduled ? startPrice : currentPrice)}
+        </p>
+      </div>
+
+      {/* Lưới số liệu */}
+      <div className="grid grid-cols-2 gap-2">
+        <div className="col-span-2 rounded-lg bg-primary-50 px-3.5 py-2.5">
+          <span className="label block text-primary-700">
+            Mức tối thiểu tiếp theo
+          </span>
+          <span className="text-h3 font-bold text-primary-700 tabular">
+            {formatMoney(minNextBid)}
+          </span>
+        </div>
+
+        <div className="rounded-lg bg-surface-subtle px-3 py-2.5">
+          <span className="label block">Giá khởi điểm</span>
+          <span className="text-small font-semibold text-text tabular">
+            {formatMoney(startPrice)}
+          </span>
+        </div>
+
+        <div className="rounded-lg bg-surface-subtle px-3 py-2.5">
+          <span className="label block">Bước giá</span>
+          <span className="text-small font-semibold text-text tabular">
+            {formatMoney(bidIncrement)}
+          </span>
+        </div>
+
+        <div className="rounded-lg bg-surface-subtle px-3 py-2.5">
+          <span className="label block">Số lượt đặt</span>
+          <span className="text-small font-semibold text-text tabular">
+            {bidCount} lượt
+          </span>
+        </div>
+
+        <div className="rounded-lg bg-surface-subtle px-3 py-2.5">
+          <span className="label block">Người dẫn đầu</span>
+          <span className="text-small font-semibold text-text truncate block">
+            {highestBidderName ?? "Chưa có"}
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
-

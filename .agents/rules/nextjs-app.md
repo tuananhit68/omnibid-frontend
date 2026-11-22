@@ -1,37 +1,26 @@
 ---
 trigger: glob
-globs: src/app/**
+globs: "src/app/**, src/middleware.ts, src/proxy.ts"
+description: "Route, layout, bảo vệ route, Server/Client Component theo cấu trúc v4."
 ---
-
-# Next.js App Router
-
-## Route và layout
-
-| Route group | Layout | Bảo vệ |
-| --- | --- | --- |
-| `(public)` | `PublicLayout` | không |
-| `(auth)` | `AuthLayout` | đã đăng nhập thì chuyển về `/` |
-| `(user)` | `PublicLayout` (`/me`, `/orders`, `/watchlist`, `/notifications`) hoặc `SellerLayout` (`/seller/*`) | cần đăng nhập |
-| `admin` | `AdminLayout` | cần role ADMIN |
-
-- Bảo vệ ở `src/middleware.ts` (đọc cookie/phiên) + kiểm tra lại trong layout. Backend vẫn trả 401/403 – luôn xử lý.
-- Mỗi route có `loading.tsx` (skeleton theo bố cục trang) và `error.tsx` (thông báo + nút "Thử lại"). Có `not-found.tsx` chung.
-- `page.tsx` mỏng: lấy params, tải dữ liệu đầu (nếu là trang công khai), render component từ `src/features`.
-
+# Next.js App Router (Next 16)
+## Route group
+| Group | Layout | Route | Bảo vệ |
+|---|---|---|---|
+| `(public)` | PublicLayout | `/`, `/auctions`, `/auctions/[id]` | không |
+| `(auth)` | AuthLayout | `/login`, `/register` | đã đăng nhập → `/` (Admin → `/admin`) |
+| `(account)` | AccountLayout | `/me/profile`, `/me/products(/new, /[id]/edit)`, `/me/auctions(/new, /[id])`, `/me/bids`, `/me/orders`, `/me/notifications`, `/orders/[id]` | cần USER (Admin → `/admin`) |
+| `admin` | AdminLayout | `/admin`, `/admin/users`, `/admin/products(/[id])`, `/admin/auctions(/[id])`, `/admin/orders(/[id])`, `/admin/categories`, `/admin/reports(/[id])`, `/admin/profile` | cần ADMIN |
+- Bảo vệ sớm ở `src/middleware.ts` (Next 16 đã đổi tên thành `proxy.ts` — nếu build cảnh báo deprecated thì đổi tên tệp + hàm `proxy`, giữ logic) đọc cookie cờ `omnibid_auth`, `omnibid_role`; kiểm tra lại trong layout client bằng `useSession`. Backend vẫn trả 401/403 — luôn xử lý.
+- Không còn: `/watchlist`, `/seller/**`, `/notifications`, `/me/settings`, `/admin/dashboard`, `/admin/audit-logs`. Thêm redirect vĩnh viễn trong `next.config.ts` cho route cũ đã từng dùng: `/me/settings`→`/me/profile`, `/notifications`→`/me/notifications`, `/admin/dashboard`→`/admin`, `/seller/products`→`/me/products`.
+- `/dev/ui` (bảng component) và `/dev/mock` (công cụ mock) chỉ bật khi không phải production; `/dev/mock` chỉ khi `NEXT_PUBLIC_API_MODE=mock`. Ở chế độ mock, trang không tải dữ liệu phía server.
+- Mỗi route có `loading.tsx` (skeleton theo bố cục) và `error.tsx` (câu + "Thử lại"); `not-found.tsx` chung; `/403`.
+- `page.tsx` mỏng: lấy params, tải dữ liệu đầu (trang công khai), render component từ `src/features`.
 ## Server/Client
-
-- Mặc định Server Component. Chỉ thêm `'use client'` ở component lá cần state, effect, sự kiện, WebSocket.
-- Không import code client-only (window, localStorage, STOMP) vào Server Component.
-- Trang công khai có `generateMetadata` (tiêu đề, mô tả, ảnh chính cho chi tiết phiên).
-
-## Ảnh và font
-
-- Ảnh dùng `next/image` với `width/height` hoặc `fill` + khung có tỉ lệ cố định (tránh CLS). Khai báo domain Cloudinary trong `next.config` (`images.remotePatterns`).
-- Ảnh trên màn hình đầu (hero, ảnh chính chi tiết phiên) đặt `priority`; còn lại lazy.
-- Font Be Vietnam Pro qua `next/font/google`: `Be_Vietnam_Pro({ subsets: ['latin', 'vietnamese'], weight: ['400','500','600','700'], variable: '--font-be-vietnam-pro', display: 'swap' })`, gắn class `variable` lên `<html>`. Không phải variable font nên phải khai báo `weight`.
-
-## Hiệu năng
-
-- Không tải thư viện biểu đồ ở trang không cần: `dynamic(() => import(...), { ssr: false })` cho biểu đồ admin.
-- Danh sách dài (lịch sử bid đầy đủ, nhật ký) phân trang hoặc tải thêm, không render hàng nghìn dòng.
-- Không fetch trong `useEffect` khi đã có TanStack Query.
+- Mặc định Server Component; `'use client'` ở component lá cần state/effect/sự kiện/WebSocket/localStorage. Không import code client-only vào Server Component.
+- Trang công khai có `generateMetadata`. Dữ liệu cá nhân (cần JWT trong localStorage) chỉ tải phía client.
+- Dự án bật `cacheComponents` (Next 16): dữ liệu phiên/giá luôn động — đánh dấu không cache (`connection()`/`noStore` tương đương) cho fetch chi tiết phiên phía server.
+## Ảnh, font, hiệu năng
+- `next/image` với khung tỉ lệ cố định; chỉ remotePattern `res.cloudinary.com`. Ảnh đầu màn hình `priority`.
+- Font Be Vietnam Pro qua `next/font/google` (`latin`, `vietnamese`, weight 400–700).
+- Danh sách dài phân trang; không fetch trong `useEffect` khi đã có TanStack Query.

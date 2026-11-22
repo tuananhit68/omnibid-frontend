@@ -1,42 +1,31 @@
 ---
 trigger: glob
-globs: src/components/**
+globs: "src/components/**"
+description: "Cách viết component UI thuần và layout."
 ---
+# Component (`src/components/ui`, `src/components/layout`)
+Danh sách, variant: `.agents/skills/omnibid-fe-v4/references/design/DESIGN_SYSTEM.md` §6–§8.
+- Component UI thuần giao diện: chỉ props, không gọi API, không import `src/features/*`. Một component một tệp PascalCase, export có tên + `XxxProps`.
+- Dựa trên phần tử HTML đúng ngữ nghĩa, nhận hết thuộc tính gốc, `forwardRef` khi là điều khiển form/nút.
+- Variant/size là union type, mặc định theo DESIGN_SYSTEM.md. Đủ state `hover`, `focus-visible`, `active`, `disabled`, `loading`.
+- Không hard-code chữ tiếng Việt trong UI component trừ nhãn mặc định cho screen reader.
 
-# Component giao diện (`src/components/ui`, `src/components/layout`)
+| Component | Bắt buộc |
+|---|---|
+| `Button` | `type="button"` mặc định; `loading` → spinner + `aria-busy`, giữ độ rộng, chặn bấm |
+| `IconButton` | prop `label` → `aria-label`; vùng bấm 44×44 |
+| `Input`, `Textarea`, `Select` | `label`, `hint`, `error`; `useId`; `aria-describedby`; `aria-invalid` |
+| `MoneyInput` | hiển thị `22.000.000`, giá trị `number` nguyên; hậu tố `₫`; `inputMode="numeric"` |
+| `DateTimeInput` | hiển thị `dd/MM/yyyy HH:mm` giờ VN, trả chuỗi ISO **có** `+07:00` |
+| `StatusBadge` | nhận `{ kind, value }`, lấy label + tone từ `src/types/enums.ts`; luôn có chữ |
+| `Modal`, `ConfirmDialog` | `role="dialog"`, `aria-modal`, `aria-labelledby`, bẫy focus, `Esc`, trả focus, khóa cuộn; `ConfirmDialog` hỗ trợ ô lý do bắt buộc/tùy chọn |
+| `Tabs`, `SegmentedControl` | `role="tablist"/"tab"/"tabpanel"`, phím mũi tên |
+| `DataTable` | `overflow-x-auto`, `<th scope="col">`, `loading`/`emptyState`/`error`, cột tiền căn phải `tabular`, chế độ thẻ trên mobile |
+| `Pagination` | `nav aria-label="Phân trang"`, `aria-current="page"` |
+| `Toast` | thành công `role="status"` tự ẩn 5s; lỗi `role="alert"` không tự ẩn |
+| `CountdownTimer` | nhận `endTime` (ISO có offset) + `serverOffsetMs`; không tự đổi trạng thái; gọi `onExpire` |
+| `OrderProgress` | 4 bước, nhận `status` + các mốc thời gian |
+| `CategoryIcon` | nhận tên icon lucide, map tĩnh các icon cho phép, fallback `tag` |
 
-Danh sách, số đo và variant đầy đủ ở `design/components.md`. Rule này nói cách viết.
-
-## Nguyên tắc
-
-- Component UI **thuần giao diện**: chỉ nhận props, không gọi API, không đọc store, không import `src/features/*`.
-- Một component một file, tên PascalCase, export có tên (`export function Button`). Props đặt tên `ButtonProps`, export kèm.
-- Dựa trên phần tử HTML đúng ngữ nghĩa và nhận hết thuộc tính gốc: `Button` mở rộng `React.ButtonHTMLAttributes<HTMLButtonElement>`, dùng `forwardRef`.
-- Variant và size là union type (`variant?: 'primary' | 'primary-strong' | ...`), mặc định theo `components.md`.
-- Mỗi component tương tác có đủ: `hover`, `focus-visible`, `active`, `disabled`, và `loading` nếu gửi dữ liệu.
-- Không hard-code chữ tiếng Việt trong component UI trừ nhãn mặc định cho screen reader (vd "Đóng"); chữ hiển thị truyền qua props/children.
-
-## Bắt buộc theo loại
-
-| Component | Yêu cầu |
-| --- | --- |
-| `Button` | `type="button"` mặc định; `loading` → spinner + `aria-busy`, giữ nguyên độ rộng, chặn bấm; cao ≥ 44px với size `lg`/`xl` |
-| `IconButton` | prop `label` bắt buộc → `aria-label`; vùng bấm 44×44 dù icon 16–20px |
-| `Input`, `Textarea`, `Select` | nhận `label`, `hint`, `error`; tự sinh `id` bằng `useId`; nối `aria-describedby` tới hint/error; `aria-invalid` khi lỗi |
-| `MoneyInput` | hiển thị `22.000.000`, giá trị trả ra là `number`; hậu tố `₫`; `inputMode="numeric"` |
-| `StatusBadge` | nhận `{ enum, value }`, tự lấy label + tone từ `src/types/enums.ts`; luôn có chữ |
-| `Modal`, `ConfirmDialog` | `role="dialog"`, `aria-modal`, `aria-labelledby`; bẫy focus; `Esc` đóng; trả focus về nút mở; khoá cuộn nền |
-| `Tabs` | `role="tablist"/"tab"/"tabpanel"`, phím mũi tên chuyển tab |
-| `DataTable` | bọc `overflow-x-auto`; `<th scope="col">`; props `loading`, `emptyState`, `error`; cột tiền căn phải + `tabular` |
-| `Pagination` | `nav aria-label="Phân trang"`, trang hiện tại `aria-current="page"` |
-| `Toast` | thành công `role="status"`; lỗi `role="alert"` và không tự ẩn |
-| `CountdownTimer` | nhận `endTime` + `serverOffsetMs`; không tự đổi trạng thái phiên; gọi `onExpire` |
-
-## Icon
-
-- SVG từ `design/` → `src/components/icons/<Name>Icon.tsx`, `fill/stroke="currentColor"`, nhận `className`.
-- Icon trang trí: `aria-hidden="true"`. Icon mang nghĩa đứng một mình: có `aria-label` hoặc chữ ẩn `sr-only`.
-
-## Trang xem trước
-
-Mọi component mới phải được thêm vào `src/app/dev/ui/page.tsx` với đủ variant và state. Trang này chỉ bật khi `NODE_ENV !== 'production'`.
+- Icon: `src/components/icons` (SVG, `currentColor`) cho icon giao diện; `lucide-react` chỉ cho icon danh mục (và có thể dùng thay icon thiếu). Icon trang trí `aria-hidden`.
+- Mọi component mới/sửa phải có mặt ở `src/app/dev/ui/page.tsx` (chỉ bật khi `NODE_ENV !== 'production'`).

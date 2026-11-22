@@ -1,21 +1,26 @@
-import { apiClient, type AuthResponse } from "@/lib/api";
+import { apiRequest } from "@/lib/api/client";
+import type { LoginResponse, MessageResponse, UserProfile } from "@/lib/api/contract";
 import type { LoginRequest, RegisterRequest } from "./types";
 
-/**
- * Đăng ký tài khoản USER mới
- * Endpoint: POST /api/v1/auth/register
- */
-export async function registerUser(
-  body: RegisterRequest
-): Promise<AuthResponse> {
-  return apiClient.post<unknown, AuthResponse>("/auth/register", body);
+export async function registerUser(body: RegisterRequest): Promise<UserProfile> {
+  return apiRequest<UserProfile>({
+    method: "POST",
+    url: "/auth/register",
+    data: body,
+  });
 }
 
-/**
- * Đăng nhập lấy JWT
- * Endpoint: POST /api/v1/auth/login
- */
-export async function loginUser(body: LoginRequest): Promise<AuthResponse> {
-  return apiClient.post<unknown, AuthResponse>("/auth/login", body);
+export async function loginUser(body: LoginRequest): Promise<LoginResponse> {
+  return apiRequest<LoginResponse>({
+    method: "POST",
+    url: "/auth/login",
+    data: body,
+  });
 }
 
+export async function logoutUser(): Promise<MessageResponse> {
+  return apiRequest<MessageResponse>({
+    method: "POST",
+    url: "/auth/logout",
+  });
+}
